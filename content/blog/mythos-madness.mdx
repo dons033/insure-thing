@@ -1,0 +1,28 @@
+---
+title: "Mythos Madness"
+date: "2026-04-10"
+description: "Claude Mythos Preview prices intelligence at a level where reading every word of every document for every account starts to pencil out. Insurance should pay attention."
+author: "Don Seibert"
+tags: ["ai", "underwriting", "claude", "economics"]
+image: "/images/blog/mythos-madness.jpeg"
+---
+
+Imagine an underwriter who reads every word of every document. Not skims. Reads. Every line of five years of loss runs. Every photo in the loss control report. Every entry on the mod worksheet.
+
+That costs about $40.
+
+Claude Mythos Preview is Anthropic's next-generation model, and if the benchmarks hold, it represents a generational leap in capability. It has already shaken software security: Anthropic's red team used it to find a 27-year-old vulnerability in OpenBSD and a 16-year-old flaw in FFmpeg that survived every prior model and human reviewer. A single bug-finding run cost under $50.
+
+The pricing sounds expensive: $25 per million input tokens, $125 output. Five times Opus. But I built a maximalist test case, a California contractor WC risk with 17 document types, ten analytical passes, agent interactions, and a full recommendation, and the total came to roughly $40. About the cost of a D&B credit report. On a $40,000 contractor policy, that adds 0.1% to expenses. You only need to offset 0.1% in losses to break even.
+
+Personal lines is cheaper. A homeowners file runs about $2 at Mythos pricing. Under a dime at Haiku.
+
+Two benchmarks explain why this matters for insurance. SWE-bench Pro tests complex, multi-step problem solving across interconnected systems, exactly what underwriting is. Mythos leads GPT-5.4 by 20 points. SWE-bench Multimodal tests reasoning across visual and structured data simultaneously, reading forms, photos, and tables together. Mythos more than doubled Opus 4.6. That is the difference between a model that sometimes understands what it is looking at and one that usually does.
+
+Yes, these are self-reported numbers. But the trajectory is clear. Whether Mythos gets there first or a competitor does, this level of capability is coming. (Right now, the main thing holding it back is cybersecurity concerns holding back model release).
+
+Meanwhile, Jensen Huang says he would be "deeply alarmed" if a $500K engineer spent less than $250K on AI tokens. The smartest tech companies are spending more, not less. Insurance should not copy their leaderboards. But we should ask: are we spending enough on intelligence, or are we penny-wise on the tools that could transform underwriting?
+
+This is Part 1 of three. Next: how to choose the right model for each task, and how to build the harness that makes expensive models unnecessary for daily work.
+
+In the ancient mythos, the gods had lightning. Soon we can rent it; but sometimes a swarm of lightning bugs might be better.

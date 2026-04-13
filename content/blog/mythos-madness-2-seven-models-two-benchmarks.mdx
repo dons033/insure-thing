@@ -1,0 +1,31 @@
+---
+title: "Mythos Madness #2: 7 Models, 2 Benchmarks"
+date: "2026-04-11"
+description: "A 15-cent AI matches a $40 one on simple tasks and dies on hard ones. The harness, not the model, is usually where the gains live."
+author: "Don Seibert"
+tags: ["ai", "underwriting", "models", "benchmarks"]
+image: "/images/blog/mythos-madness-2-benchmarks.png"
+hideHeroImage: true
+---
+
+<iframe src="/charts/mythos-madness-2-benchmarks.html" width="100%" height="620" style={{border: 'none', borderRadius: '8px', marginBottom: '2rem'}} title="7 Models, 2 Benchmarks — MATH-500 vs HLE" />
+
+On well-defined problems, the performance on small, cheap models is high enough that there is barely a difference between them and the behemoths. The MATH-500 benchmark is an illustration of this: challenging high school level math problems in calculus and geometry. Even new mid-size models can ace this; older models could not.
+
+If your task requires this level of capability, there are a lot of models that can do it now. Engineering the right toolset and harness for the models is going to make a bigger difference than over-spending on the model, and the price differences are substantial. Mythos will cost 265x more than a simple small model that does the task well for no real difference. Think extracting data from a clean form or a structured loss run, or checking against eligibility rules.
+
+Hard reasoning tasks are different, and here is where we see the latest frontier models show their value. Consider Humanity's Last Exam level multi-disciplinary reasoning problems. Mythos can solve 65% of the tasks, but a small but mighty Gemma 4 model solves 18%. Think finding complex coverage gaps, spotting misclassification on messy risks with unstructured data, or running book-level analysis of loss patterns. High end models will be expensive, but eliminating a single loss may save you more than you spend.
+
+## The Harness Matters More Than the Model
+
+On structured tasks, the harness matters more than the model. A Stanford study found that harness-level changes, retrieval, tool access, and validation, improved quality 28 to 47%. Prompt refinement alone added less than 3%. Researchers found a 36-point accuracy gain from changing the scaffold around the same model.
+
+So how do you know which tasks need which model? Test it. MATH-500 and HLE and other benchmarks are interesting, but no external benchmark matches your data, tasks, or guidelines. A high-end coding model is useful to help rapidly engineer the base harness and prompts for a test setup. It is not just a price axis. Different models excel at different tasks, from text to image to reasoning. Match the model to the task.
+
+Other constraints matter: speed, compliance, tech stack fit, and provenance. Any of these can override benchmark scores entirely. They whittle the list of eligible models down to just the ones worthy of testing.
+
+## What I Found in Practice
+
+I have used Claude Code and OpenAI's Codex to build test harnesses for multiple models. The fun thing is, for simpler tasks neither ended up recommending Claude or ChatGPT models. Price-to-performance pointed elsewhere. Once I have settled on a model, there is additional tweaking to make sure the engineering matches the model. Then I know I have something solid that will do the task fast, cheap, and well.
+
+*Note on the tests and models: not every model is tested on every benchmark, and fewer models are measured against MATH-500.*

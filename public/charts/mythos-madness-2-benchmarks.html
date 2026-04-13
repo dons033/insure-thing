@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>7 Models, 2 Benchmarks</title>
+<style>
+body { margin: 0; padding: 48px 40px; background: #f8f8f8; font-family: 'Segoe UI', -apple-system, system-ui, sans-serif; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto; }
+.panel-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 3px; letter-spacing: -0.3px; }
+.panel-sub { font-size: 14px; color: #555; margin-bottom: 20px; }
+.chart-wrap { position: relative; width: 100%; height: 400px; }
+.footer { max-width: 1200px; margin: 20px auto 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 24px; font-size: 13px; color: #555; }
+.legend span { display: flex; align-items: center; gap: 6px; }
+.swatch { width: 14px; height: 14px; border-radius: 3px; }
+.line-legend { display: flex; align-items: center; gap: 5px; }
+.line-legend .line { width: 22px; height: 3px; border-radius: 2px; background: #C0392B; }
+.line-legend .dot { width: 9px; height: 9px; border-radius: 50%; background: #C0392B; }
+.footnote { font-size: 12px; color: #888; margin-top: 12px; line-height: 1.5; }
+@media (max-width: 768px) {
+  body { padding: 24px 16px; }
+  .grid { grid-template-columns: 1fr; gap: 32px; }
+  .chart-wrap { height: 350px; }
+}
+</style>
+</head>
+<body>
+<div class="grid">
+<div>
+<div class="panel-title">MATH-500: well-defined tasks</div>
+<div class="panel-sub">Cost rises 265x. Performance rises 2%. <em>(r = 0.33*)</em></div>
+<div class="chart-wrap"><canvas id="mathChart"></canvas></div>
+</div>
+<div>
+<div class="panel-title">HLE: deep reasoning tasks</div>
+<div class="panel-sub">Cost rises 220x. Performance rises 5x. <em>(r = 0.99)</em></div>
+<div class="chart-wrap"><canvas id="hleChart"></canvas></div>
+</div>
+</div>
+<div class="footer">
+<div class="legend">
+<span><span class="swatch" style="background:#4A6FA5;"></span>All other models</span>
+<span><span class="swatch" style="background:#D4881C;"></span>Mythos Preview</span>
+<span class="line-legend"><span class="line"></span><span class="dot"></span> Cost per review (top axis)</span>
+</div>
+<div class="footnote">Cost = per full UW review (1.04M input + 110K output tokens). Mythos MATH-500 estimated at 99.5%. MATH-500 scores from Artificial Analysis independent benchmarks where available. HLE from published model/system cards. r = Pearson correlation between log-price and benchmark score. *MATH-500 correlation excludes estimated Mythos score; confirmed scores only.</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const tc = '#333333';
+const tcAxis = '#555555';
+const gc = 'rgba(0,0,0,0.05)';
+const steel = '#4A6FA5';
+const amber = '#D4881C';
+const red = '#C0392B';
+function costLinePlugin() {
+  return {
+    afterDatasetsDraw(chart) {
+      if (chart.data.datasets.length < 2) return;
+      const ctx = chart.ctx;
+      const costs = chart.data.datasets[1].data;
+      const xScale = chart.scales.x2;
+      if (!xScale) return;
+      const points = [];
+      costs.forEach((val, i) => {
+        if (val === null) return;
+        const bar = chart.getDatasetMeta(0).data[i];
+        points.push({ x: xScale.getPixelForValue(val), y: bar.y });
+      });
+      if (points.length < 2) return;
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+      ctx.strokeStyle = red;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      points.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+        ctx.fillStyle = red;
+        ctx.fill();
+      });
+    }
+  };
+}
+function labelPlugin() {
+  return {
+    afterDatasetsDraw(chart) {
+      const ctx = chart.ctx;
+      chart.data.datasets[0].data.forEach((val, i) => {
+        const meta = chart.getDatasetMeta(0).data[i];
+        ctx.fillStyle = tc;
+        ctx.font = '600 13px system-ui';
+        ctx.textAlign = 'left';
+        ctx.fillText(val + '%', meta.x + 8, meta.y + 5);
+      });
+    }
+  };
+}
+function mc(count, mi) {
+  return Array.from({length: count}, (_, i) => i === mi ? amber : steel);
+}
+new Chart(document.getElementById('mathChart'), {
+  type: 'bar',
+  data: {
+    labels: [
+      ['MiniMax M1', '$0.15'],
+      ['Nemotron 49B', '$0.16'],
+      ['DeepSeek R1', '$0.81'],
+      ['GPT-5 (high)', '$4.25'],
+      ['Sonnet 4.6', '$4.77'],
+      ['Opus 4.6', '$7.95'],
+      ['Mythos (est.)', '$39.75']
+    ],
+    datasets: [
+      { data: [98.0, 97.4, 97.3, 99.4, 97.8, 97.6, 99.5], backgroundColor: mc(7, 6), borderRadius: 4, barThickness: 28, xAxisID: 'x' },
+      { data: [0.15, 0.16, 0.81, 4.25, 4.77, 7.95, 39.75], hidden: true, xAxisID: 'x2' }
+    ]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { filter: (item) => item.datasetIndex === 0, callbacks: { label: (ctx) => ctx.raw + '%' } } },
+    scales: {
+      x: { position: 'bottom', min: 0, max: 100, grid: { color: gc }, ticks: { color: tcAxis, font: { size: 12 }, callback: (v) => v + '%', stepSize: 25 } },
+      x2: { position: 'top', min: 0, max: 50, grid: { drawOnChartArea: false, drawTicks: false }, ticks: { color: tcAxis, font: { size: 11 }, callback: (v) => '$' + v, stepSize: 10 }, title: { display: true, text: 'cost per review', color: tcAxis, font: { size: 11 } } },
+      y: { grid: { display: false }, ticks: { color: tc, font: { size: 13 }, autoSkip: false } }
+    },
+    layout: { padding: { right: 48 } }
+  },
+  plugins: [labelPlugin(), costLinePlugin()]
+});
+new Chart(document.getElementById('hleChart'), {
+  type: 'bar',
+  data: {
+    labels: [
+      ['Gemma 4 26B', '$0.18'],
+      ['DeepSeek V3.2', '$0.31'],
+      ['MiniMax M2.7', '$0.44'],
+      ['GPT-5.4', '$4.25'],
+      ['Opus 4.6', '$7.95'],
+      ['Mythos Preview', '$39.75']
+    ],
+    datasets: [
+      { data: [18.3, 25.1, 28.1, 52.1, 53.1, 64.7], backgroundColor: mc(6, 5), borderRadius: 4, barThickness: 28, xAxisID: 'x' },
+      { data: [0.18, 0.31, 0.44, 4.25, 7.95, 39.75], hidden: true, xAxisID: 'x2' }
+    ]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { filter: (item) => item.datasetIndex === 0, callbacks: { label: (ctx) => ctx.raw + '%' } } },
+    scales: {
+      x: { position: 'bottom', min: 0, max: 100, grid: { color: gc }, ticks: { color: tcAxis, font: { size: 12 }, callback: (v) => v + '%', stepSize: 25 } },
+      x2: { position: 'top', min: 0, max: 50, grid: { drawOnChartArea: false, drawTicks: false }, ticks: { color: tcAxis, font: { size: 11 }, callback: (v) => '$' + v, stepSize: 10 }, title: { display: true, text: 'cost per review', color: tcAxis, font: { size: 11 } } },
+      y: { grid: { display: false }, ticks: { color: tc, font: { size: 13 }, autoSkip: false } }
+    },
+    layout: { padding: { right: 48 } }
+  },
+  plugins: [labelPlugin(), costLinePlugin()]
+});
+</script>
+</body>
+</html>
