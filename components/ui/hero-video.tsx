@@ -32,24 +32,25 @@ export function HeroVideo() {
       const h = rect.height;
       const cx = w * 0.5;
       const cy = h * 0.5;
-      const maxR = Math.max(w, h) * 0.7;
+      const maxR = Math.min(w, h) * 0.45;
 
       ctx.clearRect(0, 0, w, h);
 
+      const accent = "rgba(206, 130, 51,";
+
       // Concentric rings
-      const accent = "rgba(206, 130, 51,"; // burnt orange
       const ringCount = 5;
       for (let i = 1; i <= ringCount; i++) {
         const r = (maxR / ringCount) * i;
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.strokeStyle = `${accent} ${0.06 + i * 0.01})`;
+        ctx.strokeStyle = `${accent} ${0.08 + i * 0.02})`;
         ctx.lineWidth = 1;
         ctx.stroke();
       }
 
       // Cross lines
-      ctx.strokeStyle = `${accent} 0.06)`;
+      ctx.strokeStyle = `${accent} 0.08)`;
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(cx, cy - maxR);
@@ -58,14 +59,14 @@ export function HeroVideo() {
       ctx.lineTo(cx + maxR, cy);
       ctx.stroke();
 
-      // Sweep gradient
+      // Sweep trail
       const sweepAngle = angle;
-      const tailLength = Math.PI * 0.4;
+      const tailLength = Math.PI * 0.5;
 
-      for (let i = 0; i < 60; i++) {
-        const t = i / 60;
+      for (let i = 0; i < 80; i++) {
+        const t = i / 80;
         const a = sweepAngle - t * tailLength;
-        const opacity = (1 - t) * 0.12;
+        const opacity = (1 - t) * 0.25;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.arc(cx, cy, maxR, a, a + 0.02);
@@ -80,37 +81,43 @@ export function HeroVideo() {
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(lineX, lineY);
-      ctx.strokeStyle = `${accent} 0.2)`;
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = `${accent} 0.4)`;
+      ctx.lineWidth = 2;
       ctx.stroke();
 
       // Center dot
       ctx.beginPath();
-      ctx.arc(cx, cy, 3, 0, Math.PI * 2);
-      ctx.fillStyle = `${accent} 0.3)`;
+      ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+      ctx.fillStyle = `${accent} 0.5)`;
       ctx.fill();
 
-      // A few static "blips"
+      // Blips
       const blips = [
         { a: 0.8, d: 0.35 },
         { a: 2.1, d: 0.55 },
         { a: 3.9, d: 0.72 },
         { a: 5.2, d: 0.28 },
         { a: 1.4, d: 0.85 },
+        { a: 4.5, d: 0.45 },
       ];
       for (const blip of blips) {
         const dist = blip.d * maxR;
         const bx = cx + Math.cos(blip.a) * dist;
         const by = cy + Math.sin(blip.a) * dist;
 
-        // Fade in as sweep passes
         let diff = ((sweepAngle - blip.a) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
-        let blipAlpha = diff < Math.PI ? Math.max(0, 0.5 - diff * 0.25) : 0;
+        let blipAlpha = diff < Math.PI * 1.2 ? Math.max(0, 0.7 - diff * 0.3) : 0;
 
         if (blipAlpha > 0.01) {
           ctx.beginPath();
-          ctx.arc(bx, by, 3, 0, Math.PI * 2);
+          ctx.arc(bx, by, 4, 0, Math.PI * 2);
           ctx.fillStyle = `${accent} ${blipAlpha})`;
+          ctx.fill();
+
+          // Glow
+          ctx.beginPath();
+          ctx.arc(bx, by, 10, 0, Math.PI * 2);
+          ctx.fillStyle = `${accent} ${blipAlpha * 0.2})`;
           ctx.fill();
         }
       }
@@ -131,7 +138,7 @@ export function HeroVideo() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="absolute top-0 right-0 z-0 w-[60%] h-full opacity-50"
+      className="absolute inset-0 z-0 w-full h-full"
     />
   );
 }
