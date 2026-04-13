@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Outfit } from "next/font/google";
+import { Questrial, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
@@ -7,15 +7,15 @@ import { siteConfig } from "@/lib/constants";
 import { OrganizationJsonLd } from "@/components/seo/json-ld";
 import { Analytics } from "@vercel/analytics/react";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const questrial = Questrial({
+  variable: "--font-questrial",
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "500", "600"],
+  weight: "400",
 });
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
   display: "swap",
 });
@@ -57,7 +57,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${outfit.variable} h-full antialiased`}
+      className={`${questrial.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[color:var(--color-background)] text-[color:var(--color-foreground)]">
         <OrganizationJsonLd />

@@ -6,11 +6,12 @@
   --color-surface: #ffffff;
   --color-muted: #6b6b73;
   --color-border: #e6e4dc;
-  --color-accent: #b4591f;
-  --color-accent-soft: #f4ead9;
+  --color-accent: #c41e2a;
+  --color-accent-soft: #fce8e9;
 
-  --font-serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  --font-sans: var(--font-outfit), system-ui, -apple-system, sans-serif;
+  --font-heading: var(--font-questrial), system-ui, sans-serif;
+  --font-serif: var(--font-questrial), system-ui, sans-serif;
+  --font-sans: var(--font-space-grotesk), system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -31,8 +32,8 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
-  font-weight: 500;
+  font-family: var(--font-heading);
+  font-weight: 400;
   letter-spacing: -0.015em;
   line-height: 1.15;
   color: var(--color-foreground);

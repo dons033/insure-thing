@@ -36,7 +36,7 @@ export function HeroVideo() {
 
       ctx.clearRect(0, 0, w, h);
 
-      const accent = "rgba(206, 130, 51,";
+      const accent = "rgba(196, 30, 42,";
 
       // Concentric rings
       const ringCount = 5;
