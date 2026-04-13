@@ -11,7 +11,7 @@ export default function HomePage() {
   return (
     <>
       <section className="relative overflow-hidden border-b border-[color:var(--color-border)]">
-        <div className="mx-auto max-w-[1200px] px-6 lg:px-10 py-24 md:py-36">
+        <div className="relative z-10 mx-auto max-w-[1200px] px-6 lg:px-10 py-24 md:py-36">
           <div className="max-w-3xl fade-in">
             <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)] mb-6">
               Insurance Consulting
