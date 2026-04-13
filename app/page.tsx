@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { services } from "@/lib/constants";
 import { ServiceCard } from "@/components/ui/service-card";
+import { HeroVideo } from "@/components/ui/hero-video";
 import { getAllPosts, formatDate } from "@/lib/blog";
 
 export default function HomePage() {
@@ -38,16 +39,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          aria-hidden="true"
-          className="absolute top-0 right-0 -z-10 w-[60%] h-full object-cover opacity-60"
-        >
-          <source src="/videos/hero-bg.mp4" type="video/mp4" />
-        </video>
+        <HeroVideo />
       </section>
 
       <section className="mx-auto max-w-[1200px] px-6 lg:px-10 py-24">
