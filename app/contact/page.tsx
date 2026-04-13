@@ -54,7 +54,7 @@ export default function ContactPage() {
           </aside>
 
           <form
-            action="https://formspree.io/f/your-form-id"
+            action="https://formspree.io/f/maqayldw"
             method="POST"
             className="space-y-6 rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-8"
           >
