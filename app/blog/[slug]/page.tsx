@@ -9,6 +9,8 @@ import {
   getPostBySlug,
 } from "@/lib/blog";
 import { mdxComponents } from "@/components/blog/mdx-components";
+import { BlogPostingJsonLd } from "@/components/seo/json-ld";
+import { siteConfig } from "@/lib/constants";
 
 type Params = { slug: string };
 
@@ -48,6 +50,13 @@ export default async function BlogPostPage({
 
   return (
     <article className="mx-auto max-w-[720px] px-6 lg:px-10 py-16 md:py-24">
+      <BlogPostingJsonLd
+        title={post.frontmatter.title}
+        description={post.frontmatter.description}
+        date={post.frontmatter.date}
+        image={post.frontmatter.image}
+        url={`${siteConfig.url}/blog/${slug}`}
+      />
       <Link
         href="/blog"
         className="inline-flex items-center gap-2 text-sm text-[color:var(--color-muted)] hover:text-[color:var(--color-accent)] mb-10"
