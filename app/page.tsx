@@ -44,7 +44,7 @@ export default function HomePage() {
           muted
           playsInline
           aria-hidden="true"
-          className="absolute top-0 right-0 -z-10 w-[60%] h-full object-cover opacity-30"
+          className="absolute top-0 right-0 -z-10 w-[60%] h-full object-cover opacity-60"
         >
           <source src="/videos/hero-bg.mp4" type="video/mp4" />
         </video>
