@@ -1,0 +1,167 @@
+.tokens-venn-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #fafaf7;
+  color: #1a1a1f;
+  padding: 4rem 1.5rem;
+}
+
+.tokens-venn-stage {
+  width: 100%;
+  max-width: 860px;
+  margin-inline: auto;
+}
+
+.tokens-venn-caption {
+  font-family: var(--font-heading, "Questrial", ui-sans-serif, system-ui, sans-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: #6b6b73;
+  border-top: 1px solid #e6e4dc;
+  padding-top: 1.25rem;
+  margin: 1.5rem 0 0;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+.tokens-venn-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.tokens-venn-bg {
+  fill: transparent;
+}
+
+.tokens-venn-circle,
+.tokens-venn-outer,
+.tokens-venn-label,
+.tokens-venn-final-label {
+  opacity: 0;
+}
+
+.tokens-venn-circle,
+.tokens-venn-outer {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.tokens-venn-circle circle {
+  stroke-width: 1.75;
+}
+
+/* OpenAI teal */
+.tokens-venn-sam circle {
+  fill: rgba(95, 179, 158, 0.42);
+  stroke: #1f8467;
+}
+
+/* Anthropic peach */
+.tokens-venn-dario circle {
+  fill: rgba(232, 168, 124, 0.42);
+  stroke: #c97840;
+}
+
+/* xAI slate */
+.tokens-venn-elon circle {
+  fill: rgba(106, 132, 165, 0.4);
+  stroke: #4a5b7d;
+}
+
+.tokens-venn-outer circle {
+  fill: rgba(252, 232, 233, 0.32);
+  stroke: #c41e2a;
+  stroke-width: 2;
+}
+
+.tokens-venn-label,
+.tokens-venn-final-label {
+  text-anchor: middle;
+  fill: #1a1a1f;
+  paint-order: stroke;
+  stroke: #fafaf7;
+  stroke-linejoin: round;
+}
+
+.tokens-venn-label {
+  font-family: var(--font-sans, "Space Grotesk", ui-sans-serif, system-ui, sans-serif);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  stroke-width: 5px;
+}
+
+.tokens-venn-final-label {
+  font-family: var(--font-sans, "Space Grotesk", ui-sans-serif, system-ui, sans-serif);
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  fill: #1a1a1f;
+  stroke-width: 8px;
+}
+
+.tokens-venn-stage.is-visible .tokens-venn-sam {
+  animation: tokens-venn-circle-in 640ms cubic-bezier(0.2, 0.8, 0.2, 1) 100ms forwards;
+}
+
+.tokens-venn-stage.is-visible .tokens-venn-dario {
+  animation: tokens-venn-circle-in 640ms cubic-bezier(0.2, 0.8, 0.2, 1) 700ms forwards;
+}
+
+.tokens-venn-stage.is-visible .tokens-venn-elon {
+  animation: tokens-venn-circle-in 680ms cubic-bezier(0.2, 0.8, 0.2, 1) 1300ms forwards;
+}
+
+.tokens-venn-stage.is-visible .tokens-venn-label-sam {
+  animation: tokens-venn-label-in 380ms ease-out 480ms forwards;
+}
+
+.tokens-venn-stage.is-visible .tokens-venn-label-dario {
+  animation: tokens-venn-label-in 380ms ease-out 1080ms forwards;
+}
+
+.tokens-venn-stage.is-visible .tokens-venn-label-elon {
+  animation: tokens-venn-label-in 380ms ease-out 1680ms forwards;
+}
+
+.tokens-venn-stage.is-visible .tokens-venn-outer {
+  animation: tokens-venn-outer-in 820ms cubic-bezier(0.14, 0.86, 0.24, 1) 2100ms forwards;
+}
+
+.tokens-venn-stage.is-visible .tokens-venn-final-label {
+  animation: tokens-venn-final-label-in 560ms ease-out 2600ms forwards;
+}
+
+@keyframes tokens-venn-circle-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes tokens-venn-outer-in {
+  0% { opacity: 0; transform: scale(0.94); }
+  72% { opacity: 1; transform: scale(1.008); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes tokens-venn-label-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tokens-venn-final-label-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tokens-venn-stage.is-visible .tokens-venn-circle,
+  .tokens-venn-stage.is-visible .tokens-venn-outer,
+  .tokens-venn-stage.is-visible .tokens-venn-label,
+  .tokens-venn-stage.is-visible .tokens-venn-final-label {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}

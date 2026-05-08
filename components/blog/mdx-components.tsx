@@ -1,5 +1,6 @@
 import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
+import TokensVenn from "@/components/blog/tokens-venn";
 
 export const mdxComponents: MDXComponents = {
   a: ({ href, children, ...props }) => {
@@ -16,4 +17,5 @@ export const mdxComponents: MDXComponents = {
       </a>
     );
   },
+  TokensVenn,
 };

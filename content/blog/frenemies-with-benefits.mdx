@@ -1,0 +1,72 @@
+---
+title: "Frenemies with Benefits: Anthropic and SpaceXai"
+date: "2026-05-08"
+description: "Dario and Elon don't exchange birthday cards. They just signed a 220,000-GPU deal anyway. The math, the digs, and what could still go wrong."
+author: "Don Seibert"
+image: "/images/blog/frenemies-with-benefits.png"
+hideHeroImage: true
+---
+
+<TokensVenn />
+
+In February, Elon Musk called Anthropic "misanthropic and evil." Dario Amodei has been more circumspect, but his published essays on AI's "race to the bottom" have taken thinly-veiled shots at Grok-shaped products, and the two camps have spent years calibrating their distance from each other.
+
+This week, after the deal closed, Musk wrote on X: "No one set off my evil detector." Anthropic, for its part, has "expressed interest in partnering to develop multiple gigawatts of orbital AI compute capacity."
+
+Neither side underwent a sudden change of heart. This is a compelling marriage of convenience that solves real problems on both sides.
+
+## xAI, now SpaceXai
+
+xAI did something genuinely impressive. Colossus 1 is arguably the largest operating compute cluster in the world, and they stood it up in just 122 days at roughly 300 megawatts and 220,000 NVIDIA GPUs. Colossus 2 is the larger sibling, targeting 550,000+ more advanced GPUs and a gigawatt of power — about the same as the city of San Francisco draws.
+
+The massive bet rested on three assumptions: bigger clusters win, Twitter's data trove is a strategic moat, and a relative-newcomer team can outbuild the incumbent labs.
+
+Grok has not taken off as hoped. Controversies haven't helped — the "MechaHitler" episode, the sexualized-deepfake scandal. Enterprise sales lagged, either because of the headlines or because xAI hasn't built the integration and sales motion that enterprise procurement requires. Ultimately, the core issue is that the models simply aren't best at anything. For raw capability they trail Anthropic, OpenAI, and Google. For uncensored, fast, and cheap, the Chinese open-weight models like DeepSeek and Qwen have increasingly owned the segment. (Uncensored for many things. Don't ask about Tiananmen.)
+
+The result: Colossus 1 reportedly running at 11% model FLOPs utilization while Colossus 2 ramps next door. A massive capital expense, depreciating in plain view of its bigger sibling.
+
+## Anthropic
+
+Anthropic faced the inverse problem. On May 6, on stage at Code with Claude, Dario said it plainly: the company had built its 2026 plan around 10x usage growth and is now on a path to 80x. He called the rate "crazy" and "too hard to handle." Demand had lapped supply hard enough to junk the capacity plan and start over. Claude Code users felt it most. Rate limits frustrated paying customers. Codex, with Microsoft's Azure backbone behind it, kept eating market share.
+
+Available capacity met urgent demand. The deal wrote itself.
+
+## Common Adversary
+
+Both companies dislike OpenAI more than they dislike each other. Sam Altman has been working to keep it that way.
+
+On April 16, quote-tweeting his own Codex lead, Altman posted: "I am happy everyone is switching to Codex, but Tibo if you start rate limiting me or making me use worse models…" A week later, after Anthropic briefly pulled Claude Code from the $20 Pro tier for 2% of new sign-ups — the now-infamous pricing "experiment" — Altman replied to Anthropic's head of growth on X with "ok boomer," then conceded "tongiht i have had a couple of drinks." Around the same window he was rebranding OpenAI as "an AI inference company," a line that landed pointedly given Anthropic's quota-and-outage spring.
+
+Microsoft's Azure relationship gave OpenAI a structural compute advantage. Anthropic plus SpaceX narrows that gap. Barbs land softer when the target just signed for 220,000 GPUs.
+
+Dario and Elon do not have to like each other to enjoy that part.
+
+## The Strategic Wrapper
+
+Elon needed a story. "We overbought GPUs and now sublease them" reads as retreat, which is not in his playbook. "Anchor tenant for our multi-gigawatt orbital compute roadmap" reads as vision.
+
+Anthropic cooperatively supplied the framing: "As part of this agreement, Anthropic also expressed interest in partnering to develop multiple gigawatts of orbital AI compute capacity." No timelines. No capital commitments. No joint program. A friendly nod, costing nothing, bought goodwill and a clean narrative.
+
+Anthropic got capacity now. Elon got to pitch Colossus as step one of something cosmic, and boost his cash flow before an IPO. Both walked away with the press release they wanted.
+
+## Winners
+
+Claude Code users won. Anthropic doubled five-hour rate limits across Pro, Max, Team, and seat-based Enterprise plans. Peak-hour throttling came off Pro and Max. Internal compute freed up for the next generation of Claude — which matters more than the rate-limit bump if you care about where the model goes from here.
+
+Codex users won. The pressure on OpenAI to keep delivering more tokens, faster, just increased. Codex crossed 4 million weekly active developers in April. Competition produces better products.
+
+Grok users won. xAI gained an anchor tenant on top of its $20 billion January Series E. Operational discipline at scale improves. Lessons from running production inference under stress feed back into Grok development.
+
+## What Could Still Go Wrong
+
+This is not a love match. It is alignment of interests under time pressure. Anthropic now depends, partially, on a non-hyperscaler infrastructure partner whose lead investor tweets through the news cycle.
+
+Brand exposure to Elon is a real cost; it's not a coincidence the deal wasn't pre-announced. Any Claude Code users who might object are too busy enjoying their shiny new tokens. But more DOGE shenanigans or fresh Grok scandals could come back to haunt.
+
+Exposure runs the other way too. Anthropic's "supply-chain risk" designation from the Pentagon — issued in March, still being litigated — looks more negotiable than it once did, but further tangles with the federal government could hurt SpaceXai, which still pulls roughly a quarter to a third of revenue from government contracts.
+
+## Strengths Aligned
+
+Elon builds big things fast. Anthropic builds excellent models. The division of labor matches the talents. SpaceX handles steel, power, and silicon. Anthropic handles alignment, training, and inference quality.
+
+For builders — pros and vibe coders alike, who burn tokens like a small nation-state — more tokens just got easier to find. Whichever camp you sit in.
