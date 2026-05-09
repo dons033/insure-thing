@@ -10,6 +10,7 @@ import {
 } from "@/lib/blog";
 import { mdxComponents } from "@/components/blog/mdx-components";
 import { BlogPostingJsonLd } from "@/components/seo/json-ld";
+import Comments from "@/components/blog/comments";
 import { siteConfig } from "@/lib/constants";
 
 type Params = { slug: string };
@@ -127,6 +128,10 @@ export default async function BlogPostPage({
       <div className="prose-article">
         <MDXRemote source={post.content} components={mdxComponents} />
       </div>
+
+      <section className="mt-16 pt-10 border-t border-[color:var(--color-border)]">
+        <Comments />
+      </section>
     </article>
   );
 }
