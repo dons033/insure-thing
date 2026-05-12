@@ -7,7 +7,13 @@ export const metadata: Metadata = {
     "AI-native CA Workers' Comp underwriting workstation — auto-pre-fill from CSLB, BuildZoom, and CA SOS; cross-source contradiction detection; rules engine with plain-English explanations; agentic broker-email pause-and-resume.",
 };
 
+// User-facing embedded view (Insure-Thing navbar + iframe).
 const WORKSTATION_URL = "https://workstation.insure-thing.com";
+// Direct workstation Vercel deployment — used for .well-known/mcp.json
+// and any MCP-server URL that needs to bypass the Insure-Thing host
+// rewrite. External MCP clients (Claude Desktop, Cursor, ChatGPT
+// Developer Mode) point at this URL, not the embedded one.
+const WORKSTATION_BARE_URL = "https://ca-wc-classifier.vercel.app";
 
 const FEATURES: { title: string; body: string }[] = [
   {
@@ -204,7 +210,7 @@ export default function WcUnderwritingPage() {
                 <p className="text-[color:var(--color-muted)] leading-relaxed">
                   Fetch{" "}
                   <a
-                    href={`${WORKSTATION_URL}/.well-known/mcp.json`}
+                    href={`${WORKSTATION_BARE_URL}/.well-known/mcp.json`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[color:var(--color-accent)] hover:underline"
