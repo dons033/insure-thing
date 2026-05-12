@@ -45,7 +45,28 @@ export default function LabsPage() {
             </div>
           </Link>
 
-          <div className="rounded-2xl border border-dashed border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-8 flex flex-col">
+          <a
+            href="https://safetyhound.insure-thing.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-8 hover:border-[color:var(--color-accent)] transition-colors"
+          >
+            <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)] mb-3">
+              Live demo
+            </div>
+            <h2 className="font-serif text-2xl mb-3 group-hover:text-[color:var(--color-accent)] transition-colors">
+              Safety Hound
+            </h2>
+            <p className="text-[15px] leading-relaxed text-[color:var(--color-muted)] mb-6">
+              A side-scrolling platformer that teaches workplace safety through real workers&rsquo; comp mechanics. Run a hard-hatted dog through Construction, Kitchen, and Warehouse shifts &mdash; equipping PPE, locking out machinery, mopping spills, clearing blocked fire exits &mdash; before each hazard becomes a CLAIM. The score is an Experience Modification Rate. Real OSHA stats in the post-shift debrief. Global leaderboard ranks by lowest EMR.
+            </p>
+            <div className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--color-foreground)] group-hover:text-[color:var(--color-accent)] transition-colors">
+              Play the demo
+              <span aria-hidden="true">→</span>
+            </div>
+          </a>
+
+          <div className="rounded-2xl border border-dashed border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-8 flex flex-col md:col-span-2">
             <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)] mb-3">
               Next on the workbench
             </div>
