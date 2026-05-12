@@ -66,12 +66,20 @@ export default function WorkstationEmbedPage() {
         <span aria-hidden="true">↗</span>
       </a>
 
-      {/* Demo password hint — top-right of the iframe area. Hidden on
-          small viewports to avoid covering the workstation login form. */}
+      {/* Demo-access hint — top-right of the iframe area. Hidden on
+          small viewports to avoid covering the workstation login form.
+          We don't print the password on a public page; visitors email
+          for access. This keeps casual crawlers and AI scrapers from
+          one-clicking past the auth gate. */}
       <div className="absolute right-4 top-4 hidden md:block">
         <div className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-background)]/90 backdrop-blur px-3 py-1.5 text-xs">
-          <span className="text-[color:var(--color-muted)]">Demo password:</span>{" "}
-          <code className="font-mono font-semibold text-[color:var(--color-accent)]">9821</code>
+          <span className="text-[color:var(--color-muted)]">Password on request:</span>{" "}
+          <a
+            href="mailto:hello@insure-thing.com?subject=CA%20WC%20Workstation%20demo%20access"
+            className="font-mono font-semibold text-[color:var(--color-accent)] hover:underline"
+          >
+            hello@insure-thing.com
+          </a>
         </div>
       </div>
 

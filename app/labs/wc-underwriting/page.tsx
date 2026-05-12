@@ -92,7 +92,14 @@ export default function WcUnderwritingPage() {
             </a>
           </div>
           <p className="mt-6 text-xs font-mono text-[color:var(--color-muted)]">
-            Demo password <span className="px-1.5 py-0.5 rounded bg-[color:var(--color-accent-soft)] text-[color:var(--color-accent)]">9821</span> — single-tenant, single-shared password by design.
+            Password available on request. Email{" "}
+            <a
+              href="mailto:hello@insure-thing.com?subject=CA%20WC%20Workstation%20demo%20access"
+              className="text-[color:var(--color-accent)] hover:underline"
+            >
+              hello@insure-thing.com
+            </a>
+            .
           </p>
         </div>
       </section>
@@ -160,7 +167,14 @@ export default function WcUnderwritingPage() {
               <div>
                 <h3 className="font-serif text-xl mb-2">Open the queue</h3>
                 <p className="text-[color:var(--color-muted)] leading-relaxed">
-                  Log in with <code className="font-mono text-sm">9821</code>. The portfolio grid loads with 400+ contractors stratified across five WC carriers. Rows sort by <em>decision severity</em> first — referrals and declines float to the top. Confidence-coloured chips on every fact.
+                  Log in with the demo password (email{" "}
+                  <a
+                    href="mailto:hello@insure-thing.com?subject=CA%20WC%20Workstation%20demo%20access"
+                    className="text-[color:var(--color-accent)] hover:underline"
+                  >
+                    hello@insure-thing.com
+                  </a>
+                  ). The portfolio grid loads with 400+ contractors stratified across five WC carriers. Rows sort by <em>decision severity</em> first; referrals and declines float to the top. Confidence-coloured chips on every fact.
                 </p>
               </div>
             </li>
