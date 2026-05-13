@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Workstation — CA WC Underwriting Demo",
+  title: "Pre-Clearance Console · CA WC Demo",
   description:
-    "Live demo of the AI-native CA Workers' Comp underwriting workstation. Auto-pre-fill from CSLB, BuildZoom, and CA SOS; rules with plain-English regulator-ready reasons; agentic broker-email pause-and-resume.",
+    "Live demo of the InsureThing CA Workers' Comp pre-clearance system. Auto-pre-fill from CSLB, BuildZoom, and CA SOS; rules with plain-English regulator-ready reasons; email-driven inquiry loop with auto-drafted replies.",
 };
 
 const WORKSTATION_URL = "https://ca-wc-classifier.vercel.app";
@@ -35,7 +35,7 @@ export default function WorkstationEmbedPage() {
         <iframe
           src={WORKSTATION_URL}
           className="block h-full w-full border-0"
-          title="CA WC Underwriting Workstation demo"
+          title="CA WC Pre-Clearance demo"
           // `clipboard-write` so the workstation's "Copy as audit JSON"
           // buttons on WhyButton panels work inside the iframe. `forms`
           // for the login + simulate-broker-reply forms. `same-origin`
@@ -75,7 +75,7 @@ export default function WorkstationEmbedPage() {
         <div className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-background)]/90 backdrop-blur px-3 py-1.5 text-xs">
           <span className="text-[color:var(--color-muted)]">Password on request:</span>{" "}
           <a
-            href="mailto:hello@insure-thing.com?subject=CA%20WC%20Workstation%20demo%20access"
+            href="mailto:hello@insure-thing.com?subject=CA%20WC%20Pre-Clearance%20demo%20access"
             className="font-mono font-semibold text-[color:var(--color-accent)] hover:underline"
           >
             hello@insure-thing.com
@@ -85,9 +85,9 @@ export default function WorkstationEmbedPage() {
 
       {/* Mobile-only note — the workstation is desktop-first */}
       <div className="md:hidden border-t border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-6 py-6 text-center text-sm text-[color:var(--color-muted)]">
-        The workstation is built for desktop. On mobile, you&rsquo;ll see the
-        login screen but the queue grid and submission detail surfaces need
-        more horizontal space. Best experienced on a real screen.
+        The pre-clearance console is built for desktop. On mobile, you&rsquo;ll
+        see the login screen but the queue grid and submission detail surfaces
+        need more horizontal space. Best experienced on a real screen.
         <div className="mt-3">
           <Link
             href="/labs/wc-underwriting"

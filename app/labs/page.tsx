@@ -34,10 +34,10 @@ export default function LabsPage() {
               Live demo
             </div>
             <h2 className="font-serif text-2xl mb-3 group-hover:text-[color:var(--color-accent)] transition-colors">
-              CA Workers&rsquo; Comp Underwriting Workstation
+              CA Workers&rsquo; Comp Pre-Clearance
             </h2>
             <p className="text-[15px] leading-relaxed text-[color:var(--color-muted)] mb-6">
-              An AI-native workstation for California WC. Auto-pre-fill from CSLB, BuildZoom, and CA SOS. Cross-source contradictions surfaced. Rules with plain-English regulator-ready reasons. Agentic broker-email pause-and-resume. 436 contractors in the test bed.
+              Brokers email an inquiry. The system pre-fills from CSLB, BuildZoom, and CA SOS, runs opinionated rules, and replies with a quotable / refer / decline answer plus the documentation needed to move forward. 436 contractors in the test bed; proof of concept for a fuller underwriting workstation.
             </p>
             <div className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--color-foreground)] group-hover:text-[color:var(--color-accent)] transition-colors">
               See the demo
