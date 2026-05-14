@@ -17,29 +17,29 @@ const WORKSTATION_BARE_URL = "https://ca-wc-classifier.vercel.app";
 
 const FEATURES: { title: string; body: string }[] = [
   {
-    title: "Pre-fill from public data",
+    title: "Email-driven inquiry loop",
     body:
-      "A broker email mentions a CSLB license number. Within seconds the pre-clearance engine has pulled the full CSLB record (license detail + WC carrier history + bond history), reconciled it against BuildZoom permit data and the CA Secretary of State business-entity registry, and emitted 30+ derived facts with provenance pills on every value.",
+      "Brokers email hello@insure-thing.com with \"Submission\" in the subject. The agent extracts structured fields with an LLM, resolves the contractor against the CSLB record, runs pre-clearance rules, and drafts a reply with the matched identity echoed back plus the documentation needed to advance the file. Drafts sit in Gmail for human review before send.",
   },
   {
-    title: "Cross-source contradiction surfacing",
+    title: "Agentic intake from a broker name",
     body:
-      "Per-source typed storage (no generic JSONB blob) means a CSLB business name that disagrees with the SOS entity name surfaces as a contradiction — not silently picked. Operators see the disagreement and decide.",
+      "Operators type a business name and city. The agent searches CSLB by name, auto-chains to a full lookup on a single match, scrapes the web for operations evidence, drafts a one or two sentence description, and proposes a governing WCIRB class code. The chat shows a single friendly summary; the raw tool trace stays in state for audit but doesn't pollute the operator's view.",
+  },
+  {
+    title: "Pre-fill from public data with provenance",
+    body:
+      "Per-source pulls from CSLB (license detail, WC carrier history, bond history, personnel), BuildZoom (permit volume, contractor score), and CA Secretary of State (entity registration, year started, standing) produce 30+ derived facts on every insured. Provenance pills on every value let an operator click to the source row in one step.",
   },
   {
     title: "Rules engine with empirical anchors",
     body:
-      "Eleven UW rules, each with a NAIC-compliant plain-English reason code generated on firing. The rules include misclassification fingerprinting, shell-company / family-name re-formation detection (pg_trgm fuzzy match), and lost-carrier-listing — an empirically-discovered signal that separates one CA WC carrier's book from four others at a 45% vs 0% rate.",
+      "Eleven production underwriting rules, each generating a NAIC-compliant plain-English reason on firing. Includes misclassification fingerprinting, shell-company reformation detection via fuzzy surname match, and a lost-carrier-listing rule discovered empirically: one carrier in the test bed shows the pattern at 45%, others at 0%. Empirical-finding to production rule was about three hours.",
   },
   {
-    title: "Email-driven inquiry loop",
+    title: "Rules curation with backtest preview",
     body:
-      "Brokers email hello@insure-thing.com with \"Submission\" in the subject. The agent extracts the structured fields, resolves the contractor against CSLB, runs pre-clearance rules, and drafts a polite reply with the answer plus a list of documentation needed to advance the file. Drafts sit in Gmail for human review before send.",
-  },
-  {
-    title: "Portfolio view of the pre-clearance queue",
-    body:
-      "Inquiries land in a sortable grid: rows are insureds, columns are payroll, estimated pure premium, prior class code, automated class code, and triage outcome (accept / refer / decline). Confidence-coloured chips, click-to-audit on every value. The same 436-contractor sample also serves as a backtest target for new rules.",
+      "Underwriters describe a rule in plain English. The composer turns it into a JSON predicate, runs it as a backtest against the seeded book, and shows precision and recall before the rule is saved. The same empirical pipeline that produced the lost-listing rule is the one operators run on rules of their own design.",
   },
   {
     title: "Same substrate for humans and agents",
@@ -49,11 +49,11 @@ const FEATURES: { title: string; body: string }[] = [
 ];
 
 const BOOK_FACTS: { label: string; value: string }[] = [
-  { label: "Contractors in the test bed", value: "436" },
-  { label: "Carriers analyzed", value: "5" },
+  { label: "Construction companies in the test bed", value: "400+" },
   { label: "Derived facts per insured", value: "30+" },
   { label: "Production rules", value: "11" },
   { label: "Full pipeline cost per insured", value: "<$0.01" },
+  { label: "First reply latency, broker email to drafted answer", value: "~60s" },
 ];
 
 export default function WcUnderwritingPage() {
@@ -155,7 +155,7 @@ export default function WcUnderwritingPage() {
               How to navigate
             </div>
             <h2 className="font-serif text-3xl md:text-4xl leading-tight">
-              Suggested 5-minute click path.
+              Suggested click path.
             </h2>
           </div>
 
@@ -174,7 +174,7 @@ export default function WcUnderwritingPage() {
                   >
                     hello@insure-thing.com
                   </a>
-                  ). 400+ contractors stratified across five WC carriers load into the grid. Rows sort by triage severity first; declines and referrals float to the top. Confidence-coloured chips on every value.
+                  ). 400+ construction companies across a diversity of CA WC carriers load into the grid. Rows sort by triage severity first; declines and referrals float to the top. Confidence-coloured chips on every value.
                 </p>
               </div>
             </li>
@@ -208,9 +208,9 @@ export default function WcUnderwritingPage() {
                 4
               </span>
               <div>
-                <h3 className="font-serif text-xl mb-2">Try the wait-state demo</h3>
+                <h3 className="font-serif text-xl mb-2">Try the agentic intake</h3>
                 <p className="text-[color:var(--color-muted)] leading-relaxed">
-                  Find a submission missing broker data (the seed includes one). Click <em>Request broker info</em>. The agent drafts the email and parks the submission. The drafted email body is real LLM output (Gemini 3 Flash, ~2 seconds, ~$0.001). Click <em>Simulate broker reply</em> to resume; the agent writes the broker-supplied data into the per-source archive and re-runs the rules. The production version of this loop is the email-driven pre-clearance pipeline at hello@insure-thing.com.
+                  Open <em>Guided intake</em> from the sidebar. Type a business name and city (e.g. <em>&ldquo;Rafael&rsquo;s Tree Services in Oakley, CA&rdquo;</em>) and watch the agent search CSLB by name, auto-chain to a full lookup on a single match, scrape the web for operations evidence, then draft an operations description and propose a governing WCIRB class code in one chat turn. One friendly summary; the raw tool trace is preserved in state for audit but doesn&rsquo;t pollute the chat.
                 </p>
               </div>
             </li>
@@ -218,6 +218,25 @@ export default function WcUnderwritingPage() {
             <li className="flex gap-6">
               <span className="flex-shrink-0 w-10 h-10 rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-background)] flex items-center justify-center font-serif text-lg">
                 5
+              </span>
+              <div>
+                <h3 className="font-serif text-xl mb-2">Send a real inquiry email</h3>
+                <p className="text-[color:var(--color-muted)] leading-relaxed">
+                  Email{" "}
+                  <a
+                    href="mailto:hello@insure-thing.com?subject=Submission%3A%20Test%20inquiry"
+                    className="text-[color:var(--color-accent)] hover:underline"
+                  >
+                    hello@insure-thing.com
+                  </a>{" "}
+                  with <em>&ldquo;Submission&rdquo;</em> in the subject and a one-paragraph quote request. Within about a minute the agent reads the inbox, runs the full pipeline, and drafts a reply in the same Gmail thread: clear / refer / decline / clarify, with the matched identity echoed back, override documentation when applicable, and a workstation link for next-stage materials. Drafts wait for human review before they actually send.
+                </p>
+              </div>
+            </li>
+
+            <li className="flex gap-6">
+              <span className="flex-shrink-0 w-10 h-10 rounded-full border border-[color:var(--color-border)] bg-[color:var(--color-background)] flex items-center justify-center font-serif text-lg">
+                6
               </span>
               <div>
                 <h3 className="font-serif text-xl mb-2">Probe the MCP servers</h3>
@@ -289,30 +308,65 @@ export default function WcUnderwritingPage() {
         </div>
       </section>
 
-      {/* Honest gaps */}
+      {/* Roadmap */}
       <section className="border-t border-[color:var(--color-border)] bg-[color:var(--color-surface)]">
-        <div className="mx-auto max-w-[1200px] px-6 lg:px-10 py-16">
-          <div className="grid gap-12 md:grid-cols-[1fr_1.5fr]">
+        <div className="mx-auto max-w-[1200px] px-6 lg:px-10 py-20">
+          <div className="mb-12 max-w-2xl">
+            <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)] mb-3">
+              Where this goes
+            </div>
+            <h2 className="font-serif text-3xl md:text-4xl leading-tight">
+              Pre-clearance is the first stage. The substrate carries further.
+            </h2>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            <div className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-background)] p-7">
+              <div className="font-mono text-[11px] uppercase tracking-wider text-[color:var(--color-muted)] mb-3">
+                Next
+              </div>
+              <h3 className="font-serif text-xl mb-3">Rules curation as a real product surface</h3>
+              <p className="text-[14px] leading-relaxed text-[color:var(--color-muted)]">
+                A lifecycle for proposed rules (draft, in review, approved, live), an escalation chain so underwriting managers approve any Decline-severity rule before it goes live, and an agentic refinement loop where the composer narrows a rule that&rsquo;s firing too often on a specific segment and previews the new backtest before save.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-background)] p-7">
+              <div className="font-mono text-[11px] uppercase tracking-wider text-[color:var(--color-muted)] mb-3">
+                Next
+              </div>
+              <h3 className="font-serif text-xl mb-3">Multi-channel communications</h3>
+              <p className="text-[14px] leading-relaxed text-[color:var(--color-muted)]">
+                Email is the first channel because brokers default to it. The substrate is channel-agnostic; the Gmail integration is one adapter. Slack and Microsoft Teams for embedded carrier deployments, WhatsApp and iMessage for high-volume small-account broker channels, Telegram for international and outside-CA pilots. Same agent, same rules, same templates.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-background)] p-7">
+              <div className="font-mono text-[11px] uppercase tracking-wider text-[color:var(--color-muted)] mb-3">
+                Next
+              </div>
+              <h3 className="font-serif text-xl mb-3">Pricing guidance, not just triage</h3>
+              <p className="text-[14px] leading-relaxed text-[color:var(--color-muted)]">
+                Today the answer is categorical (clear, refer, decline, clarify). The next layer suggests pricing posture: &ldquo;this risk may qualify for our best tier if claims history is clean,&rdquo; &ldquo;we&rsquo;d want a loss-control consultation,&rdquo; &ldquo;borderline appetite, we&rsquo;d sharpen with this documentation.&rdquo; Anchored on WCIRB pure premium rates and the empirical patterns from the sample.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-10 grid gap-12 md:grid-cols-[1fr_1.5fr] pt-10 border-t border-[color:var(--color-border)]">
             <div>
               <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)] mb-3">
-                Known gaps
+                Honestly
               </div>
-              <h2 className="font-serif text-2xl leading-tight">
-                What the demo doesn&rsquo;t do — yet.
-              </h2>
+              <h3 className="font-serif text-2xl leading-tight">
+                What the proof of concept doesn&rsquo;t do yet.
+              </h3>
             </div>
             <div className="space-y-4 text-[color:var(--color-muted)] leading-relaxed">
               <p>
-                This is pre-clearance, not quote-to-bind. The system stops at &ldquo;will we quote / refer / decline plus what docs we need.&rdquo; The pre-filled application page brokers continue from is the next build. Policy admin, billing, claims are out of scope for the proof of concept.
+                This is pre-clearance, not quote-to-bind. The system stops at &ldquo;will we quote, refer, or decline, plus what documentation we need.&rdquo; The pre-filled application page brokers continue from is the next build after the three pillars above. Policy admin, billing, and claims are out of scope for the proof of concept.
               </p>
               <p>
-                The CA SOS connector needs an API key (sign-up pending). Year-started, ownership-change signals, and entity-standing data populate when that lands.
-              </p>
-              <p>
-                BuildZoom is Cloudflare-rate-limited from common egress IPs. Production runs the scraper from Vercel where egress IPs rotate enough to mostly work; locally you&rsquo;ll see some 403s.
-              </p>
-              <p>
-                Single-tenant demo, gated by one shared password. Multi-tenant + per-user auth is a v1.0 concern.
+                Single-tenant demo, gated by one shared password. Multi-tenant and per-user auth is a v1.0 concern; the substrate supports it but the demo doesn&rsquo;t expose it.
               </p>
             </div>
           </div>
@@ -326,7 +380,7 @@ export default function WcUnderwritingPage() {
             Best understood by clicking around.
           </h2>
           <p className="mt-4 text-[color:var(--color-muted)] max-w-xl mx-auto">
-            The demo is live, the password is one email away, and 436 contractors are waiting in the queue.
+            The demo is live, the password is one email away, and 400+ construction companies across a diversity of carriers are waiting in the queue.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <a
