@@ -74,7 +74,7 @@ export default function LabsPage() {
               More demos coming
             </h2>
             <p className="text-[15px] leading-relaxed text-[color:var(--color-muted)] mb-6 flex-1">
-              Other vertical slices of insurance AI work — submission triage from broker email, loss-ratio diagnostics, claim-leakage signals — are next on the workbench. The blog is the best place to follow along.
+              Other vertical slices of insurance AI work are next on the workbench: submission triage from broker email, loss-ratio diagnostics, claim-leakage signals. The blog is the best place to follow along.
             </p>
             <Link
               href="/blog"

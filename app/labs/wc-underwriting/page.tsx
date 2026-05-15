@@ -186,7 +186,7 @@ export default function WcUnderwritingPage() {
               <div>
                 <h3 className="font-serif text-xl mb-2">Click any insured</h3>
                 <p className="text-[color:var(--color-muted)] leading-relaxed">
-                  The agent timeline animates the steps it took to assemble the record — fetch CSLB, cross-reference SOS, derive 30+ facts, run 11 rules. Each step is click-expandable. Every fact has a <code className="font-mono text-sm">[?]</code> button that opens its source and reasoning.
+                  The agent timeline animates the steps it took to assemble the record: fetch CSLB, cross-reference SOS, derive 30+ facts, run 11 rules. Each step is click-expandable. Every fact has a <code className="font-mono text-sm">[?]</code> button that opens its source and reasoning.
                 </p>
               </div>
             </li>
