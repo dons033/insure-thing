@@ -1,0 +1,42 @@
+---
+title: "Labs is open."
+date: "2026-05-15"
+description: "Labs is for things that work: prototypes, demos, and tools that make the argument clickable. Two are live today, including an agentic Workers' Comp underwriting workstation."
+author: "Don Seibert"
+tags: ["labs", "launch", "underwriting", "agentic", "ai"]
+image: "/images/blog/labs-is-open.webp"
+---
+
+*Labs is for things that work.*
+
+The blog is for words. Labs is for working things: prototypes, demos, tools, and small experiments that make the argument clickable.
+
+Two things are live today: the first slice of a CA Workers' Comp underwriting workstation, and Safety Hound, a workplace-safety side-scroller with a hard-hatted dog. One is serious. One started as a break between commits. Both point at the same fact: the floor of what one person can ship has moved.
+
+The workstation is in its early stages, but handles pre-clearance well. In one line: an agentic natural language interface between brokers and underwriters. Either side can be a human. Either side can be an AI agent.
+
+A broker sends a plain-English email with basic information, like business name and city. (Next step: WhatsApp, Telegram, Slack.) An agentic system reads the email, checks fast and free public data, finds the contractor, pulls the license record, checks the company's website, drafts an operations description, proposes a class code, and runs production rules.
+
+Then it responds with one of four answers. Decline, if the business hits a hard knockout. Refer, if it's workable but needs more data, with concerns and required documents. Clarify, if it can't pin down the contractor or a field is missing, with the exact questions. Or clear, if nothing knocked it out, and asks for the next round of materials. The pre-filled application the broker carries forward is the next build; today the output is the drafted reply and the populated file inside the workstation.
+
+It is the first two minutes of a submission, done well. Using readily available data, can we rule it out? Reducing carrier expense and avoiding wasted agent time. What it can resolve, it resolves. What it can fuzzy-match, it matches. What it does not know, it asks.
+
+Brokers do not type a contractor's exact legal name. A broker in the field has thick thumbs and thin patience for retyping. They type "Raphael's Tree Service in Oakley" when the license database has "RAFAEL'S TREE SERVICES INC." The system retries with apostrophe-stripped, ph-to-f, and singular/plural variants. It finds the match. No human in the loop. When two or three distinct contractors match, the chat shows clickable buttons. Business name, city, license number. One click resolves it.
+
+The contradiction surface is the most important design choice. If the operator says, "They only mow lawns," but the license record and website show tree removals and pruning, the agent does not quietly overwrite the human. It shows the conflict: what you said, what the public record says, and why they differ. Then the underwriter, or underwriting system, decides.
+
+It was surprising how often the public record disagreed with itself. The license classes said one thing; the advertised work said another. General contractors marketing building additions with only painters on payroll. Could be subbed out, but not at the rate it showed up. Across the test bed the apparent-mismatch rate ran from the mid-teens to the mid-forties percent by carrier. Carriers can specify what contradictions they allow, what they don't, and which require more information.
+
+Another signal was prior coverage with no current carrier listed: a coverage-continuity gap. One carrier showed it on roughly forty-five percent of the contractors I sampled. Four others, zero. A carrier with a rule for that stops the application in real time, at no marginal cost. A carrier with broader appetite still sees it, and knows exactly what it's taking on.
+
+The workstation grows from here on its AI-native structure. Underwriters will write rules in plain English, backtest them against the book, and see which submissions would have changed. Approvals can be escalated to higher-level humans or models. The same public-data layer can also run outbound: finding risks that fit a carrier's appetite before they submit. The next layer adds pricing posture: not just clear, refer, decline, or clarify, but how hard to lean in.
+
+It is not yet an end-to-end underwriting workstation, but the philosophy carries: check against inexpensive data first, identify issues that need to be resolved, before using expensive data, expensive tokens, or human underwriting time. Find a pattern. Check it. Test it. Ship it. Fast loop.
+
+The other thing is Safety Hound, a side-scrolling game about work-site safety. You play a hard-hatted dog through Construction, Kitchen, and Warehouse shifts, equipping PPE, locking out machinery, mopping spills, clearing blocked exits, and trying to finish with the lowest Experience Modification Rate. The debrief uses real OSHA frequency stats. Probably not the ideal way to teach workplace safety. But it is fun, and shows what a crazy idea looks like shipped in a few days, when a few years ago it would have taken a developer team a quarter.
+
+For the workstation, email me for a password. For the Safety Hound game, just tell people it's for work.
+
+[Open the workstation →](/labs/wc-underwriting)
+
+[Play Safety Hound →](https://safetyhound.insure-thing.com/)
