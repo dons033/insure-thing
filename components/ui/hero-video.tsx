@@ -15,6 +15,24 @@ export function HeroVideo() {
     let animationId: number;
     let angle = 0;
 
+    // Resolve the accent token to an rgb triple the canvas API can use;
+    // re-read when the color scheme flips so dark mode stays on-token.
+    const readAccent = () => {
+      const m = getComputedStyle(canvas).color.match(/\d+/g);
+      return m ? `rgba(${m[0]}, ${m[1]}, ${m[2]},` : "rgba(128, 128, 128,";
+    };
+    let accent = readAccent();
+    const scheme = window.matchMedia("(prefers-color-scheme: dark)");
+    const onSchemeChange = () => {
+      accent = readAccent();
+    };
+    scheme.addEventListener("change", onSchemeChange);
+    const themeObserver = new MutationObserver(onSchemeChange);
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+
     const resize = () => {
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
@@ -35,8 +53,6 @@ export function HeroVideo() {
       const maxR = Math.min(w, h) * 0.45;
 
       ctx.clearRect(0, 0, w, h);
-
-      const accent = "rgba(196, 30, 42,";
 
       // Concentric rings
       const ringCount = 5;
@@ -105,8 +121,8 @@ export function HeroVideo() {
         const bx = cx + Math.cos(blip.a) * dist;
         const by = cy + Math.sin(blip.a) * dist;
 
-        let diff = ((sweepAngle - blip.a) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
-        let blipAlpha = diff < Math.PI * 1.2 ? Math.max(0, 0.7 - diff * 0.3) : 0;
+        const diff = ((sweepAngle - blip.a) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+        const blipAlpha = diff < Math.PI * 1.2 ? Math.max(0, 0.7 - diff * 0.3) : 0;
 
         if (blipAlpha > 0.01) {
           ctx.beginPath();
@@ -131,6 +147,8 @@ export function HeroVideo() {
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener("resize", resize);
+      scheme.removeEventListener("change", onSchemeChange);
+      themeObserver.disconnect();
     };
   }, []);
 
@@ -138,7 +156,7 @@ export function HeroVideo() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="absolute inset-0 z-0 w-full h-full"
+      className="absolute inset-0 z-0 w-full h-full text-[color:var(--color-accent)]"
     />
   );
 }

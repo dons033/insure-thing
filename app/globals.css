@@ -1,13 +1,63 @@
 @import "tailwindcss";
 
+/* ============================================================
+   InsureThing design tokens — the ONLY place hex values live.
+   Every color elsewhere must be a var() reference (drift rule).
+   Light/dark pairs resolve via light-dark() + color-scheme;
+   docs/STYLE_GUIDE.md is the canonical reference.
+   ============================================================ */
+
 @theme {
-  --color-background: #fafaf7;
-  --color-foreground: #1a1a1f;
-  --color-surface: #ffffff;
-  --color-muted: #6b6b73;
-  --color-border: #e6e4dc;
-  --color-accent: #c41e2a;
-  --color-accent-soft: #fce8e9;
+  /* ── Core ── */
+  --color-background: light-dark(#fafaf7, #161619);
+  --color-foreground: light-dark(#1a1a1f, #ecebe6);
+  --color-surface: light-dark(#ffffff, #1e1e23);
+  --color-muted: light-dark(#6b6b73, #a0a0a8);
+  --color-border: light-dark(#e6e4dc, #2e2e35);
+  --color-hover: light-dark(#f4f3ef, #26262c);
+  --color-accent: light-dark(#c41e2a, #e25560);
+  --color-accent-soft: light-dark(#fce8e9, #42191d);
+
+  /* ── Semantic ── */
+  --color-ok: light-dark(#2e7d32, #57b15c);
+  --color-ok-soft: light-dark(#e7f3e9, #1a2e1c);
+  --color-warn: light-dark(#b26a00, #d9962e);
+  --color-warn-soft: light-dark(#fdf2dc, #332608);
+
+  /* ── Pill treatments ── */
+  --color-pill-neutral-bg: light-dark(#ececea, #2a2a31);
+  --color-pill-neutral-text: light-dark(#5f5f66, #b0b0b8);
+  --color-pill-dark-bg: light-dark(#1a1a1f, #ecebe6);
+  --color-pill-dark-text: light-dark(#ffffff, #161619);
+
+  /* ── Dark fills (header, code blocks) ── */
+  --color-code-bg: light-dark(#1a1a1f, #101013);
+  --color-code-fg: light-dark(#e6e4dc, #d6d4cc);
+
+  /* ── Score ramp: 0–39 / 40–59 / 60–74 / 75–89 / 90–100 ── */
+  --color-ramp-0: light-dark(#c41e2a, #e25560);
+  --color-ramp-1: light-dark(#bf4d10, #df7028);
+  --color-ramp-2: light-dark(#a36500, #d9962e);
+  --color-ramp-3: light-dark(#637414, #a8b545);
+  --color-ramp-4: light-dark(#2e7d32, #57b15c);
+
+  /* ── Categorical series (charts only, no semantics) ── */
+  --color-cat-1: light-dark(#c41e2a, #e25560);
+  --color-cat-2: light-dark(#2f5f8f, #6f9fc9);
+  --color-cat-3: light-dark(#b26a00, #d9962e);
+  --color-cat-4: light-dark(#2e7d32, #57b15c);
+  --color-cat-5: light-dark(#6b4d9e, #a387d6);
+  --color-cat-6: light-dark(#1f7f7a, #4fb3ad);
+
+  /* ── Type scale ── */
+  --text-display: 1.75rem;
+  --text-display--line-height: 1.1;
+  --text-title: 1.125rem;
+  --text-title--line-height: 1.3;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.6;
+  --text-caption: 0.6875rem;
+  --text-caption--line-height: 1.4;
 
   --font-heading: var(--font-questrial), system-ui, sans-serif;
   --font-serif: var(--font-questrial), system-ui, sans-serif;
@@ -15,8 +65,15 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
+/* Auto dark via prefers-color-scheme; data-theme is the manual override. */
 :root {
+  color-scheme: light dark;
+}
+:root[data-theme="light"] {
   color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 html {
@@ -39,6 +96,122 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-foreground);
 }
 
+/* ── Numeric typography ── */
+table {
+  font-variant-numeric: tabular-nums;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.stat {
+  font-family: var(--font-heading);
+  font-size: var(--text-display);
+  line-height: var(--text-display--line-height);
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Pill grammar (lifecycle/workflow states only) ── */
+.pill {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 9999px;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+
+.pill-neutral {
+  background: var(--color-pill-neutral-bg);
+  color: var(--color-pill-neutral-text);
+}
+
+.pill-dark {
+  background: var(--color-pill-dark-bg);
+  color: var(--color-pill-dark-text);
+}
+
+.pill-outline {
+  background: transparent;
+  border: 1.5px solid currentColor;
+  padding: 1px 8px;
+}
+
+/* ── Quiet dot+text labels (facts, not states) ── */
+.dot-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+}
+
+.dot-label::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--dot-color, var(--color-muted));
+  flex: none;
+}
+
+/* ── Radar motif: loading sweep (CSS-only) ── */
+.radar-loading {
+  width: 40px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  position: relative;
+  flex: none;
+  border: 1px solid var(--color-border);
+  background:
+    radial-gradient(circle, var(--color-border) 0 1px, transparent 1.5px),
+    repeating-radial-gradient(circle, transparent 0 9px, var(--color-border) 9px 10px);
+  overflow: hidden;
+}
+
+.radar-loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--color-accent) 45%, transparent),
+    transparent 80deg
+  );
+  animation: radar-sweep 2.4s linear infinite;
+}
+
+@keyframes radar-sweep {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Radar motif: empty state ── */
+.radar-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 16px;
+  color: var(--color-muted);
+  font-size: var(--text-body);
+  text-align: center;
+}
+
+.radar-empty .rings {
+  width: 72px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background:
+    radial-gradient(circle at 68% 32%, color-mix(in srgb, var(--color-accent) 35%, transparent) 0 3px, transparent 4px),
+    radial-gradient(circle, var(--color-border) 0 1.5px, transparent 2.5px),
+    repeating-radial-gradient(circle, transparent 0 16px, var(--color-border) 16px 17px);
+}
+
+/* ── Article prose ── */
 .prose-article {
   font-family: var(--font-sans);
   font-size: 1.0625rem;
@@ -100,8 +273,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .prose-article pre {
-  background: #1a1a1f;
-  color: #e6e4dc;
+  background: var(--color-code-bg);
+  color: var(--color-code-fg);
   padding: 1em 1.25em;
   border-radius: 8px;
   overflow-x: auto;
