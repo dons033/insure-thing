@@ -1,0 +1,41 @@
+---
+title: "InsureBench: Rating the Model AND the Harness"
+date: "2026-06-12"
+description: "We built an insurance benchmark where every score names the model AND the harness. Early results: a file reader adds ~11 points across three model families, and a mini model in an agentic harness tops every raw API combo."
+author: "Don Seibert"
+tags: ["ai", "benchmarks", "harness", "underwriting", "insurebench"]
+image: "/images/blog/insurebench-preliminary.png"
+hideHeroImage: true
+---
+
+<iframe src="/charts/insurebench-preliminary.html" width="100%" height="640" style={{border: 'none', borderRadius: '8px', marginBottom: '2rem'}} title="InsureBench preliminary: model x harness on real insurance tasks" />
+
+Back in the Mythos Madness series, I leaned on MATH-500 and Humanity's Last Exam to make a point about models and harnesses. Useful proxies. But no external benchmark matches your data, your tasks, or your guidelines. The honest next step was obvious: build one for insurance.
+
+So we did. InsureBench scores models on real insurance work: classifying messy Workers' Comp risks, reading loss triangles, auditing claims against policy terms, catching the coverage gap an adjuster would catch. Questions written and verified by an insurance expert, answers checked by code wherever possible, and the hard-to-score judgment calls graded against expert rubrics.
+
+## The Unit of Measurement Is the Combo
+
+Every row in the chart names two things: the model, and the harness around it. Not as a footnote. As the label. The same model shows up once per harness, because the harness is part of the score.
+
+**Simple** means the model gets the task and a prompt, nothing else. **Basic Tool Calling** is the same model, plus the ability to actually open the attached files. That one unglamorous capability is worth about eleven points — for Nemotron, for DeepSeek, and for GPT-OSS, three unrelated model families. The harness lift is real, it's large, and it's roughly the gap between adjacent model tiers. You can buy it with engineering instead of tokens.
+
+And the top row makes the point louder. That's a *mini* model on *low* reasoning — but running inside a full **Agentic CLI** harness (OpenAI's Codex) that reads files, writes python, and checks its own arithmetic. One run, so the error bar is wide, and it's the only combo driving its own tools — but a small model in a serious harness outscoring every raw API combo on the board is exactly the thesis from the Mythos Madness series, now with insurance-specific numbers behind it.
+
+## Two Benchmarks in One
+
+The headline number rates broad capacity: can this model-plus-harness do insurance work across underwriting, claims, and actuarial tasks? That's the score that tells you what a frontier model is worth.
+
+But the more valuable product is underneath: every task is also tagged by capability — numeric computation, document handling, classification, reading legal language, knowing when to say "unclear." Sliced that way, the question stops being "which model is best?" and becomes "which tasks can a small, fast, cheap model do well enough?"
+
+The early returns say: more than you'd think, if the harness fits. A model that costs fractions of a penny per task already holds its own on structured extraction. The same model confidently invents Workers' Comp class codes when asked to classify from scratch — that's a task that still needs either a bigger model or a better-equipped harness. Knowing which is which, per task type, with confidence intervals attached: that's the routing map an insurance operation actually needs.
+
+## Why the Error Bars
+
+The whiskers aren't decoration; they're the goal of the exercise. Each one is a 95% confidence interval, bootstrapped over the tasks themselves: hold the combo fixed, resample which 76 insurance tasks it faced, and see how far the score moves. On a bank this size, the honest answer is about ±9 points — which means many adjacent bars are statistically indistinguishable, and the chart says so instead of pretending a 2-point gap is a ranking. The end product here is a routing decision — *this combo is good enough for this task type* — and a routing decision is only as good as the uncertainty behind it. A bigger task bank shrinks the whiskers; that's exactly what's being built.
+
+## What Preliminary Means
+
+These are trial-grade numbers and labeled as such: the task bank is still in expert review, every bar carries its sample size and confidence interval, and infrastructure failures are excluded rather than counted as wrong answers. The frozen, expert-verified v0.1 — with repeat runs, judge-agreement statistics, and more harness lanes including a Python interpreter and full agentic CLIs — is in progress. When a harness configuration earns it, it gets a name of its own.
+
+The next post will have the v0.1 matrix. If you want your tasks in a benchmark like this — your guidelines, your data, scored the same way — that's a conversation: hello@insure-thing.com.

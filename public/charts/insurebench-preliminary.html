@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>InsureBench preliminary: every benchmark names the model AND the harness</title>
+<style>
+body { margin: 0; padding: 48px 40px; background: #f8f8f8; font-family: 'Segoe UI', -apple-system, system-ui, sans-serif; }
+.wrap { max-width: 980px; margin: 0 auto; }
+.panel-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 3px; letter-spacing: -0.3px; }
+.panel-sub { font-size: 14px; color: #555; margin-bottom: 20px; }
+.chart-wrap { position: relative; width: 100%; height: 520px; }
+.legend { display: flex; flex-wrap: wrap; gap: 24px; font-size: 13px; color: #555; margin-top: 16px; }
+.legend span { display: flex; align-items: center; gap: 6px; }
+.swatch { width: 14px; height: 14px; border-radius: 3px; }
+.footnote { font-size: 12px; color: #888; margin-top: 12px; line-height: 1.5; }
+@media (max-width: 768px) {
+  body { padding: 20px 8px; }
+  .chart-wrap { height: 560px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="panel-title">Real insurance tasks, scored by combo: model / harness</div>
+<div class="panel-sub">76 insurance tasks. Same model appears once per harness &mdash; the harness is part of the score.</div>
+<div class="chart-wrap"><canvas id="chart"></canvas></div>
+<div class="legend">
+<span><span class="swatch" style="background:#C0392B;"></span>Agentic CLI (model drives its own tools)</span>
+<span><span class="swatch" style="background:#D4881C;"></span>Basic Tool Calling (file reader)</span>
+<span><span class="swatch" style="background:#4A6FA5;"></span>Simple (prompt only)</span>
+</div>
+<div class="footnote">
+Preliminary, June 2026. Objective-keyed scoring only (code-checked answers; no LLM judges).
+Whiskers are 95% bootstrap confidence intervals over per-task means (2,000 resamples):
+repeat runs of the same task are correlated, so the interval resamples the 76 tasks, not the
+raw answers &mdash; the honest, wider read. API combos: 3 runs &times; 76 tasks; Agentic CLI:
+single run. *Qwen / Basic Tool Calling was still mid-run at capture. Infrastructure errors are
+excluded, never counted as wrong answers. Task bank is pre-freeze ("trial-grade"): the
+expert-verified v0.1 release is in progress and these numbers will be re-run against it.
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const steel = '#4A6FA5';   // Simple
+const amber = '#D4881C';   // Basic Tool Calling
+const red   = '#C0392B';   // Agentic CLI
+// [label, mean, ci_lo, ci_hi, color] - 95% bootstrap over per-task means
+const combos = [
+  ['GPT-5.4 Mini (low) / Agentic CLI (Codex)',          83.8, 75.4, 91.4, red],
+  ['Nemotron 3 Super 120B (free) / Basic Tool Calling', 71.9, 63.5, 80.3, amber],
+  ['DeepSeek V4 Flash / Basic Tool Calling',            70.8, 62.6, 78.9, amber],
+  ['Qwen 3.5 Flash / Basic Tool Calling*',              69.0, 59.0, 78.6, amber],
+  ['GPT-OSS 120B / Basic Tool Calling',                 60.5, 51.2, 70.2, amber],
+  ['Nemotron 3 Super 120B (free) / Simple',             60.1, 50.9, 69.1, steel],
+  ['DeepSeek V4 Flash / Simple',                        59.7, 50.1, 68.8, steel],
+  ['Qwen 3.5 Flash / Simple',                           51.9, 41.2, 62.3, steel],
+  ['GPT-OSS 120B / Simple',                             49.7, 39.4, 60.5, steel],
+  ['Gemini 2.5 Flash Lite / Basic Tool Calling',        43.6, 33.6, 53.3, amber],
+  ['Gemma 4 26B / Simple',                              43.3, 32.9, 53.5, steel],
+  ['Gemini 2.5 Flash Lite / Simple',                    36.0, 26.0, 45.4, steel],
+  ['Ling 2.6 Flash / Simple',                           27.8, 19.9, 36.0, steel],
+];
+const ciWhiskers = {
+  id: 'ciWhiskers',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    const meta = chart.getDatasetMeta(0);
+    const ds = chart.data.datasets[0];
+    meta.data.forEach((bar, i) => {
+      if (ds.ciLo[i] == null) return;
+      const x = chart.scales.x;
+      const lo = x.getPixelForValue(ds.ciLo[i]);
+      const hi = x.getPixelForValue(ds.ciHi[i]);
+      ctx.save();
+      ctx.strokeStyle = 'rgba(26,26,26,0.55)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(lo, bar.y); ctx.lineTo(hi, bar.y);
+      ctx.moveTo(lo, bar.y - 4); ctx.lineTo(lo, bar.y + 4);
+      ctx.moveTo(hi, bar.y - 4); ctx.lineTo(hi, bar.y + 4);
+      ctx.stroke();
+      ctx.restore();
+    });
+  }
+};
+new Chart(document.getElementById('chart'), {
+  type: 'bar',
+  data: {
+    labels: combos.map(c => c[0]),
+    datasets: [{
+      data: combos.map(c => c[1]),
+      ciLo: combos.map(c => c[2]),
+      ciHi: combos.map(c => c[3]),
+      backgroundColor: combos.map(c => c[4]),
+      borderRadius: 3,
+      barPercentage: 0.78,
+    }],
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: {
+      callbacks: { label: c =>
+        `${c.parsed.x}%  (95% CI ${c.dataset.ciLo[c.dataIndex]}–` +
+        `${c.dataset.ciHi[c.dataIndex]})` } } },
+    scales: {
+      x: { min: 0, max: 100, grid: { color: 'rgba(0,0,0,0.05)' },
+           ticks: { color: '#555', callback: v => v + '%' } },
+      y: { grid: { display: false },
+           ticks: { color: '#333', autoSkip: false,
+                    font: { size: window.innerWidth < 500 ? 10 : 12.5 } } },
+    },
+  },
+  plugins: [ciWhiskers],
+});
+</script>
+</body>
+</html>
