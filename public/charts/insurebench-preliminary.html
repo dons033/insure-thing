@@ -6,23 +6,30 @@
 <style>
 body { margin: 0; padding: 48px 40px; background: #f8f8f8; font-family: 'Segoe UI', -apple-system, system-ui, sans-serif; }
 .wrap { max-width: 980px; margin: 0 auto; }
+.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
 .panel-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 3px; letter-spacing: -0.3px; }
 .panel-sub { font-size: 14px; color: #555; margin-bottom: 20px; }
-.chart-wrap { position: relative; width: 100%; height: 520px; }
+select { font: inherit; font-size: 14px; padding: 7px 10px; border: 1px solid #ccc; border-radius: 6px; background: #fff; color: #1a1a1a; }
+.chart-wrap { position: relative; width: 100%; height: 560px; }
 .legend { display: flex; flex-wrap: wrap; gap: 24px; font-size: 13px; color: #555; margin-top: 16px; }
 .legend span { display: flex; align-items: center; gap: 6px; }
 .swatch { width: 14px; height: 14px; border-radius: 3px; }
 .footnote { font-size: 12px; color: #888; margin-top: 12px; line-height: 1.5; }
 @media (max-width: 768px) {
   body { padding: 20px 8px; }
-  .chart-wrap { height: 560px; }
+  .chart-wrap { height: 580px; }
 }
 </style>
 </head>
 <body>
 <div class="wrap">
-<div class="panel-title">Real insurance tasks, scored by combo: model / harness</div>
-<div class="panel-sub">76 insurance tasks. Same model appears once per harness &mdash; the harness is part of the score.</div>
+<div class="head">
+  <div>
+    <div class="panel-title">Real insurance tasks, scored by combo: model / harness</div>
+    <div class="panel-sub" id="sub"></div>
+  </div>
+  <select id="view" onchange="render()" aria-label="Sub-benchmark"></select>
+</div>
 <div class="chart-wrap"><canvas id="chart"></canvas></div>
 <div class="legend">
 <span><span class="swatch" style="background:#C0392B;"></span>Agentic CLI (model drives its own tools)</span>
@@ -32,34 +39,29 @@ body { margin: 0; padding: 48px 40px; background: #f8f8f8; font-family: 'Segoe U
 <div class="footnote">
 Preliminary, June 2026. Objective-keyed scoring only (code-checked answers; no LLM judges).
 Whiskers are 95% bootstrap confidence intervals over per-task means (2,000 resamples):
-repeat runs of the same task are correlated, so the interval resamples the 76 tasks, not the
-raw answers &mdash; the honest, wider read. API combos: 3 runs &times; 76 tasks; Agentic CLI:
-single run. *Qwen / Basic Tool Calling was still mid-run at capture. Infrastructure errors are
+repeat runs of the same task are correlated, so the interval resamples the tasks, not the
+raw answers &mdash; the honest, wider read. API combos: 3 runs per task; Agentic CLI: single
+run. Sub-benchmark views slice the same runs by insurance function &mdash; fewer tasks per
+slice means wider intervals; that is the point of showing them. Infrastructure errors are
 excluded, never counted as wrong answers. Task bank is pre-freeze ("trial-grade"): the
 expert-verified v0.1 release is in progress and these numbers will be re-run against it.
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const steel = '#4A6FA5';   // Simple
-const amber = '#D4881C';   // Basic Tool Calling
-const red   = '#C0392B';   // Agentic CLI
-// [label, mean, ci_lo, ci_hi, color] - 95% bootstrap over per-task means
-const combos = [
-  ['GPT-5.4 Mini (low) / Agentic CLI (Codex)',          83.8, 75.4, 91.4, red],
-  ['Nemotron 3 Super 120B (free) / Basic Tool Calling', 71.9, 63.5, 80.3, amber],
-  ['DeepSeek V4 Flash / Basic Tool Calling',            70.8, 62.6, 78.9, amber],
-  ['Qwen 3.5 Flash / Basic Tool Calling*',              69.0, 59.0, 78.6, amber],
-  ['GPT-OSS 120B / Basic Tool Calling',                 60.5, 51.2, 70.2, amber],
-  ['Nemotron 3 Super 120B (free) / Simple',             60.1, 50.9, 69.1, steel],
-  ['DeepSeek V4 Flash / Simple',                        59.7, 50.1, 68.8, steel],
-  ['Qwen 3.5 Flash / Simple',                           51.9, 41.2, 62.3, steel],
-  ['GPT-OSS 120B / Simple',                             49.7, 39.4, 60.5, steel],
-  ['Gemini 2.5 Flash Lite / Basic Tool Calling',        43.6, 33.6, 53.3, amber],
-  ['Gemma 4 26B / Simple',                              43.3, 32.9, 53.5, steel],
-  ['Gemini 2.5 Flash Lite / Simple',                    36.0, 26.0, 45.4, steel],
-  ['Ling 2.6 Flash / Simple',                           27.8, 19.9, 36.0, steel],
-];
+const DATA = {"Overall": [{"label": "GPT-5.4 Mini (low) / Agentic CLI (Codex)", "mean": 83.8, "lo": 75.2, "hi": 91.2, "color": "#C0392B", "items": 76}, {"label": "Nemotron 3 Super 120B (free) / Basic Tool Calling", "mean": 71.9, "lo": 62.9, "hi": 80.3, "color": "#D4881C", "items": 76}, {"label": "Qwen 3.5 Flash / Basic Tool Calling", "mean": 71.5, "lo": 61.8, "hi": 80.7, "color": "#D4881C", "items": 76}, {"label": "DeepSeek V4 Flash / Basic Tool Calling", "mean": 70.8, "lo": 62.1, "hi": 79.0, "color": "#D4881C", "items": 76}, {"label": "GPT-OSS 120B / Basic Tool Calling", "mean": 60.5, "lo": 50.6, "hi": 70.0, "color": "#D4881C", "items": 76}, {"label": "Nemotron 3 Super 120B (free) / Simple", "mean": 60.1, "lo": 50.4, "hi": 69.4, "color": "#4A6FA5", "items": 76}, {"label": "DeepSeek V4 Flash / Simple", "mean": 59.7, "lo": 50.2, "hi": 69.4, "color": "#4A6FA5", "items": 76}, {"label": "Qwen 3.5 Flash / Simple", "mean": 51.9, "lo": 40.9, "hi": 62.8, "color": "#4A6FA5", "items": 76}, {"label": "GPT-OSS 120B / Simple", "mean": 49.7, "lo": 39.1, "hi": 60.7, "color": "#4A6FA5", "items": 76}, {"label": "Gemini 2.5 Flash Lite / Basic Tool Calling", "mean": 43.6, "lo": 33.6, "hi": 53.3, "color": "#D4881C", "items": 76}, {"label": "Gemma 4 26B / Simple", "mean": 43.3, "lo": 33.3, "hi": 53.6, "color": "#4A6FA5", "items": 76}, {"label": "Gemini 2.5 Flash Lite / Simple", "mean": 36.0, "lo": 26.3, "hi": 46.2, "color": "#4A6FA5", "items": 76}, {"label": "Ling 2.6 Flash / Simple", "mean": 36.0, "lo": 25.6, "hi": 46.5, "color": "#4A6FA5", "items": 73}], "Underwriting": [{"label": "GPT-5.4 Mini (low) / Agentic CLI (Codex)", "mean": 87.0, "lo": 77.4, "hi": 95.6, "color": "#C0392B", "items": 45}, {"label": "Nemotron 3 Super 120B (free) / Basic Tool Calling", "mean": 63.0, "lo": 51.2, "hi": 74.2, "color": "#D4881C", "items": 45}, {"label": "DeepSeek V4 Flash / Basic Tool Calling", "mean": 62.6, "lo": 51.2, "hi": 73.6, "color": "#D4881C", "items": 45}, {"label": "Qwen 3.5 Flash / Basic Tool Calling", "mean": 58.5, "lo": 45.6, "hi": 71.9, "color": "#D4881C", "items": 45}, {"label": "GPT-OSS 120B / Basic Tool Calling", "mean": 46.9, "lo": 34.8, "hi": 60.0, "color": "#D4881C", "items": 45}, {"label": "Nemotron 3 Super 120B (free) / Simple", "mean": 46.3, "lo": 34.4, "hi": 58.1, "color": "#4A6FA5", "items": 45}, {"label": "DeepSeek V4 Flash / Simple", "mean": 45.7, "lo": 34.1, "hi": 56.8, "color": "#4A6FA5", "items": 45}, {"label": "Gemini 2.5 Flash Lite / Basic Tool Calling", "mean": 42.5, "lo": 30.4, "hi": 54.8, "color": "#D4881C", "items": 45}, {"label": "GPT-OSS 120B / Simple", "mean": 31.0, "lo": 18.5, "hi": 44.3, "color": "#4A6FA5", "items": 45}, {"label": "Qwen 3.5 Flash / Simple", "mean": 30.2, "lo": 18.8, "hi": 43.0, "color": "#4A6FA5", "items": 45}, {"label": "Gemini 2.5 Flash Lite / Simple", "mean": 29.6, "lo": 18.4, "hi": 41.9, "color": "#4A6FA5", "items": 45}, {"label": "Gemma 4 26B / Simple", "mean": 29.4, "lo": 18.5, "hi": 41.1, "color": "#4A6FA5", "items": 45}, {"label": "Ling 2.6 Flash / Simple", "mean": 27.3, "lo": 15.5, "hi": 39.8, "color": "#4A6FA5", "items": 44}], "Actuarial": [{"label": "Qwen 3.5 Flash / Basic Tool Calling", "mean": 89.5, "lo": 76.3, "hi": 100.0, "color": "#D4881C", "items": 19}, {"label": "Nemotron 3 Super 120B (free) / Basic Tool Calling", "mean": 84.2, "lo": 68.4, "hi": 97.4, "color": "#D4881C", "items": 19}, {"label": "GPT-OSS 120B / Simple", "mean": 83.3, "lo": 68.4, "hi": 95.6, "color": "#4A6FA5", "items": 19}, {"label": "Qwen 3.5 Flash / Simple", "mean": 83.3, "lo": 66.7, "hi": 96.5, "color": "#4A6FA5", "items": 19}, {"label": "DeepSeek V4 Flash / Basic Tool Calling", "mean": 82.5, "lo": 67.5, "hi": 93.9, "color": "#D4881C", "items": 19}, {"label": "DeepSeek V4 Flash / Simple", "mean": 81.6, "lo": 63.2, "hi": 96.5, "color": "#4A6FA5", "items": 19}, {"label": "GPT-5.4 Mini (low) / Agentic CLI (Codex)", "mean": 81.6, "lo": 63.2, "hi": 97.4, "color": "#C0392B", "items": 19}, {"label": "Nemotron 3 Super 120B (free) / Simple", "mean": 80.7, "lo": 63.2, "hi": 94.7, "color": "#4A6FA5", "items": 19}, {"label": "GPT-OSS 120B / Basic Tool Calling", "mean": 80.7, "lo": 65.8, "hi": 93.0, "color": "#D4881C", "items": 19}, {"label": "Gemma 4 26B / Simple", "mean": 57.0, "lo": 36.0, "hi": 77.2, "color": "#4A6FA5", "items": 19}, {"label": "Ling 2.6 Flash / Simple", "mean": 40.4, "lo": 21.0, "hi": 62.7, "color": "#4A6FA5", "items": 18}, {"label": "Gemini 2.5 Flash Lite / Simple", "mean": 35.1, "lo": 16.7, "hi": 55.3, "color": "#4A6FA5", "items": 19}, {"label": "Gemini 2.5 Flash Lite / Basic Tool Calling", "mean": 35.1, "lo": 16.7, "hi": 55.3, "color": "#D4881C", "items": 19}], "Claims & Coverage": [{"label": "Qwen 3.5 Flash / Basic Tool Calling", "mean": 91.7, "lo": 75.0, "hi": 100.0, "color": "#D4881C", "items": 12}, {"label": "Nemotron 3 Super 120B (free) / Basic Tool Calling", "mean": 86.1, "lo": 66.7, "hi": 97.2, "color": "#D4881C", "items": 12}, {"label": "Qwen 3.5 Flash / Simple", "mean": 83.3, "lo": 58.3, "hi": 100.0, "color": "#4A6FA5", "items": 12}, {"label": "DeepSeek V4 Flash / Basic Tool Calling", "mean": 83.3, "lo": 66.7, "hi": 97.2, "color": "#D4881C", "items": 12}, {"label": "Nemotron 3 Super 120B (free) / Simple", "mean": 79.2, "lo": 58.3, "hi": 95.8, "color": "#4A6FA5", "items": 12}, {"label": "GPT-OSS 120B / Basic Tool Calling", "mean": 79.2, "lo": 56.9, "hi": 97.2, "color": "#D4881C", "items": 12}, {"label": "DeepSeek V4 Flash / Simple", "mean": 77.8, "lo": 55.6, "hi": 97.2, "color": "#4A6FA5", "items": 12}, {"label": "GPT-5.4 Mini (low) / Agentic CLI (Codex)", "mean": 75.0, "lo": 50.0, "hi": 100.0, "color": "#C0392B", "items": 12}, {"label": "Gemma 4 26B / Simple", "mean": 73.6, "lo": 50.0, "hi": 94.4, "color": "#4A6FA5", "items": 12}, {"label": "GPT-OSS 120B / Simple", "mean": 66.7, "lo": 44.4, "hi": 86.1, "color": "#4A6FA5", "items": 12}, {"label": "Ling 2.6 Flash / Simple", "mean": 63.6, "lo": 36.4, "hi": 90.9, "color": "#4A6FA5", "items": 11}, {"label": "Gemini 2.5 Flash Lite / Simple", "mean": 61.1, "lo": 33.3, "hi": 86.1, "color": "#4A6FA5", "items": 12}, {"label": "Gemini 2.5 Flash Lite / Basic Tool Calling", "mean": 61.1, "lo": 33.3, "hi": 86.1, "color": "#D4881C", "items": 12}]};
+const sel = document.getElementById('view');
+Object.keys(DATA).forEach(v => {
+  const o = document.createElement('option');
+  o.value = v; o.textContent = v === 'Overall' ? 'Overall (all tasks)' : v;
+  sel.appendChild(o);
+});
+// deep-linkable sub-benchmarks: #Underwriting, #Actuarial, ...
+const hashView = decodeURIComponent((location.hash || '').slice(1));
+if (DATA[hashView]) sel.value = hashView;
+sel.addEventListener('change', () => {
+  history.replaceState(null, '', '#' + encodeURIComponent(sel.value));
+});
 const ciWhiskers = {
   id: 'ciWhiskers',
   afterDatasetsDraw(chart) {
@@ -83,37 +85,51 @@ const ciWhiskers = {
     });
   }
 };
-new Chart(document.getElementById('chart'), {
-  type: 'bar',
-  data: {
-    labels: combos.map(c => c[0]),
-    datasets: [{
-      data: combos.map(c => c[1]),
-      ciLo: combos.map(c => c[2]),
-      ciHi: combos.map(c => c[3]),
-      backgroundColor: combos.map(c => c[4]),
-      borderRadius: 3,
-      barPercentage: 0.78,
-    }],
-  },
-  options: {
-    indexAxis: 'y',
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { display: false }, tooltip: {
-      callbacks: { label: c =>
-        `${c.parsed.x}%  (95% CI ${c.dataset.ciLo[c.dataIndex]}–` +
-        `${c.dataset.ciHi[c.dataIndex]})` } } },
-    scales: {
-      x: { min: 0, max: 100, grid: { color: 'rgba(0,0,0,0.05)' },
-           ticks: { color: '#555', callback: v => v + '%' } },
-      y: { grid: { display: false },
-           ticks: { color: '#333', autoSkip: false,
-                    font: { size: window.innerWidth < 500 ? 10 : 12.5 } } },
+let chart = null;
+function render() {
+  const view = sel.value;
+  const combos = DATA[view];
+  const nItems = combos[0].items;
+  document.getElementById('sub').textContent =
+    (view === 'Overall'
+      ? nItems + ' insurance tasks. Same model appears once per harness - the harness is part of the score.'
+      : nItems + ' ' + view.toLowerCase() + ' tasks (subset of the same runs). Fewer tasks = wider intervals.');
+  const cfg = {
+    type: 'bar',
+    data: {
+      labels: combos.map(c => c.label),
+      datasets: [{
+        data: combos.map(c => c.mean),
+        ciLo: combos.map(c => c.lo),
+        ciHi: combos.map(c => c.hi),
+        backgroundColor: combos.map(c => c.color),
+        borderRadius: 3,
+        barPercentage: 0.78,
+      }],
     },
-  },
-  plugins: [ciWhiskers],
-});
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 300 },
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: c =>
+          c.parsed.x + '%  (95% CI ' + c.dataset.ciLo[c.dataIndex] + '-' +
+          c.dataset.ciHi[c.dataIndex] + ')' } } },
+      scales: {
+        x: { min: 0, max: 100, grid: { color: 'rgba(0,0,0,0.05)' },
+             ticks: { color: '#555', callback: v => v + '%' } },
+        y: { grid: { display: false },
+             ticks: { color: '#333', autoSkip: false,
+                      font: { size: window.innerWidth < 500 ? 10 : 12.5 } } },
+      },
+    },
+    plugins: [ciWhiskers],
+  };
+  if (chart) { chart.destroy(); }
+  chart = new Chart(document.getElementById('chart'), cfg);
+}
+render();
 </script>
 </body>
 </html>
