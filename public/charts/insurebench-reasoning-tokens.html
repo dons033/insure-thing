@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Why some models cost more: hidden reasoning tokens</title>
+<style>
+body { margin: 0; padding: 48px 40px; background: #f8f8f8; font-family: 'Segoe UI', -apple-system, system-ui, sans-serif; }
+.wrap { max-width: 980px; margin: 0 auto; }
+.panel-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 3px; letter-spacing: -0.3px; }
+.panel-sub { font-size: 14px; color: #555; margin-bottom: 20px; }
+.chart-wrap { position: relative; width: 100%; height: 520px; }
+.legend { display: flex; flex-wrap: wrap; gap: 24px; font-size: 13px; color: #555; margin-top: 14px; }
+.legend span { display: flex; align-items: center; gap: 6px; }
+.swatch { width: 14px; height: 14px; border-radius: 3px; }
+.footnote { font-size: 12px; color: #888; margin-top: 12px; line-height: 1.5; }
+@media (max-width: 768px) { body { padding: 20px 8px; } .chart-wrap { height: 540px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="panel-title">Why some models cost more: the hidden reasoning tax</div>
+<div class="panel-sub">Share of generated tokens that are invisible "thinking" vs. the visible answer.
+You pay for both. The number on the right is reasoning tokens spent per answer token.</div>
+<div class="chart-wrap"><canvas id="chart"></canvas></div>
+<div class="legend">
+<span><span class="swatch" style="background:#C0392B;"></span>Hidden reasoning tokens (billed, never shown)</span>
+<span><span class="swatch" style="background:#9fb0c4;"></span>Visible answer tokens</span>
+</div>
+<div class="footnote">
+Token usage over one day of identical benchmark workload. "Reasoning per answer" = reasoning
+tokens &divide; visible output tokens. Qwen 3.5 Flash generates ~8.8 hidden tokens for every
+token you see &mdash; the reason it costs roughly 10&times; DeepSeek per task despite a lower
+per-token price. Reasoning effort is usually a model default, not a setting we chose; it is part
+of the model+harness combo and a first-class cost axis in InsureBench.
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// [label, total_tokens, reasoning_tokens]
+const raw = [
+  ['Qwen 3.5 Flash',            7466475, 6701458],
+  ['MiMo V2.5',                   52797,   39379],
+  ['HY3 Preview',                 50211,   37282],
+  ['Nex N2 Pro',                  54163,   25905],
+  ['DeepSeek V4 Flash',         1171063,  436058],
+  ['Nemotron 3 Super 120B',     1517403,  547255],
+  ['GPT-OSS 120B',               800196,  217986],
+  ['Gemini 2.5 Flash Lite',     1467618,     894],
+  ['Gemma 4 26B',                925502,       0],
+  ['Ling 2.6 Flash',             367644,       0],
+];
+const rows = raw.map(([label, total, reason]) => {
+  const vis = Math.max(total - reason, 0);
+  const pctR = total ? 100 * reason / total : 0;
+  const mult = vis ? reason / vis : 0;
+  return { label, total, reason, vis, pctR, pctV: 100 - pctR, mult };
+}).sort((a, b) => b.pctR - a.pctR);
+
+const fmtM = n => (n >= 1e6 ? (n/1e6).toFixed(1)+'M' : (n/1e3).toFixed(0)+'k');
+const multLabels = {
+  id: 'multLabels',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    const meta = chart.getDatasetMeta(0);
+    meta.data.forEach((bar, i) => {
+      const r = rows[i];
+      const txt = r.mult >= 0.05 ? r.mult.toFixed(r.mult >= 1 ? 1 : 2) + '×' : '—';
+      ctx.save();
+      ctx.font = '600 12px Segoe UI';
+      ctx.fillStyle = r.pctR >= 60 ? '#C0392B' : '#555';
+      ctx.textAlign = 'left';
+      ctx.fillText(txt, chart.chartArea.right + 8, bar.y + 4);
+      ctx.restore();
+    });
+  }
+};
+new Chart(document.getElementById('chart'), {
+  type: 'bar',
+  data: {
+    labels: rows.map(r => r.label),
+    datasets: [
+      { label: 'Hidden reasoning', data: rows.map(r => r.pctR),
+        rawTok: rows.map(r => r.reason), backgroundColor: '#C0392B',
+        borderRadius: 2, stack: 's' },
+      { label: 'Visible answer', data: rows.map(r => r.pctV),
+        rawTok: rows.map(r => r.vis), backgroundColor: '#9fb0c4',
+        borderRadius: 2, stack: 's' },
+    ],
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { right: 54 } },
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: c =>
+        `${c.dataset.label}: ${c.parsed.x.toFixed(1)}% (${fmtM(c.dataset.rawTok[c.dataIndex])} tokens)` } },
+    },
+    scales: {
+      x: { stacked: true, min: 0, max: 100, grid: { color: 'rgba(0,0,0,0.05)' },
+           ticks: { color: '#555', callback: v => v + '%' } },
+      y: { stacked: true, grid: { display: false },
+           ticks: { color: '#333', font: { size: window.innerWidth < 500 ? 10 : 12.5 } } },
+    },
+  },
+  plugins: [multLabels],
+});
+</script>
+</body>
+</html>
