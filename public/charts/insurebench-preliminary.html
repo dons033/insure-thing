@@ -15,6 +15,11 @@ select { font: inherit; font-size: 14px; padding: 7px 10px; border: 1px solid #c
 .legend span { display: flex; align-items: center; gap: 6px; }
 .swatch { width: 14px; height: 14px; border-radius: 3px; }
 .footnote { font-size: 12px; color: #888; margin-top: 12px; line-height: 1.5; }
+table.cost { border-collapse: collapse; font-size: 13.5px; color: #333; min-width: 60%; }
+table.cost th { text-align: left; font-weight: 600; padding: 6px 18px 6px 0; border-bottom: 2px solid #ddd; }
+table.cost td { padding: 5px 18px 5px 0; border-bottom: 1px solid #eee; font-variant-numeric: tabular-nums; }
+table.cost td.num { text-align: right; }
+table.cost .basis { color: #888; font-size: 12px; }
 @media (max-width: 768px) {
   body { padding: 20px 8px; }
   .chart-wrap { height: 580px; }
@@ -36,6 +41,31 @@ select { font: inherit; font-size: 14px; padding: 7px 10px; border: 1px solid #c
 <span><span class="swatch" style="background:#D4881C;"></span>Basic Tool Calling (file reader)</span>
 <span><span class="swatch" style="background:#4A6FA5;"></span>Simple (prompt only)</span>
 </div>
+<div class="panel-title" style="margin-top:28px; font-size:17px;">Cost per query</div>
+<div class="panel-sub">One query = one task attempt, including all of the combo's tool round-trips.
+Accuracy is the overall mean above. The trap to watch: a cheap per-token model that
+reasons at length can cost 10x a pricier-per-token one for the same answer.</div>
+<table class="cost">
+<thead><tr><th>model / harness</th><th>overall</th><th>$ / query</th><th>basis</th></tr></thead>
+<tbody>
+<tr><td>GPT-5.5 (extra high) / Agentic CLI (Codex)</td><td class='num'>97.3%</td><td class='num'>&mdash;</td><td class='basis'>subscription (no marginal API cost)</td></tr>
+<tr><td>GPT-5.5 (low) / Agentic CLI (Codex)</td><td class='num'>92.6%</td><td class='num'>&mdash;</td><td class='basis'>subscription (no marginal API cost)</td></tr>
+<tr><td>GPT-5.4 Mini (low) / Agentic CLI (Codex)</td><td class='num'>86.0%</td><td class='num'>&mdash;</td><td class='basis'>subscription (no marginal API cost)</td></tr>
+<tr><td>Nemotron 3 Super 120B (free) / Basic Tool Calling</td><td class='num'>73.0%</td><td class='num'>$0.00050</td><td class='basis'>imputed at the paid-variant price</td></tr>
+<tr><td>Qwen 3.5 Flash / Basic Tool Calling</td><td class='num'>72.0%</td><td class='num'>$0.00339</td><td class='basis'>measured</td></tr>
+<tr><td>DeepSeek V4 Flash / Basic Tool Calling</td><td class='num'>71.8%</td><td class='num'>$0.00040</td><td class='basis'>measured</td></tr>
+<tr><td>Nemotron 3 Super 120B (free) / Simple</td><td class='num'>61.3%</td><td class='num'>$0.00039</td><td class='basis'>imputed at the paid-variant price</td></tr>
+<tr><td>DeepSeek V4 Flash / Simple</td><td class='num'>60.9%</td><td class='num'>$0.00031</td><td class='basis'>measured</td></tr>
+<tr><td>GPT-OSS 120B / Basic Tool Calling</td><td class='num'>60.7%</td><td class='num'>$0.00028</td><td class='basis'>measured</td></tr>
+<tr><td>Gemma 4 26B / Basic Tool Calling</td><td class='num'>56.4%</td><td class='num'>$0.00031</td><td class='basis'>measured</td></tr>
+<tr><td>Qwen 3.5 Flash / Simple</td><td class='num'>52.0%</td><td class='num'>$0.00438</td><td class='basis'>measured</td></tr>
+<tr><td>GPT-OSS 120B / Simple</td><td class='num'>50.6%</td><td class='num'>$0.00025</td><td class='basis'>measured</td></tr>
+<tr><td>Gemini 2.5 Flash Lite / Basic Tool Calling</td><td class='num'>43.4%</td><td class='num'>$0.00034</td><td class='basis'>measured</td></tr>
+<tr><td>Gemma 4 26B / Simple</td><td class='num'>43.1%</td><td class='num'>$0.00021</td><td class='basis'>measured</td></tr>
+<tr><td>Gemini 2.5 Flash Lite / Simple</td><td class='num'>35.6%</td><td class='num'>$0.00026</td><td class='basis'>measured</td></tr>
+<tr><td>Ling 2.6 Flash / Simple</td><td class='num'>34.8%</td><td class='num'>$0.00002</td><td class='basis'>measured</td></tr>
+</tbody>
+</table>
 <div class="footnote">
 Preliminary, June 2026. Objective-keyed scoring only (code-checked answers; no LLM judges).
 Whiskers are 95% bootstrap confidence intervals over per-task means (2,000 resamples):
