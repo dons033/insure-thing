@@ -26,6 +26,36 @@ export default function LabsPage() {
 
       <section className="mx-auto max-w-[1200px] px-6 lg:px-10 py-20">
         <div className="grid gap-6 md:grid-cols-2">
+          <a
+            href="https://insurebench.insure-thing.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group rounded-2xl border border-[color:var(--color-accent)] bg-[color:var(--color-surface)] p-8 hover:bg-[color:var(--color-accent-soft)] transition-colors md:col-span-2"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)]">
+                Live · Benchmark
+              </div>
+              <span className="font-mono text-[10px] uppercase tracking-[0.15em] bg-[color:var(--color-accent)] text-white px-2 py-0.5 rounded-full">
+                New
+              </span>
+            </div>
+            <h2 className="font-serif text-3xl mb-3 group-hover:text-[color:var(--color-accent)] transition-colors">
+              InsureBench
+            </h2>
+            <p className="text-[15px] leading-relaxed text-[color:var(--color-muted)] mb-6 max-w-3xl">
+              The first LLM + harness leaderboard built for insurance-specific tasks. An interactive
+              cost-vs-quality map of model-plus-harness combinations on real insurance work &mdash;
+              classification, loss triangles, claims, coverage, judgment &mdash; scored on accuracy and on what
+              each task actually costs. Filter by capability and difficulty; the field re-scores live. Built to
+              help insurance decision-makers find the model that&rsquo;s worth it for the job.
+            </p>
+            <div className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--color-foreground)] group-hover:text-[color:var(--color-accent)] transition-colors">
+              Explore the leaderboard
+              <span aria-hidden="true">→</span>
+            </div>
+          </a>
+
           <Link
             href="/labs/wc-underwriting"
             className="group rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-8 hover:border-[color:var(--color-accent)] transition-colors"

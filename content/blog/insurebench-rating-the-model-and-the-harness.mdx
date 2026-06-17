@@ -1,20 +1,25 @@
 ---
-title: "InsureBench Preview: Rating the Model and the Harness"
+title: "InsureBench: Rating the Model and the Harness"
 date: "2026-06-12"
-description: "We are not testing chat. We are testing work, done with real tools. InsureBench scores model-plus-harness combinations on real insurance tasks — and a smaller model in a serious agentic harness can beat larger models in simpler setups."
+description: "We are not testing chat. We are testing work. InsureBench is now live — the first interactive LLM + harness leaderboard built for insurance-specific tasks, scoring model-plus-harness combinations on real insurance work."
 author: "Don Seibert"
 tags: ["ai", "benchmarks", "harness", "underwriting", "insurebench"]
 image: "/images/blog/insurebench-preliminary.png"
 hideHeroImage: true
 ---
 
-<iframe src="/charts/insurebench-preliminary.html" width="100%" height="700" style={{border: 'none', borderRadius: '8px', marginBottom: '2rem'}} title="InsureBench preliminary: model x harness on real insurance tasks" />
+<div style={{background:'#1a1a1f', borderRadius:'1rem', padding:'2rem 2.5rem', margin:'0 0 2rem'}}>
+  <div style={{fontFamily:'ui-monospace,SFMono-Regular,Menlo,monospace', fontSize:'0.7rem', textTransform:'uppercase', letterSpacing:'0.2em', color:'#c41e2a', marginBottom:'0.75rem'}}>Live · Benchmark</div>
+  <div style={{fontFamily:'var(--font-heading)', fontSize:'1.5rem', fontWeight:400, color:'#fff', marginBottom:'0.75rem', letterSpacing:'-0.01em', lineHeight:1.2}}>InsureBench is live.</div>
+  <div style={{color:'rgba(230,228,220,0.75)', lineHeight:1.65, fontSize:'0.9375rem', marginBottom:'1.5rem'}}>Interactive cost-vs-quality leaderboard for model + harness combinations on real insurance tasks — classification, loss triangles, claims, coverage, judgment. Filter by capability and difficulty; the field re-scores live.</div>
+  <a href="https://insurebench.insure-thing.com" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex', alignItems:'center', gap:'0.5rem', background:'#c41e2a', color:'#fff', padding:'0.625rem 1.5rem', borderRadius:'9999px', fontSize:'0.875rem', fontWeight:500, textDecoration:'none'}}>Explore the leaderboard <span aria-hidden="true">→</span></a>
+</div>
 
 In an earlier Mythos Madness post, I used MATH-500 and Humanity's Last Exam to make a point about models and harnesses. Useful benchmarks. Insurance-correlated, perhaps. But not insurance.
 
 For insurance, we need to test submissions, claim files, underwriting guidelines, loss triangles, policy language, and the ability to justify a decision in a way that will stand up to a market conduct exam.
 
-So at InsureThing, we started building InsureBench: an insurance-specific evaluation system for testing both AI models and the harnesses around them on tasks that look like the work carriers, brokers, and agents need to get done every day.
+So at InsureThing, we built InsureBench: an insurance-specific evaluation system for testing both AI models and the harnesses around them on tasks that look like the work carriers, brokers, and agents need to get done every day.
 
 That distinction matters. We are not testing chat. We are testing work, done with real tools.
 
@@ -22,20 +27,29 @@ You would not test an actuary on arithmetic without giving them a calculator. LL
 
 InsureBench is designed to test the whole setup.
 
-The preview version scores model-plus-harness combinations on real insurance work: classifying messy Workers' Comp risks, reading loss triangles, auditing claims against policy terms, spotting coverage gaps, and handling unclear facts. The questions are written and reviewed by insurance experts. Where answers can be checked by code, they are. Where judgment is required, we grade against expert rubrics.
+The live leaderboard scores model-plus-harness combinations on real insurance work: classifying messy Workers' Comp risks, reading loss triangles, auditing claims against policy terms, spotting coverage gaps, and handling unclear facts. The questions are written and reviewed by insurance experts. Where answers can be checked by code, they are. Where judgment is required, we grade against expert rubrics.
 
-The early results look intuitively right, which is a good start. It is not the same as declaring victory. We are adding questions, tools, task types, and more demanding examples daily.
+The early results look intuitively right, which is a good start. It is not the same as declaring victory. We are adding questions, tools, task types, and more demanding examples.
 
 The most interesting early result is also the most practical: a smaller model in a serious agentic harness can beat larger models running in simpler API setups. The whole system matters more than the model alone. An inexpensive model with the right harness can be much cheaper to run than an expensive model producing the same useful result.
 
-The next step is to go deeper by task type. Not just which model is best overall, but which model and harness are good enough for a specific job.
+The leaderboard is designed to go deeper by task type. Not just which model is best overall, but which model and harness are good enough for a specific job.
 
 Yes, a frontier model running at high reasoning will usually score better overall than a small model you can run behind a firewall. But if the smaller model is fast, secure, reliable, and paired with a harness that lets it perform well on one specific task, the overall benchmark may not matter.
 
 Some tasks will justify the expensive model. Many will not. InsureBench is designed to help identify which tasks belong with which model, which harness, and which deployment constraints.
 
-These early results are previews based on a smaller question set, currently broken into broad categories like claims, underwriting, and actuarial work. The numbers will move as we add questions, increase complexity, repeat runs, and improve the harness lanes. As the task bank grows, the results will get more specific and more useful.
+The numbers will continue to move as we add questions, increase complexity, repeat runs, and improve the harness lanes. As the task bank grows, the results will get more specific and more useful.
 
 If you have insurance questions or tasks that should be in InsureBench, send them over. I am looking for good examples of real work across the insurance chain, and the more realistically unruly, the better.
 
-If you have a model, harness, workflow, or agentic setup you want tested against real insurance tasks, reach out as well: [don@insure-thing.com](mailto:don@insure-thing.com).
+If you have a model, harness, workflow, or agentic setup you want tested against real insurance tasks, reach out: [don@insure-thing.com](mailto:don@insure-thing.com).
+
+---
+
+<div style={{background:'#1a1a1f', borderRadius:'1rem', padding:'2rem 2.5rem', margin:'2rem 0 0'}}>
+  <div style={{fontFamily:'ui-monospace,SFMono-Regular,Menlo,monospace', fontSize:'0.7rem', textTransform:'uppercase', letterSpacing:'0.2em', color:'#c41e2a', marginBottom:'0.75rem'}}>Live · Benchmark</div>
+  <div style={{fontFamily:'var(--font-heading)', fontSize:'1.25rem', fontWeight:400, color:'#fff', marginBottom:'0.5rem', letterSpacing:'-0.01em', lineHeight:1.2}}>See the full leaderboard.</div>
+  <div style={{color:'rgba(230,228,220,0.65)', lineHeight:1.65, fontSize:'0.875rem', marginBottom:'1.25rem'}}>Filter by task category, capability, and difficulty. Every combo scored on accuracy and cost per task.</div>
+  <a href="https://insurebench.insure-thing.com" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex', alignItems:'center', gap:'0.5rem', background:'#c41e2a', color:'#fff', padding:'0.5rem 1.25rem', borderRadius:'9999px', fontSize:'0.875rem', fontWeight:500, textDecoration:'none'}}>insurebench.insure-thing.com <span aria-hidden="true">→</span></a>
+</div>

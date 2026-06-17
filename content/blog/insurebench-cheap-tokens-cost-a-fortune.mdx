@@ -1,0 +1,47 @@
+---
+title: "InsureBench: Cheap Tokens Can Cost a Fortune"
+date: "2026-06-13"
+description: "Price per token is the wrong number. The one that matters is cost per task — every tool round-trip, every hidden reasoning token — set against accuracy. InsureBench turns that into a routing map: the cheapest model-plus-harness that clears your bar for your task."
+author: "Don Seibert"
+tags: ["ai", "benchmarks", "insurebench", "cost"]
+image: "/images/blog/insurebench-cost-accuracy.png"
+hideHeroImage: true
+---
+
+<div style={{background:'#1a1a1f', borderRadius:'1rem', padding:'2rem 2.5rem', margin:'0 0 2rem'}}>
+  <div style={{fontFamily:'ui-monospace,SFMono-Regular,Menlo,monospace', fontSize:'0.7rem', textTransform:'uppercase', letterSpacing:'0.2em', color:'#c41e2a', marginBottom:'0.75rem'}}>Live · Benchmark</div>
+  <div style={{fontFamily:'var(--font-heading)', fontSize:'1.5rem', fontWeight:400, color:'#fff', marginBottom:'0.75rem', letterSpacing:'-0.01em', lineHeight:1.2}}>The cost-vs-accuracy map is live in InsureBench.</div>
+  <div style={{color:'rgba(230,228,220,0.75)', lineHeight:1.65, fontSize:'0.9375rem', marginBottom:'1.5rem'}}>Interactive scatter with Pareto frontier, hover tooltips, reasoning-token breakdown, and filters by capability and difficulty. Every model + harness combo — cost per task and accuracy together.</div>
+  <a href="https://insurebench.insure-thing.com" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex', alignItems:'center', gap:'0.5rem', background:'#c41e2a', color:'#fff', padding:'0.625rem 1.5rem', borderRadius:'9999px', fontSize:'0.875rem', fontWeight:500, textDecoration:'none'}}>Explore the leaderboard <span aria-hidden="true">→</span></a>
+</div>
+
+A model with a cheaper sticker price can cost you far more to actually run. Per-token pricing tells you what a vendor charges. It does not tell you what a task costs.
+
+That is the whole problem. You do not buy tokens — you buy answers. An answer is a task: read the file, call the tool, get the result, reason about it, maybe call another tool, write the response. Every one of those round-trips burns tokens. Two models with the same headline price can spend wildly different amounts getting to the same place. The number that matters is cost per task, and the only honest way to read it is against accuracy.
+
+The live InsureBench leaderboard shows exactly that. Each point is a model-plus-harness combo. One axis is dollars per query — one full task attempt, every tool round-trip included. The other is accuracy. The prize is cheap and right. Only the Pareto frontier is labelled, because that is the set worth choosing from — the combos where nothing else is both cheaper and more accurate.
+
+Look where the cheap-and-accurate corner actually is. A small model with nothing fancier than a file reader gets you there. DeepSeek V4 Flash and Nemotron 3 Super 120B, both in our Basic Tool Calling lane, land around 71% accuracy for roughly $0.0004 per task. Four hundredths of a cent. That is the floor doing real work.
+
+Now look out to the right, alone, with middling accuracy: Qwen 3.5 Flash. Same family of cheap-on-paper model. Roughly ten times the cost per task of DeepSeek. It is not buying you more accuracy for the money. So where does the money go?
+
+Qwen generates about 8.8 hidden reasoning tokens for every visible answer token. Roughly 90% of what it produces is invisible thinking — tokens you never see and still pay for in full. The per-token price was lower; the per-task bill was an order of magnitude higher, because the model quietly wrote ten times as much.
+
+The reasoning-token breakdown is in the leaderboard alongside the cost scatter — you can see the ratio for every combo in the field.
+
+One honest caveat. That reasoning effort is usually the model's *default*, not a dial we turned up. We did not crank Qwen and leave the others alone. This is just how the combo behaves out of the box — and that is exactly the point. Reasoning effort is part of the model-plus-harness combo, not a footnote to it. It is a first-class cost axis, and InsureBench measures it as one.
+
+This is why the benchmark is a routing map, not a leaderboard. For a task you run thousands of times a day — classify the risk, normalize the loss run, check eligibility — you do not want the most capable model in the catalog. You want the cheapest combo that clears the accuracy bar *for that task type*. Some jobs justify a frontier model and the reasoning bill that comes with it. Many do not, and paying for invisible thinking you did not need is just waste at scale.
+
+The usual caveats apply, and I mean them. Scoring is objective-keyed where answers can be checked by code. Per-task-type samples are still growing — the question bank is expanding, and the clusters will sharpen as it does. Confidence intervals are in the chart, and plenty of these combos are statistically indistinguishable from each other right now. Subscription and agentic-CLI combos — GPT-5.5 in Codex, that sort of thing — carry no per-token cost and are handled separately.
+
+If you have insurance tasks that belong in InsureBench, or a model, harness, or workflow you want measured against real insurance work — cost and accuracy both — send it over: [don@insure-thing.com](mailto:don@insure-thing.com).
+
+---
+
+<div style={{background:'#1a1a1f', borderRadius:'1rem', padding:'2rem 2.5rem', margin:'2rem 0 0'}}>
+  <div style={{fontFamily:'ui-monospace,SFMono-Regular,Menlo,monospace', fontSize:'0.7rem', textTransform:'uppercase', letterSpacing:'0.2em', color:'#c41e2a', marginBottom:'0.75rem'}}>Live · Benchmark</div>
+  <div style={{fontFamily:'var(--font-heading)', fontSize:'1.25rem', fontWeight:400, color:'#fff', marginBottom:'0.5rem', letterSpacing:'-0.01em', lineHeight:1.2}}>See cost vs accuracy for every combo.</div>
+  <div style={{color:'rgba(230,228,220,0.65)', lineHeight:1.65, fontSize:'0.875rem', marginBottom:'1.25rem'}}>Interactive Pareto scatter + reasoning-token breakdown. Filter by task category, capability, and difficulty.</div>
+  <a href="https://insurebench.insure-thing.com" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex', alignItems:'center', gap:'0.5rem', background:'#c41e2a', color:'#fff', padding:'0.5rem 1.25rem', borderRadius:'9999px', fontSize:'0.875rem', fontWeight:500, textDecoration:'none'}}>insurebench.insure-thing.com <span aria-hidden="true">→</span></a>
+</div>
