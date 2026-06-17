@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Labs",
   description:
-    "Interactive demos, proof-of-concept tools, and experiments in AI-driven insurance workflows.",
+    "Public benchmarks, interactive demos, and experiments in AI-driven insurance workflows.",
 };
 
 export default function LabsPage() {
@@ -19,7 +19,7 @@ export default function LabsPage() {
             This is where we build things.
           </h1>
           <p className="mt-8 text-lg text-[color:var(--color-muted)] max-w-2xl">
-            Interactive demos, proof-of-concept tools, and experiments in AI-driven insurance workflows. Check back, or subscribe to the blog for updates.
+            Public benchmarks, interactive demos, proof-of-concept tools, and experiments in AI-driven insurance workflows. Check back, or subscribe to the blog for updates.
           </p>
         </div>
       </section>
@@ -44,14 +44,14 @@ export default function LabsPage() {
               InsureBench
             </h2>
             <p className="text-[15px] leading-relaxed text-[color:var(--color-muted)] mb-6 max-w-3xl">
-              The first LLM + harness leaderboard built for insurance-specific tasks. An interactive
-              cost-vs-quality map of model-plus-harness combinations on real insurance work &mdash;
-              classification, loss triangles, claims, coverage, judgment &mdash; scored on accuracy and on what
-              each task actually costs. Filter by capability and difficulty; the field re-scores live. Built to
-              help insurance decision-makers find the model that&rsquo;s worth it for the job.
+              A public benchmark and lab project for evaluating model plus harness combinations on
+              insurance work. InsureBench tests claims, underwriting, actuarial, coverage, forms,
+              document reading, and workflow judgment tasks, with results framed around practical
+              deployment: which setup is reliable enough, fast enough, and economical enough for the
+              job.
             </p>
             <div className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--color-foreground)] group-hover:text-[color:var(--color-accent)] transition-colors">
-              Explore the leaderboard
+              Explore the benchmark
               <span aria-hidden="true">→</span>
             </div>
           </a>
