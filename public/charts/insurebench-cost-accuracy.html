@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>InsureBench: cost vs accuracy by task type</title>
+<style>
+body { margin: 0; padding: 48px 40px; background: #f8f8f8; font-family: 'Segoe UI', -apple-system, system-ui, sans-serif; }
+.wrap { max-width: 980px; margin: 0 auto; }
+.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.panel-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 3px; letter-spacing: -0.3px; }
+.panel-sub { font-size: 14px; color: #555; margin-bottom: 20px; }
+select { font: inherit; font-size: 14px; padding: 7px 10px; border: 1px solid #ccc; border-radius: 6px; background: #fff; color: #1a1a1a; }
+.chart-wrap { position: relative; width: 100%; height: 560px; }
+.legend { display: flex; flex-wrap: wrap; gap: 24px; font-size: 13px; color: #555; margin-top: 12px; }
+.legend span { display: flex; align-items: center; gap: 6px; }
+.swatch { width: 14px; height: 14px; border-radius: 3px; }
+.footnote { font-size: 12px; color: #888; margin-top: 12px; line-height: 1.5; }
+@media (max-width: 768px) { body { padding: 20px 8px; } .chart-wrap { height: 520px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="head">
+  <div>
+    <div class="panel-title">Cost vs accuracy: pick your spot per task type</div>
+    <div class="panel-sub" id="sub"></div>
+  </div>
+  <select id="view" onchange="render()" aria-label="Task type"></select>
+</div>
+<div class="chart-wrap"><canvas id="chart"></canvas></div>
+<div class="legend">
+<span><span class="swatch" style="background:#D4881C;"></span>Basic Tool Calling (file reader)</span>
+<span><span class="swatch" style="background:#4A6FA5;"></span>Simple (prompt only)</span>
+<span><span class="swatch" style="background:#6B8E23;"></span>Tools + Python</span>
+</div>
+<div class="footnote">
+The prize is the <b>upper-left</b>: high accuracy at low cost per task. Cost is <b>$ per query</b>
+(one task attempt incl. all tool round-trips), log scale &mdash; not price per token. The right
+combo depends on the task type and your accuracy bar. Subscription / agentic-CLI combos
+(GPT-5.5 in Codex, etc.) carry no per-token cost and are charted separately. Free-tier lanes
+are imputed at the paid-variant price. Preliminary, June 2026; objective-keyed scoring; per-task
+samples are still small &mdash; expanding the bank is what sharpens these clusters.
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const DATA = {"Overall": [{"label": "Nemotron 3 Super 120B (free) / Simple", "x": 0.000388, "y": 61.3, "color": "#4A6FA5", "basis": "imputed", "items": 74}, {"label": "Gemini 2.5 Flash Lite / Simple", "x": 0.000258, "y": 35.6, "color": "#4A6FA5", "basis": "measured", "items": 74}, {"label": "Nemotron 3 Super 120B (free) / Basic Tool Calling", "x": 0.000499, "y": 73.0, "color": "#D4881C", "basis": "imputed", "items": 74}, {"label": "Gemini 2.5 Flash Lite / Basic Tool Calling", "x": 0.000337, "y": 43.4, "color": "#D4881C", "basis": "measured", "items": 74}, {"label": "DeepSeek V4 Flash / Simple", "x": 0.000307, "y": 60.9, "color": "#4A6FA5", "basis": "measured", "items": 74}, {"label": "GPT-OSS 120B / Simple", "x": 0.000251, "y": 50.6, "color": "#4A6FA5", "basis": "measured", "items": 74}, {"label": "Qwen 3.5 Flash / Simple", "x": 0.004382, "y": 52.0, "color": "#4A6FA5", "basis": "measured", "items": 74}, {"label": "Gemma 4 26B / Simple", "x": 0.000214, "y": 43.1, "color": "#4A6FA5", "basis": "measured", "items": 74}, {"label": "Ling 2.6 Flash / Simple", "x": 1.5e-05, "y": 34.8, "color": "#4A6FA5", "basis": "measured", "items": 75}, {"label": "DeepSeek V4 Flash / Basic Tool Calling", "x": 0.000395, "y": 71.8, "color": "#D4881C", "basis": "measured", "items": 74}, {"label": "GPT-OSS 120B / Basic Tool Calling", "x": 0.000281, "y": 60.7, "color": "#D4881C", "basis": "measured", "items": 74}, {"label": "Qwen 3.5 Flash / Basic Tool Calling", "x": 0.00339, "y": 72.0, "color": "#D4881C", "basis": "measured", "items": 74}, {"label": "Gemma 4 26B / Basic Tool Calling", "x": 0.000305, "y": 56.4, "color": "#D4881C", "basis": "measured", "items": 74}], "Underwriting": [{"label": "Nemotron 3 Super 120B (free) / Simple", "x": 0.000403, "y": 47.3, "color": "#4A6FA5", "basis": "imputed", "items": 44}, {"label": "Gemini 2.5 Flash Lite / Simple", "x": 0.000241, "y": 30.3, "color": "#4A6FA5", "basis": "measured", "items": 44}, {"label": "Nemotron 3 Super 120B (free) / Basic Tool Calling", "x": 0.00061, "y": 64.4, "color": "#D4881C", "basis": "imputed", "items": 44}, {"label": "Gemini 2.5 Flash Lite / Basic Tool Calling", "x": 0.000359, "y": 43.4, "color": "#D4881C", "basis": "measured", "items": 44}, {"label": "DeepSeek V4 Flash / Simple", "x": 0.000319, "y": 46.7, "color": "#4A6FA5", "basis": "measured", "items": 44}, {"label": "GPT-OSS 120B / Simple", "x": 0.000268, "y": 31.7, "color": "#4A6FA5", "basis": "measured", "items": 44}, {"label": "Qwen 3.5 Flash / Simple", "x": 0.005094, "y": 30.9, "color": "#4A6FA5", "basis": "measured", "items": 44}, {"label": "Gemma 4 26B / Simple", "x": 0.000185, "y": 30.1, "color": "#4A6FA5", "basis": "measured", "items": 44}, {"label": "Ling 2.6 Flash / Simple", "x": 1.5e-05, "y": 26.3, "color": "#4A6FA5", "basis": "measured", "items": 45}, {"label": "DeepSeek V4 Flash / Basic Tool Calling", "x": 0.000483, "y": 64.0, "color": "#D4881C", "basis": "measured", "items": 44}, {"label": "GPT-OSS 120B / Basic Tool Calling", "x": 0.000286, "y": 48.0, "color": "#D4881C", "basis": "measured", "items": 44}, {"label": "Qwen 3.5 Flash / Basic Tool Calling", "x": 0.003471, "y": 59.7, "color": "#D4881C", "basis": "measured", "items": 44}, {"label": "Gemma 4 26B / Basic Tool Calling", "x": 0.000335, "y": 47.9, "color": "#D4881C", "basis": "measured", "items": 44}], "Actuarial": [{"label": "Nemotron 3 Super 120B (free) / Simple", "x": 0.000343, "y": 80.7, "color": "#4A6FA5", "basis": "imputed", "items": 19}, {"label": "Gemini 2.5 Flash Lite / Simple", "x": 0.000299, "y": 35.1, "color": "#4A6FA5", "basis": "measured", "items": 19}, {"label": "Nemotron 3 Super 120B (free) / Basic Tool Calling", "x": 0.00035, "y": 84.2, "color": "#D4881C", "basis": "imputed", "items": 19}, {"label": "Gemini 2.5 Flash Lite / Basic Tool Calling", "x": 0.00033, "y": 35.1, "color": "#D4881C", "basis": "measured", "items": 19}, {"label": "DeepSeek V4 Flash / Simple", "x": 0.000272, "y": 81.6, "color": "#4A6FA5", "basis": "measured", "items": 19}, {"label": "GPT-OSS 120B / Simple", "x": 0.000216, "y": 83.3, "color": "#4A6FA5", "basis": "measured", "items": 19}, {"label": "Qwen 3.5 Flash / Simple", "x": 0.0033, "y": 83.3, "color": "#4A6FA5", "basis": "measured", "items": 19}, {"label": "Gemma 4 26B / Simple", "x": 0.000244, "y": 57.0, "color": "#4A6FA5", "basis": "measured", "items": 19}, {"label": "Ling 2.6 Flash / Simple", "x": 1.5e-05, "y": 38.3, "color": "#4A6FA5", "basis": "measured", "items": 19}, {"label": "DeepSeek V4 Flash / Basic Tool Calling", "x": 0.000277, "y": 82.5, "color": "#D4881C", "basis": "measured", "items": 19}, {"label": "GPT-OSS 120B / Basic Tool Calling", "x": 0.000285, "y": 80.7, "color": "#D4881C", "basis": "measured", "items": 19}, {"label": "Qwen 3.5 Flash / Basic Tool Calling", "x": 0.003285, "y": 91.2, "color": "#D4881C", "basis": "measured", "items": 19}, {"label": "Gemma 4 26B / Basic Tool Calling", "x": 0.000259, "y": 64.9, "color": "#D4881C", "basis": "measured", "items": 19}, {"label": "Ling 2.6 Flash / Basic Tool Calling", "x": 1.6e-05, "y": 36.1, "color": "#D4881C", "basis": "measured", "items": 18}], "Claims & Coverage": [{"label": "Nemotron 3 Super 120B (free) / Simple", "x": 0.000409, "y": 83.3, "color": "#4A6FA5", "basis": "imputed", "items": 11}, {"label": "Gemini 2.5 Flash Lite / Simple", "x": 0.000257, "y": 57.6, "color": "#4A6FA5", "basis": "measured", "items": 11}, {"label": "Nemotron 3 Super 120B (free) / Basic Tool Calling", "x": 0.000316, "y": 87.9, "color": "#D4881C", "basis": "imputed", "items": 11}, {"label": "Gemini 2.5 Flash Lite / Basic Tool Calling", "x": 0.000262, "y": 57.6, "color": "#D4881C", "basis": "measured", "items": 11}, {"label": "DeepSeek V4 Flash / Simple", "x": 0.000324, "y": 81.8, "color": "#4A6FA5", "basis": "measured", "items": 11}, {"label": "GPT-OSS 120B / Simple", "x": 0.000243, "y": 69.7, "color": "#4A6FA5", "basis": "measured", "items": 11}, {"label": "Qwen 3.5 Flash / Simple", "x": 0.003403, "y": 81.8, "color": "#4A6FA5", "basis": "measured", "items": 11}, {"label": "Gemma 4 26B / Simple", "x": 0.000275, "y": 71.2, "color": "#4A6FA5", "basis": "measured", "items": 11}, {"label": "Ling 2.6 Flash / Simple", "x": 1.6e-05, "y": 63.6, "color": "#4A6FA5", "basis": "measured", "items": 11}, {"label": "DeepSeek V4 Flash / Basic Tool Calling", "x": 0.00025, "y": 84.8, "color": "#D4881C", "basis": "measured", "items": 11}, {"label": "GPT-OSS 120B / Basic Tool Calling", "x": 0.00025, "y": 77.3, "color": "#D4881C", "basis": "measured", "items": 11}, {"label": "Qwen 3.5 Flash / Basic Tool Calling", "x": 0.00325, "y": 87.9, "color": "#D4881C", "basis": "measured", "items": 11}, {"label": "Gemma 4 26B / Basic Tool Calling", "x": 0.000266, "y": 75.8, "color": "#D4881C", "basis": "measured", "items": 11}]};
+const sel = document.getElementById('view');
+Object.keys(DATA).forEach(v => {
+  const o = document.createElement('option');
+  o.value = v; o.textContent = v === 'Overall' ? 'Overall (all tasks)' : v;
+  sel.appendChild(o);
+});
+const hashView = decodeURIComponent((location.hash || '').slice(1));
+if (DATA[hashView]) sel.value = hashView;
+sel.addEventListener('change', () => {
+  history.replaceState(null, '', '#' + encodeURIComponent(sel.value));
+});
+// shade the upper-left "prize" quadrant
+const prizeZone = {
+  id: 'prizeZone',
+  beforeDraw(chart) {
+    const {ctx, chartArea: a, scales} = chart;
+    if (!a) return;
+    const yMid = scales.y.getPixelForValue(75);
+    ctx.save();
+    ctx.fillStyle = 'rgba(107,142,35,0.06)';
+    ctx.fillRect(a.left, a.top, a.right - a.left, yMid - a.top);
+    ctx.fillStyle = '#6B8E23';
+    ctx.font = '12px Segoe UI';
+    ctx.globalAlpha = 0.6;
+    ctx.fillText('cheap + accurate', a.left + 8, a.top + 18);
+    ctx.restore();
+  }
+};
+// Pareto frontier: a combo is efficient if nothing is both >= as
+// accurate AND <= as costly. Only the frontier is labelled (it IS the
+// "pick your spot" set); dominated combos dim to points-only.
+function frontier(pts) {
+  return pts.map((p, i) => !pts.some((q, j) =>
+    j !== i && q.y >= p.y && q.x <= p.x && (q.y > p.y || q.x < p.x)));
+}
+const labelPts = {
+  id: 'labelPts',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    const ds = chart.data.datasets[0];
+    chart.getDatasetMeta(0).data.forEach((pt, i) => {
+      if (!ds.data[i].eff) return;          // label frontier only
+      const t = ds.data[i].label;
+      ctx.save();
+      ctx.font = '600 11px Segoe UI'; ctx.fillStyle = '#222';
+      const w = ctx.measureText(t).width;
+      let x = pt.x + 9, align = 'left';
+      if (x + w > chart.chartArea.right) { x = pt.x - 9; align = 'right'; }
+      ctx.textAlign = align;
+      ctx.fillText(t, x, pt.y + 4);
+      ctx.restore();
+    });
+  }
+};
+let chart = null;
+function render() {
+  const view = sel.value;
+  const pts = DATA[view];
+  const n = pts.length ? pts[0].items : 0;
+  document.getElementById('sub').textContent =
+    (view === 'Overall' ? n + ' tasks. ' : n + ' ' + view.toLowerCase() + ' tasks. ')
+    + 'Metered API combos only; each point is a model / harness.';
+  const eff = frontier(pts);
+  const hex2rgba = (h, a) => {
+    const n = parseInt(h.slice(1), 16);
+    return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`;
+  };
+  const cfg = {
+    type: 'scatter',
+    data: { datasets: [{
+      data: pts.map((p, i) => ({x: p.x, y: p.y, label: p.label,
+                                 eff: eff[i]})),
+      backgroundColor: pts.map((p, i) => eff[i] ? p.color
+                                              : hex2rgba(p.color, 0.28)),
+      pointRadius: pts.map((p, i) => eff[i] ? 7 : 5),
+      pointHoverRadius: 9,
+    }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      layout: { padding: { right: 90 } },
+      plugins: { legend: { display: false }, tooltip: { callbacks: {
+        label: c => c.raw.label + ': ' + c.raw.y + '%  ($' + c.raw.x.toFixed(5) + '/query)' } } },
+      scales: {
+        x: { type: 'logarithmic', title: { display: true, text: '$ per query (log scale) - lower is better', color: '#555' },
+             grid: { color: 'rgba(0,0,0,0.05)' },
+             ticks: { color: '#555', callback: v => '$' + Number(v).toFixed(v < 0.001 ? 5 : 4) } },
+        y: { min: 0, max: 100, title: { display: true, text: 'accuracy (%) - higher is better', color: '#555' },
+             grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#555', callback: v => v + '%' } },
+      },
+    },
+    plugins: [prizeZone, labelPts],
+  };
+  if (chart) { chart.destroy(); }
+  chart = new Chart(document.getElementById('chart'), cfg);
+}
+render();
+</script>
+</body>
+</html>

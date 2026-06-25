@@ -15,9 +15,9 @@ hideHeroImage: true
   <a href="https://insurebench.insure-thing.com" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex', alignItems:'center', gap:'0.5rem', background:'#c41e2a', color:'#fff', padding:'0.625rem 1.5rem', borderRadius:'9999px', fontSize:'0.875rem', fontWeight:500, textDecoration:'none'}}>Explore InsureBench <span aria-hidden="true">→</span></a>
 </div>
 
-InsureBench is our benchmark for evaluating AI systems on insurance work. The first public view is now live.
+InsureBench is our benchmark for evaluating AI systems on insurance work, and the first public view is now live. The first lesson from it is blunt: a model's token price tells you almost nothing about what a task actually costs.
 
-Most model benchmarks ask which model is better. That is useful, but it is not the main question an insurance organization faces when it tries to deploy AI. In production, the deployed unit is not just a model. It is a model plus the harness around it: the prompt, file reader, retrieval layer, structured output handling, retries, domain context, and escalation path.
+Most model benchmarks ask which model is better. That is useful, but it is not the main question an insurance organization faces when it deploys AI. In production, the deployed unit is not a model on its own but the model plus the harness around it: the prompt, file reader, retrieval layer, structured output handling, retries, domain context, and escalation path.
 
 That is what InsureBench measures.
 
@@ -25,35 +25,27 @@ The early benchmark includes tasks that look more like insurance work than chat:
 
 The first lesson is simple: cost per token is not cost per task.
 
-<iframe
-  src="/charts/insurebench-cost-accuracy.html"
-  title="InsureBench cost versus accuracy chart"
-  style={{width:'100%', height:'620px', border:'0', borderRadius:'1rem', margin:'2rem 0', background:'#1a1a1f'}}
-/>
+<iframe src="/charts/insurebench-cost-accuracy.html" title="InsureBench cost versus accuracy chart" style={{width:'100%', height:'620px', border:'0', borderRadius:'1rem', margin:'2rem 0', background:'#1a1a1f'}} />
 
-The chart above should be read as a preliminary snapshot, not a final ranking. It plots model plus harness combinations by accuracy and cost per task. The useful comparison is not "which token price is lowest?" It is "which setup can complete this kind of work reliably at the lowest practical cost?"
+The chart above is a preliminary snapshot, not a final ranking. It plots model-plus-harness combinations by accuracy and cost per task. The useful question is not which token price is lowest, but which setup can complete this kind of work reliably at the lowest practical cost.
 
 That distinction matters. A model may be inexpensive on a price sheet but expensive in practice if it needs more output tokens, more tool calls, more retries, or more hidden reasoning tokens to reach an answer. Another model may be more expensive per token but finish the job in fewer steps.
 
 The second early lesson is that reasoning cost can be hard to see if you only look at visible output.
 
-<iframe
-  src="/charts/insurebench-reasoning-tokens.html"
-  title="InsureBench reasoning token breakdown"
-  style={{width:'100%', height:'520px', border:'0', borderRadius:'1rem', margin:'2rem 0', background:'#1a1a1f'}}
-/>
+<iframe src="/charts/insurebench-reasoning-tokens.html" title="InsureBench reasoning token breakdown" style={{width:'100%', height:'520px', border:'0', borderRadius:'1rem', margin:'2rem 0', background:'#1a1a1f'}} />
 
 Some models spend heavily on hidden reasoning tokens. That may be worthwhile on difficult work. It may also be unnecessary on repeated operational tasks where a cheaper model with a good harness can clear the required bar.
 
-This is not an argument against frontier models. For high-value expert work, or for tasks where a small improvement is worth a large cost, the strongest available model may be the right choice. If a senior actuary is doing a difficult one-off analysis in an agentic coding environment, the economics are different from an automated scan across thousands of files.
+None of this counts against frontier models. For high-value expert work, or tasks where a small improvement is worth a large cost, the strongest available model may be the right choice. A senior actuary running a difficult one-off analysis in an agentic coding environment is in a different economic position from an automated scan across thousands of files.
 
-The point is narrower and more practical: for repeated insurance workflows, the relevant unit is the completed task. The right answer may be a frontier model. It may be a lower-cost model with a better harness. It may be a routing workflow that handles routine cases cheaply and escalates uncertain cases.
+For repeated insurance workflows, though, the unit that matters is the completed task. The right answer may be a frontier model. It may be a lower-cost model with a better harness. It may be a routing workflow that handles routine cases cheaply and escalates the uncertain ones.
 
-InsureBench is built to make those distinctions visible.
+InsureBench is built to tell those cases apart.
 
-The usual caveats apply. The question bank is expanding. Some task-family samples are still small. Confidence intervals matter. The results will move as we add models, repeat runs, and improve harnesses.
+This is preview data, with the caveats that implies. The question bank is still expanding, some task-family samples are small, and confidence intervals are wide in places. The numbers will move as we add models, repeat runs, and improve harnesses.
 
-But even this preview shows the shape of the work ahead: insurance AI evaluation needs to measure the model, the harness, the task, and the cost of getting to a reliable answer.
+Even at preview stage, the direction is clear: insurance AI evaluation has to measure the model, the harness, the task, and the cost of reaching a reliable answer.
 
 If you have insurance tasks that belong in InsureBench, or a model, harness, or workflow you want measured against real insurance work, send it over: [don@insure-thing.com](mailto:don@insure-thing.com).
 

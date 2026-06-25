@@ -1,7 +1,7 @@
 ---
 title: "InsureBench V1 Is Ready"
 date: "2026-06-17"
-description: "InsureBench V1 is ready: a public benchmark for evaluating model plus harness combinations on insurance work, with deeper runs across more tasks and a wider selection of industry models."
+description: "InsureBench V1 is live — a public benchmark scoring model-plus-harness combinations on insurance work. The headline finding: the best model depends on the job, and a low-cost model beat the frontier on actuarial tasks at roughly 1/400th the cost."
 author: "Don Seibert"
 tags: ["ai", "benchmarks", "harness", "underwriting", "insurebench"]
 image: "/images/blog/insurebench-preliminary.png"
@@ -15,19 +15,17 @@ hideHeroImage: true
   <a href="https://insurebench.insure-thing.com" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex', alignItems:'center', gap:'0.5rem', background:'#c41e2a', color:'#fff', padding:'0.625rem 1.5rem', borderRadius:'9999px', fontSize:'0.875rem', fontWeight:500, textDecoration:'none'}}>Explore InsureBench V1 <span aria-hidden="true">→</span></a>
 </div>
 
-InsureBench V1 is ready for release.
+InsureBench V1 is live: a public benchmark for evaluating model-plus-harness combinations on insurance work — claims reasoning, actuarial analysis, underwriting review, coverage questions, document reading, forms, and workflow judgment.
 
-It is a public benchmark for evaluating model plus harness combinations on insurance work: claims reasoning, actuarial analysis, underwriting review, coverage questions, document reading, forms, and workflow judgment.
+The clearest result is that the best model depends on the job. Mimo v2.5 was the strongest system we tested on actuarial tasks, ahead of the frontier models in that slice at roughly 1/400th of the cost. Gemini 3.5 Flash Low did well on claims reasoning despite weaker actuarial scores. Nemotron led the tested claims set. None of these are permanent rankings, but they all point one way: no single model wins everything.
 
-The emphasis is practical deployment. We are not trying to prove that the strongest frontier models are strong. They are. GPT 5.5 and Claude Opus are broadly ahead in the ways one would expect. The more useful question is where that extra capability matters, where it does not, and how much the harness around the model changes the answer.
+That is the point of the benchmark. We are not out to prove the strongest frontier models are strong — they are. GPT 5.5 and Claude Opus are broadly ahead, in the ways you would expect. The more useful question for anyone deploying AI is where that extra capability is worth its cost, where it is not, and how much the harness around the model changes the answer.
 
-V1 includes deeper runs across more tasks and a wider selection of industry models. The results show a pattern that should matter to insurance AI leaders: model choice is task-specific.
-
-In the current V1 results, Mimo v2.5 was especially strong on actuarial tasks, outperforming even the frontier models in that slice at roughly 1/400th of the cost. Gemini 3.5 Flash Low did well on claims reasoning despite weaker actuarial performance. Nemotron led the tested claims set. Those examples are not meant as permanent rankings. They are evidence for the larger point: the right model depends on the job.
+V1 adds deeper runs across more tasks and a wider selection of industry models. The task-specific pattern held up as the data grew.
 
 The harness matters too. A model with file reading, output repair, batching, domain context, or an escalation path is not the same system as the same model called through a plain API. InsureBench measures the combination because that is what gets deployed.
 
-The same is true for cost. The relevant unit is not the token. It is the completed business task, including tool calls, retries, hidden reasoning tokens, and any escalation needed to make the workflow reliable.
+The same is true for cost. The unit that matters is not the token but the completed business task — tool calls, retries, hidden reasoning tokens, and any escalation needed to keep the workflow reliable.
 
 The benchmark will continue to grow. We will add more questions, more models, more harnesses, and more task families. We are especially interested in repeated insurance workflows where cost, latency, control, and reliability matter: underwriting intake, claims triage, coverage checks, loss-run analysis, forms processing, agency management, and portfolio monitoring.
 
@@ -35,7 +33,7 @@ InsureBench is a lab project and a public benchmark. InsureThing will continue t
 
 We also help carriers, MGAs, brokers, and insurance technology teams apply these findings to their own operations. The public benchmark is a broad indicator. The production question is more specific: for this workflow, under these constraints, what is the cheapest and fastest AI system that is reliable enough, and how should it escalate when it is not?
 
-That is the work InsureBench is designed to make visible. The lab page has the current results and will be the main place we publish updates.
+The lab page has the current results, and it is where we will publish updates.
 
 <div style={{background:'#1a1a1f', borderRadius:'1rem', padding:'2rem 2.5rem', margin:'2rem 0 0'}}>
   <div style={{fontFamily:'ui-monospace,SFMono-Regular,Menlo,monospace', fontSize:'0.7rem', textTransform:'uppercase', letterSpacing:'0.2em', color:'#c41e2a', marginBottom:'0.75rem'}}>Live · Benchmark</div>
