@@ -1,7 +1,7 @@
 ---
 title: "An Inexpensive Model Is Sometimes All You Need"
 date: "2026-06-24"
-description: "A cheap, open, self-hostable model reads real insurance forms at ~96% for about $1.50 per 1,000 — and the mistakes it makes are the safe kind. The story is the harness, not the model."
+description: "A cheap, open, self-hostable model reads real insurance forms at ~96% for about $1.50 per 1,000. What makes it deployable isn't the model — it's the model-and-harness pairing, guided by a human expert who knows which errors are safe, which to refer, and which are dangerous."
 author: "Don Seibert"
 tags: ["ai", "benchmarks", "insurebench", "extraction", "harness"]
 image: "/images/blog/clerk/snl-form-labeled.png"
@@ -57,7 +57,7 @@ Almost every error lands in a bucket the workflow already handles — a lookup, 
 
 ## Design for the errors that matter
 
-Before you deploy, do the triage we did: sort the model's mistakes by **whether a check you already have can catch them**. For this process the split was clean.
+Before you deploy, do the triage we did: sort the model's mistakes by **whether a check you already have can catch them**. This part is human judgment, and it's the part you can't skip — an expert who knows the process decides which errors are safe, which can be referred, and which are dangerous. The model and harness do the reading; the SME defines what a *safe* failure even means here. For this process the split was clean.
 
 - **Most errors are reconcilable.** A policy number off by a digit, a carrier with odd spacing, a near-miss name — these all check against the **policy registry you already hold**. The read either snaps to a real record or it doesn't. Running the shipped harness's leftover errors through that one reconciliation step took first-pass accuracy from ~96% to effectively **100%** on the sample.
 - **Dates are the exception — and the one to engineer around.** A wrong date that still looks like a valid coverage period *passes* a registry check; the value is plausible, just wrong. This is the error that can actually cause harm — a no-loss period that appears to cover the lapse but doesn't. Give it a second, dedicated net: **validate every extracted date against the policy's known coverage-gap window**. And even with that net, treat a date discrepancy as the high-severity path that goes to a human — a miss there costs far more than a misread name.
@@ -99,7 +99,7 @@ A few representative reads, and how each is handled:
 
 ## The takeaway
 
-You don't need a frontier model — or a cloud you can't audit — to do this job. A **cheap, open, firewall-deployable** model reads these forms at ~96% for about **$1.50 per thousand**. But the number that makes it deployable isn't the accuracy — it's that the *same* model went from an honest **87% with four confident wrong dates** to **96% with none**, just by improving the harness around it. **Harness engineering — not a bigger model — is what moves an efficient LLM from "interesting demo" to "safe enough to run unattended."** Accuracy gets you in the room; engineered, well-understood failure modes are what let you actually ship.
+You don't need a frontier model — or a cloud you can't audit — to do this job. A **cheap, open, firewall-deployable** model reads these forms at ~96% for about **$1.50 per thousand**. But the number that makes it deployable isn't the accuracy — it's that the *same* model went from an honest **87% with four confident wrong dates** to **96% with none**, just by improving the harness around it. **What makes it deployable isn't a bigger model — it's the model-and-harness pairing, combined with a human expert's read on which errors can be referred, which are safe, and which are dangerous.** Accuracy gets you in the room; that pairing — and a clear-eyed map of how it fails — is what lets you actually ship.
 
 <div style={{background:'#1a1a1f', borderRadius:'1rem', padding:'2rem 2.5rem', margin:'2.5rem 0 0'}}>
   <div style={{fontFamily:'ui-monospace,SFMono-Regular,Menlo,monospace', fontSize:'0.7rem', textTransform:'uppercase', letterSpacing:'0.2em', color:'#c41e2a', marginBottom:'0.75rem'}}>Live · Benchmark</div>
