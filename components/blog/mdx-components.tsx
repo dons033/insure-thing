@@ -1,6 +1,12 @@
 import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
 import TokensVenn from "@/components/blog/tokens-venn";
+import {
+  ClerkStatCards,
+  CostAccuracyScatter,
+  HarnessLadder,
+  SampleForms,
+} from "@/components/blog/clerk-figures";
 
 export const mdxComponents: MDXComponents = {
   a: ({ href, children, ...props }) => {
@@ -18,4 +24,8 @@ export const mdxComponents: MDXComponents = {
     );
   },
   TokensVenn,
+  ClerkStatCards,
+  CostAccuracyScatter,
+  HarnessLadder,
+  SampleForms,
 };

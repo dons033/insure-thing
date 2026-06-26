@@ -287,6 +287,34 @@ table {
   padding: 0;
 }
 
+.prose-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-block: 1.6em;
+  font-size: 0.95rem;
+}
+
+.prose-article thead th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.prose-article tbody td {
+  padding: 0.6em 0.75em;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.prose-article tbody tr:last-child td {
+  border-bottom: none;
+}
+
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }

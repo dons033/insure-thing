@@ -1,0 +1,113 @@
+---
+title: "The $1.50 Clerk: A Cheap Open Model That Reads Insurance Forms — and Fails Safely"
+date: "2026-06-24"
+description: "A cheap, open, self-hostable model reads real insurance forms at ~96% for about $1.50 per 1,000 — and the mistakes it makes are the safe kind. The story is the harness, not the model."
+author: "Don Seibert"
+tags: ["ai", "benchmarks", "insurebench", "extraction", "harness"]
+image: "/images/blog/clerk/snl-form-labeled.png"
+hideHeroImage: true
+---
+
+"Is this AI accurate enough to deploy?" is the wrong question for a lot of back-office insurance work. The better one: **when it's wrong, how is it wrong — and can the workflow catch it?**
+
+We tested a **Statement of No Loss** reader — pull the named insured, policy number, carrier, dates, and signature off a scanned form — on 175 synthetic forms spanning clean scans to heavily degraded ones, three layouts, and four date formats. The contestant: **MiMo-V2.5**, a cheap open-weights multimodal model, paired with a layout-aware OCR-assist harness. No fine-tuning.
+
+<ClerkStatCards />
+
+## Cost vs. accuracy: the cheap field clears the bar
+
+<CostAccuracyScatter />
+
+Two things jump out. The **multimodal models** (which look at the image) cluster at 90–96%; **text-only models** reading the same OCR text cap around 80% — the image carries layout and signature signal that flattened text loses. And **gemma-4 looks like the value pick** — 92% at $0.58/1k — until you look at the error *types*: on the very same harness, gemma invented dates on blank or illegible fields, exactly where MiMo correctly left them blank or flagged them unreadable. Cheaper, but it fails in the dangerous direction. MiMo buys the top accuracy points *and* the safe failure mode.
+
+## Cheaper per token, pricier per task
+
+Hy3 looks like a bargain on the price sheet — its tokens cost less than MiMo's. But it's a *reasoning* model, and on this task it burns ~3× as many tokens thinking. The per-token saving flips into a per-task *premium* — for a lower score. All that deliberation isn't buying anything here.
+
+| model | Price / output token | Tokens generated / form † | Cost / 1,000 forms | Accuracy |
+| --- | --- | --- | --- | --- |
+| **Hy3** (text) | **$0.21** — cheaper | ~6,800 | **$2.12** | 80% |
+| **MiMo** | $0.28 | ~2,050 | **$1.48** | 96% |
+
+<p style={{fontSize:'13px',color:'var(--color-muted)'}}>† output + reasoning tokens. Hy3 costs ~25% less per token yet ~40% more per form — it generates 3× the tokens to get there. Cheaper-per-token is not cheaper-per-task.</p>
+
+## It's the harness, not (just) the model
+
+Here's the part most teams skip. We held the model fixed — same MiMo, same 175 forms — and changed only the *harness* around it: how the document is presented, whether the model is told to flag what it can't read, and how OCR is fed in. Headline accuracy barely moved. **How it fails moved a lot.**
+
+<HarnessLadder />
+
+Start with the bare model — its raw output, graded as-is, the way you'd score it before building any interpretation layer. It reads **87%**. (You only reach ~94% once you bolt on answer-recovery to clean up its output — but that cleanup is itself harness work, so it doesn't belong in the "no harness" column.) Underneath that 87% sit **four confident wrong dates** — including one form where it *swapped* the cancellation and signing dates, misstating the exact coverage window the form exists to certify. Nothing downstream catches a date that looks valid but isn't.
+
+The single cheapest harness layer — just telling the model to flag a field it can't read instead of guessing — takes those **four dangerous errors to zero**. It barely touches the headline number; it converts a confident wrong answer into an honest "I can't read this," which routes to a human. Better OCR and layout anchoring on top then grind the remaining (benign) error rate down to ~4%. And it really is *quality*, not just *more* — so **test the pairing; don't assume another layer helps**. A naive OCR pass we tried actually *reintroduced* a hallucinated date (the model trusted a bad transcription); only the version that kept the image authoritative stayed clean. The right harness even depends on the model: on other InsureBench tasks, a domain skill that *lifted* a small model *dragged down* a stronger one that didn't need the scaffolding. It's the model-and-harness *combination* that counts, not either alone. **The arc from "unacceptable" to "deployable" here is harness engineering, not a bigger model.**
+
+## The mistakes are referrals, not failures
+
+Now the part that matters for deployment. We classified every one of MiMo's misses by *what a clerk would do with it*:
+
+| What went wrong | What happens to it |
+| --- | --- |
+| Policy # off by a digit (`CPP-202-…`) | Snap to the real policy via a registry lookup ✓ |
+| Field too degraded to read | Model says `unreadable` → **send back for a legible copy** ✓ |
+| Garbled signature | Low confidence → **refer to a human** ✓ |
+| Date written as "12:01 AM ON Aug 6, 2025" | Formatting, not a wrong value — normalized ✓ |
+| Carrier read from the letterhead | It was right — the answer key was wrong ✓ |
+
+Almost every error lands in a bucket the workflow already handles — a lookup, a resubmission request, or a referral. The model's willingness to say *"I can't read this"* instead of guessing is the feature, not the bug.
+
+## Design for the errors that matter
+
+Before you deploy, do the triage we did: sort the model's mistakes by **whether a check you already have can catch them**. For this process the split was clean.
+
+- **Most errors are reconcilable.** A policy number off by a digit, a carrier with odd spacing, a near-miss name — these all check against the **policy registry you already hold**. The read either snaps to a real record or it doesn't. Running the shipped harness's leftover errors through that one reconciliation step took first-pass accuracy from ~96% to effectively **100%** on the sample.
+- **Dates are the exception — and the one to engineer around.** A wrong date that still looks like a valid coverage period *passes* a registry check; the value is plausible, just wrong. This is the error that can actually cause harm — a no-loss period that appears to cover the lapse but doesn't. Give it a second, dedicated net: **validate every extracted date against the policy's known coverage-gap window**. And even with that net, treat a date discrepancy as the high-severity path that goes to a human — a miss there costs far more than a misread name.
+
+This is why the harness's calibration layer earns its keep: the cheapest way to survive the dangerous class is to stop the model from *committing* a confident wrong date in the first place. On the shipped harness it did that **zero** times across 175 forms; the bare model did it four. Defense in depth — calibrated extraction, then registry reconciliation, then a date-vs-coverage-gap check — is what turns "~96% accurate" into "safe to run unattended."
+
+## Latency: plan for the tail, not the average
+
+Speed isn't the average — it's the worst case you have to live with. On a shared public endpoint, the same form that usually takes MiMo about 47 seconds occasionally took **19 minutes**. gemma was far steadier; reasoning models pay for their thinking in a long, unpredictable tail.
+
+| model (shipped vision harness) | median | p95 | slowest form |
+| --- | --- | --- | --- |
+| **gemma-4** | 14s | 41s | 105s |
+| **MiMo** | 47s | 287s | **1,125s** |
+| nemotron nano-omni (free) | 12s | 107s | 381s |
+
+<p style={{fontSize:'13px',color:'var(--color-muted)'}}>The median is fine across the board; the <em>tail</em> is the deployment risk — on a shared endpoint you can't predict which form draws the 19-minute wait.</p>
+
+The good news is the whole point of using *open* models: that tail is a provisioning choice, not a property of the model. You aren't stuck with one vendor's shared endpoint. Three ways to take control, most to least hands-on:
+
+- **Bring it in-house.** Your hardware, your servers — total control of latency and data, nothing leaves your walls. The price is real capital expenditure and the technical depth to run GPUs in production.
+- **Dedicated managed hosting.** The same weights on a secure cloud with a contracted service level — predictable latency without owning the metal. The middle path most teams settle on.
+- **Spread across providers.** An open model is served by several vendors at once; route to whichever is fast right now and fail over when one slows down. That's optionality a closed, single-vendor model simply can't offer.
+
+A closed frontier model gives you one endpoint and one SLA — take it or leave it. An open model lets you pick the deployment that matches the latency, control, and data-handling your process actually needs.
+
+## See for yourself
+
+<SampleForms />
+
+A few representative reads, and how each is handled:
+
+| Read | Truth | Disposition |
+| --- | --- | --- |
+| `CPP-202-535075` | `CPP-2023-535075` | 1 char off → registry snap |
+| `policy: unreadable` | (illegible on scan) | return for legible copy |
+| `Heviol Kuwaiski` | `Hector Kowalski` | low-confidence → refer |
+| `carrier: Granite Bay Casualty` | key said `blank` | model right, key bug |
+
+## The takeaway
+
+You don't need a frontier model — or a cloud you can't audit — to do this job. A **cheap, open, firewall-deployable** model reads these forms at ~96% for about **$1.50 per thousand**. But the number that makes it deployable isn't the accuracy — it's that the *same* model went from an honest **87% with four confident wrong dates** to **96% with none**, just by improving the harness around it. **Harness engineering — not a bigger model — is what moves an efficient LLM from "interesting demo" to "safe enough to run unattended."** Accuracy gets you in the room; engineered, well-understood failure modes are what let you actually ship.
+
+<div style={{background:'#1a1a1f', borderRadius:'1rem', padding:'2rem 2.5rem', margin:'2.5rem 0 0'}}>
+  <div style={{fontFamily:'ui-monospace,SFMono-Regular,Menlo,monospace', fontSize:'0.7rem', textTransform:'uppercase', letterSpacing:'0.2em', color:'#c41e2a', marginBottom:'0.75rem'}}>Live · Benchmark</div>
+  <div style={{fontFamily:'var(--font-heading)', fontSize:'1.25rem', fontWeight:400, color:'#fff', marginBottom:'0.5rem', letterSpacing:'-0.01em', lineHeight:1.2}}>See where cheap models clear the bar — and where they don't.</div>
+  <div style={{color:'rgba(230,228,220,0.65)', lineHeight:1.65, fontSize:'0.875rem', marginBottom:'1.25rem'}}>InsureBench scores model-plus-harness combinations on real insurance work — accuracy and true cost per task, filterable by capability and difficulty.</div>
+  <a href="https://insurebench.insure-thing.com" target="_blank" rel="noopener noreferrer" style={{display:'inline-flex', alignItems:'center', gap:'0.5rem', background:'#c41e2a', color:'#fff', padding:'0.5rem 1.25rem', borderRadius:'9999px', fontSize:'0.875rem', fontWeight:500, textDecoration:'none'}}>Explore InsureBench <span aria-hidden="true">→</span></a>
+</div>
+
+<div style={{fontSize:'13px', color:'var(--color-muted)', borderTop:'1px solid var(--color-border)', marginTop:'2.5em', paddingTop:'1em', lineHeight:1.55}}>
+<strong>Methodology:</strong> InsureBench, a synthetic insurance benchmark (forms are generated, not real; not affiliated with ACORD). 175 Statement-of-No-Loss extraction tasks, single run per model, objective field scoring with value-normalized dates. The harness ladder holds the model (MiMo) fixed and varies only the harness. The bare-model rung is scored on the model's raw output with no answer-recovery — the honest floor you'd get before building an interpretation layer (87%); the harnessed rungs credit the interpretation layer they actually include (bolting that recovery onto the bare model alone would itself read ~94%). Cost is metered API pricing; the open models are self-hostable, where per-call cost is replaced by your own compute. "Dangerous" = a self-consistent wrong value a downstream check can't catch (here, a wrong or invented date).
+</div>
