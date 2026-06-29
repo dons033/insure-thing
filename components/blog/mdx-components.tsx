@@ -7,6 +7,10 @@ import {
   HarnessLadder,
   SampleForms,
 } from "@/components/blog/clerk-figures";
+import {
+  SweBenchProBars,
+  SweBenchProTimeline,
+} from "@/components/blog/fence-figures";
 
 export const mdxComponents: MDXComponents = {
   a: ({ href, children, ...props }) => {
@@ -28,4 +32,6 @@ export const mdxComponents: MDXComponents = {
   CostAccuracyScatter,
   HarnessLadder,
   SampleForms,
+  SweBenchProBars,
+  SweBenchProTimeline,
 };

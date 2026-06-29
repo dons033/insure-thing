@@ -1,0 +1,29 @@
+---
+title: "The Fence Is Around the Wrong Models"
+date: "2026-06-26"
+description: "Chinese labs and hybrid systems are catching the flagship US models on the coding leaderboards. Washington is slowing its own labs at the same time."
+author: "Don Seibert"
+tags: ["ai", "policy", "benchmarks", "open-models"]
+---
+
+On the hardest public coding benchmark, the top usable score belongs to a Japanese orchestration system. Below the best available US model, Opus 4.8, the field runs mostly Chinese: GLM-5.2, Qwen, MiniMax, and Kimi all match or beat OpenAI's GPT-5.5. The single highest score is another US model, Claude Fable 5, that no American can run, because the government ordered it offline. Non-US systems are climbing past the flagship US models while Washington slows its own labs.
+
+<SweBenchProBars />
+
+Sacks puts the US lead over China at six to nine months. The coding benchmarks put it at two to three, and closing: GLM-5.2 now outscores GPT-5.5 on coding and knowledge, trailing only on agentic tool use, at a sixth to a seventh of the price. The narrowing is not all organic: Anthropic told the Senate that roughly 25,000 fraudulent accounts ran 28.8 million Claude sessions this spring to distill its models into rivals, tied to Alibaba's Qwen team.
+
+On June 9, Anthropic shipped Fable 5 and Mythos 5. Three days later the Commerce Department ordered both offline worldwide. The security concern was real: the NSA director reportedly told a Senate committee that Mythos found vulnerabilities in nearly all of the agency's classified systems within hours. Two weeks on, OpenAI released GPT-5.6 as a gated preview, the government clearing customers one at a time. A new executive order asks labs to submit frontier models for classified review up to 30 days before release.
+
+The available US frontier sits flat at Opus 4.8 while China's curve climbs. Each month a model stays gated, GLM closes about two points. The delay never lowers the US score; it gives the competitor another month to climb underneath it.
+
+<SweBenchProTimeline />
+
+The slowdown leaves the danger intact. **A capable attacker does not need the fenced models.** The strongest open weights are Chinese, and an open model needs no jailbreak: its guardrails are a file you delete, and you can fine-tune it on exploit data until it finds vulnerabilities on command. The closed model an attacker would otherwise use logs the session and can revoke the account; the open model on the attacker's own hardware does neither. The order removes the tool a defender can be trusted with and leaves the one an attacker prefers.
+
+Closing the gate funded the climb over the fence, because capability no longer lives in one model you can switch off. Within weeks of the ban, three groups shipped products that assemble frontier-level performance from cheaper models instead of training one. OpenRouter's Fusion fans a prompt across a panel and synthesizes the answers; a budget panel beat solo GPT-5.5 and solo Opus 4.8 and came within a point of Fable at half the cost, and the strongest panel, built on Fable itself, beat solo Fable. Tokyo's Sakana shipped Fugu, an orchestrator that routes across a swappable pool and advertises "frontier capability without the risk of export controls." Its top tier posts 73.7 on SWE-bench Pro, above Opus 4.8 and behind only the fenced-off Fable, leaving the highest available coding score an orchestrator's. In Beijing, the founder of 360, a member of China's top political body, demonstrated Tulongfeng, a Mythos-equivalent vulnerability finder built the same way; he conceded his base models trail by twenty to thirty percent and built it anyway. The cyber capability the order fenced off, China rebuilt from parts no one fenced, in the open.
+
+The market has read the lesson: firms that bought API access learned that a federal order can revoke it overnight, with no appeal. For a regulated buyer that is a new category of risk, and it points one way, to models you host yourself, that no one can switch off. The attack moves to other infrastructure, and the paying customer moves with it: every enterprise that leaves for Sakana, a Chinese open model, or its own hardware pulls revenue from the labs the controls were meant to protect, and that revenue funds the next US model. Cost had already begun this shift; revocation risk and a Chinese open frontier now accelerate it.
+
+The voices that spent two years warning that overregulation would lose the race to China have gone quiet. Sacks, who built that case, is now the recall's chief public advocate. The contradiction, beating China by deregulating while throttling the leading US models, goes unremarked.
+
+The capability is loose and cannot be recalled. Slowing the labs that build the controllable version buys no security, because the attacker's tools sit outside the fence; it forfeits the commercial lead now and the revenue that funds the lead later. The threat is already moving, and US policy is slowing the only models built to be governed.
