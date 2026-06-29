@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import {
   formatDate,
   getAllPostSlugs,
@@ -126,7 +127,11 @@ export default async function BlogPostPage({
       </div>
 
       <div className="prose-article">
-        <MDXRemote source={post.content} components={mdxComponents} />
+        <MDXRemote
+          source={post.content}
+          components={mdxComponents}
+          options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+        />
       </div>
 
       <section className="mt-16 pt-10 border-t border-[color:var(--color-border)]">
