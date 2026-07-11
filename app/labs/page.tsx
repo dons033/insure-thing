@@ -4,74 +4,88 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Labs",
   description:
-    "Public benchmarks, interactive demos, and experiments in AI-driven insurance workflows.",
+    "Working insurance benchmarks, production prototypes, and live experiments that demonstrate how InsureThing evaluates and builds real systems.",
 };
 
 export default function LabsPage() {
   return (
     <>
       <section className="border-b border-[color:var(--color-border)]">
-        <div className="mx-auto max-w-[1200px] px-6 lg:px-10 py-20 md:py-28">
-          <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)] mb-6">
+        <div className="mx-auto max-w-[1200px] px-6 py-20 md:py-28 lg:px-10">
+          <div className="mb-6 font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)]">
             Labs
           </div>
-          <h1 className="font-serif text-4xl md:text-6xl leading-[1.05] max-w-4xl">
-            This is where we build things.
+          <h1 className="max-w-4xl font-serif text-4xl leading-[1.05] md:text-6xl">
+            Working systems make the argument concrete.
           </h1>
-          <p className="mt-8 text-lg text-[color:var(--color-muted)] max-w-2xl">
-            Public benchmarks, interactive demos, proof-of-concept tools, and experiments in AI-driven insurance workflows. Check back, or subscribe to the blog for updates.
+          <p className="mt-8 max-w-3xl text-lg leading-relaxed text-[color:var(--color-muted)]">
+            Labs contains public benchmarks, production prototypes, and live
+            experiments. Each project tests an idea against actual insurance
+            work—and shows the controls, limitations, and economics alongside
+            the result.
           </p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1200px] px-6 lg:px-10 py-20">
-        <div className="grid gap-6 md:grid-cols-2">
+      <section className="mx-auto max-w-[1200px] px-6 py-20 lg:px-10">
+        <div className="grid gap-8 md:grid-cols-2">
           <a
             href="https://insurebench.insure-thing.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="group rounded-2xl border border-[color:var(--color-accent)] bg-[color:var(--color-surface)] p-8 hover:bg-[color:var(--color-accent-soft)] transition-colors md:col-span-2"
+            className="group border-t-2 border-[color:var(--color-accent)] pt-7 md:col-span-2"
           >
-            <div className="flex items-center gap-3 mb-3">
-              <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)]">
-                Live · Benchmark
+            <div className="grid gap-8 md:grid-cols-[0.8fr_1.2fr]">
+              <div>
+                <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)]">
+                  Public benchmark
+                </div>
+                <h2 className="mt-4 font-serif text-3xl transition-colors group-hover:text-[color:var(--color-accent)]">
+                  InsureBench
+                </h2>
+                <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium group-hover:text-[color:var(--color-accent)]">
+                  Explore the benchmark <span aria-hidden="true">↗</span>
+                </div>
               </div>
-              <span className="font-mono text-[10px] uppercase tracking-[0.15em] bg-[color:var(--color-accent)] text-white px-2 py-0.5 rounded-full">
-                New
-              </span>
-            </div>
-            <h2 className="font-serif text-3xl mb-3 group-hover:text-[color:var(--color-accent)] transition-colors">
-              InsureBench
-            </h2>
-            <p className="text-[15px] leading-relaxed text-[color:var(--color-muted)] mb-6 max-w-3xl">
-              A public benchmark and lab project for evaluating model plus harness combinations on
-              insurance work. InsureBench tests claims, underwriting, actuarial, coverage, forms,
-              document reading, and workflow judgment tasks, with results framed around practical
-              deployment: which setup is reliable enough, fast enough, and economical enough for the
-              job.
-            </p>
-            <div className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--color-foreground)] group-hover:text-[color:var(--color-accent)] transition-colors">
-              Explore the benchmark
-              <span aria-hidden="true">→</span>
+              <div>
+                <p className="text-lg leading-relaxed text-[color:var(--color-muted)]">
+                  Evaluates model-plus-harness combinations on insurance work by
+                  quality and cost. The practical question is not which model
+                  wins overall, but which setup clears the required accuracy bar
+                  for each capability at an economical cost.
+                </p>
+                <div className="mt-6 border-l-2 border-[color:var(--color-accent)] pl-4 text-sm leading-relaxed">
+                  <span className="font-medium">What this demonstrates:</span>{" "}
+                  task-specific model evaluation, deployment economics, and a
+                  public evidence boundary that does not expose private prompts,
+                  answer keys, or model outputs.
+                </div>
+              </div>
             </div>
           </a>
 
           <Link
             href="/labs/wc-underwriting"
-            className="group rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-8 hover:border-[color:var(--color-accent)] transition-colors"
+            className="group border-t border-[color:var(--color-border)] pt-7 transition-colors hover:border-[color:var(--color-accent)]"
           >
-            <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)] mb-3">
-              Live demo
+            <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)]">
+              Production prototype
             </div>
-            <h2 className="font-serif text-2xl mb-3 group-hover:text-[color:var(--color-accent)] transition-colors">
-              CA Workers&rsquo; Comp Pre-Clearance
+            <h2 className="mt-4 font-serif text-2xl transition-colors group-hover:text-[color:var(--color-accent)]">
+              CA Workers&apos; Comp Pre-Clearance
             </h2>
-            <p className="text-[15px] leading-relaxed text-[color:var(--color-muted)] mb-6">
-              Brokers email an inquiry. The system pre-fills from CSLB, BuildZoom, and CA SOS, runs opinionated rules, and replies with a quotable / refer / decline answer plus the documentation needed to move forward. 436 contractors in the test bed; proof of concept for a fuller underwriting workstation.
+            <p className="mt-4 leading-relaxed text-[color:var(--color-muted)]">
+              A broker inquiry becomes a clear, refer, or decline answer with
+              public-data prefill, underwriting rules, documentation requests,
+              provenance, and human review.
             </p>
-            <div className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--color-foreground)] group-hover:text-[color:var(--color-accent)] transition-colors">
-              See the demo
-              <span aria-hidden="true">→</span>
+            <div className="mt-6 border-l-2 border-[color:var(--color-accent)] pl-4 text-sm leading-relaxed">
+              <span className="font-medium">What this demonstrates:</span>{" "}
+              auditable automation, data provenance, broker communication, and
+              underwriting judgment in one operating loop.
+            </div>
+            <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium group-hover:text-[color:var(--color-accent)]">
+              Read the case study <span aria-hidden="true">→</span>
             </div>
           </Link>
 
@@ -79,41 +93,45 @@ export default function LabsPage() {
             href="https://safetyhound.insure-thing.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="group rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-8 hover:border-[color:var(--color-accent)] transition-colors"
+            className="group border-t border-[color:var(--color-border)] pt-7 transition-colors hover:border-[color:var(--color-accent)]"
           >
-            <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)] mb-3">
-              Live demo
+            <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)]">
+              Live experiment
             </div>
-            <h2 className="font-serif text-2xl mb-3 group-hover:text-[color:var(--color-accent)] transition-colors">
+            <h2 className="mt-4 font-serif text-2xl transition-colors group-hover:text-[color:var(--color-accent)]">
               Safety Hound
             </h2>
-            <p className="text-[15px] leading-relaxed text-[color:var(--color-muted)] mb-6">
-              A side-scrolling platformer that teaches workplace safety through real workers&rsquo; comp mechanics. Run a hard-hatted dog through Construction, Kitchen, and Warehouse shifts &mdash; equipping PPE, locking out machinery, mopping spills, clearing blocked fire exits &mdash; before each hazard becomes a CLAIM. The score is an Experience Modification Rate. Real OSHA stats in the post-shift debrief. Global leaderboard ranks by lowest EMR.
+            <p className="mt-4 leading-relaxed text-[color:var(--color-muted)]">
+              A side-scrolling game that teaches workplace safety through real
+              workers&apos; compensation mechanics, including PPE, hazards, claims,
+              OSHA facts, and experience modification.
             </p>
-            <div className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--color-foreground)] group-hover:text-[color:var(--color-accent)] transition-colors">
-              Play the demo
-              <span aria-hidden="true">→</span>
+            <div className="mt-6 border-l-2 border-[color:var(--color-accent)] pl-4 text-sm leading-relaxed">
+              <span className="font-medium">What this demonstrates:</span>{" "}
+              translating technical insurance concepts into an accessible,
+              engaging training experience.
+            </div>
+            <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium group-hover:text-[color:var(--color-accent)]">
+              Play the experiment <span aria-hidden="true">↗</span>
             </div>
           </a>
+        </div>
 
-          <div className="rounded-2xl border border-dashed border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-8 flex flex-col md:col-span-2">
-            <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted)] mb-3">
-              Next on the workbench
-            </div>
-            <h2 className="font-serif text-2xl mb-3 text-[color:var(--color-muted)]">
-              More demos coming
+        <div className="mt-20 grid gap-8 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-10 md:grid-cols-[1fr_auto] md:items-center md:p-14">
+          <div>
+            <h2 className="max-w-2xl font-serif text-2xl md:text-3xl">
+              Have an insurance task that should be tested or built?
             </h2>
-            <p className="text-[15px] leading-relaxed text-[color:var(--color-muted)] mb-6 flex-1">
-              Other vertical slices of insurance AI work are next on the workbench: submission triage from broker email, loss-ratio diagnostics, claim-leakage signals. The blog is the best place to follow along.
+            <p className="mt-4 text-[color:var(--color-muted)]">
+              Labs is evidence of the work—not a separate product catalog.
             </p>
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 border border-[color:var(--color-border)] px-5 py-2.5 rounded-full text-sm font-medium hover:border-[color:var(--color-accent)] hover:text-[color:var(--color-accent)] transition-colors self-start"
-            >
-              Read the blog
-              <span aria-hidden="true">→</span>
-            </Link>
           </div>
+          <Link
+            href="/contact"
+            className="inline-flex items-center gap-2 rounded-full bg-[color:var(--color-foreground)] px-6 py-3 text-sm font-medium text-[color:var(--color-background)] transition-colors hover:bg-[color:var(--color-accent)]"
+          >
+            Start a conversation <span aria-hidden="true">→</span>
+          </Link>
         </div>
       </section>
     </>

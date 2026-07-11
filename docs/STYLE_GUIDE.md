@@ -140,7 +140,7 @@ Concentric rings + sweep is the brand's graphic device for **system state** — 
 
 - **Loading** (`.radar-loading`): 40px disc, hairline concentric rings, a rotating 80° accent sweep. CSS-only (`conic-gradient` + `radar-sweep` keyframes, 2.4s linear). Use wherever data is being fetched.
 - **Empty state** (`.radar-empty`): 72px static rings with one faded blip, muted copy beneath — *"No signal yet."* plus one sentence of what would populate the view. Use for empty tables, unselected detail panes, no-data tabs.
-- **Restraint:** at most **one** radar element per view. The motif marks absence and waiting; it never decorates populated content, never sits behind text, and never encodes data — with one exception: a polar/radar *chart* may serve as a view's single radar element when the data itself is radial (e.g. capability routing).
+- **Restraint:** at most **one** radar element per view. The motif marks absence and waiting; it never sits behind text and never encodes data. Two exceptions are allowed: the homepage may use one self-contained radar illustration beside (not beneath) the hero copy, and a polar/radar *chart* may serve as a view's single radar element when the data itself is radial (e.g. capability routing). Honor `prefers-reduced-motion` for any animated treatment.
 
 ---
 

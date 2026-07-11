@@ -6,7 +6,7 @@ import { PostCard } from "@/components/blog/post-card";
 export const metadata: Metadata = {
   title: "Blog",
   description:
-    "Don Seibert on the connections between insurance, technology, and society. Trends, deep dives, and the practical challenges of real-world implementation.",
+    "Essays and field notes on underwriting, insurance products, AI systems, and the economics of putting them into production.",
 };
 
 export default function BlogIndexPage() {
@@ -21,10 +21,13 @@ export default function BlogIndexPage() {
               Blog
             </div>
             <h1 className="font-serif text-4xl md:text-5xl leading-[1.1] mb-6">
-              Where insurance, technology, and society meet.
+              Field notes on insurance systems and the work behind them.
             </h1>
             <p className="text-lg text-[color:var(--color-muted)] max-w-xl">
-              Welcome to my blog, where I explore the connections between insurance, technology, and society. I&rsquo;m fascinated by how technological changes reshape society and, professionally, how they transform insurance. This blog attempts to bridge all three, combining my thoughts on big trends with nerdy deep dives into the practical challenges of real world implementation.
+              Essays on underwriting, insurance products, AI systems, and the
+              economics of putting them into production—plus occasional notes
+              on the technology and policy shifts changing the industry around
+              them.
             </p>
           </div>
           <div className="relative aspect-square w-full max-w-md justify-self-end">

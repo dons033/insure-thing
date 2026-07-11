@@ -1,4 +1,3 @@
-/* eslint-disable react/no-danger */
 import type { CSSProperties } from "react";
 
 // Figures for "The Fence Is Around the Wrong Models". The two charts are the

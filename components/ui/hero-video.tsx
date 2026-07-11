@@ -12,8 +12,10 @@ export function HeroVideo() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let animationId: number;
+    let animationId: number | null = null;
     let angle = 0;
+    let isVisible = true;
+    let redraw = () => {};
 
     // Resolve the accent token to an rgb triple the canvas API can use;
     // re-read when the color scheme flips so dark mode stays on-token.
@@ -23,8 +25,10 @@ export function HeroVideo() {
     };
     let accent = readAccent();
     const scheme = window.matchMedia("(prefers-color-scheme: dark)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const onSchemeChange = () => {
       accent = readAccent();
+      redraw();
     };
     scheme.addEventListener("change", onSchemeChange);
     const themeObserver = new MutationObserver(onSchemeChange);
@@ -138,16 +142,50 @@ export function HeroVideo() {
         }
       }
 
-      angle += 0.008;
-      animationId = requestAnimationFrame(draw);
+    };
+    redraw = draw;
+
+    const stop = () => {
+      if (animationId !== null) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
     };
 
-    draw();
+    const animate = () => {
+      draw();
+      angle += 0.008;
+      animationId = requestAnimationFrame(animate);
+    };
+
+    const syncAnimation = () => {
+      stop();
+      if (isVisible && !reducedMotion.matches) {
+        animationId = requestAnimationFrame(animate);
+      } else {
+        draw();
+      }
+    };
+
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        syncAnimation();
+      },
+      { threshold: 0.05 },
+    );
+
+    const onMotionChange = () => syncAnimation();
+    reducedMotion.addEventListener("change", onMotionChange);
+    visibilityObserver.observe(canvas);
+    syncAnimation();
 
     return () => {
-      cancelAnimationFrame(animationId);
+      stop();
       window.removeEventListener("resize", resize);
       scheme.removeEventListener("change", onSchemeChange);
+      reducedMotion.removeEventListener("change", onMotionChange);
+      visibilityObserver.disconnect();
       themeObserver.disconnect();
     };
   }, []);
@@ -156,7 +194,7 @@ export function HeroVideo() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="absolute inset-0 z-0 w-full h-full text-[color:var(--color-accent)]"
+      className="absolute inset-0 h-full w-full text-[color:var(--color-accent)]"
     />
   );
 }
