@@ -17,7 +17,11 @@ export function PostCard({ post }: { post: Post }) {
               alt=""
               fill
               sizes="(min-width: 768px) 180px, 100vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+              className={`${
+                post.frontmatter.cardImageFit === "contain"
+                  ? "object-contain p-2"
+                  : "object-cover"
+              } transition-transform duration-500 group-hover:scale-[1.03]`}
             />
           </div>
         )}
@@ -32,6 +36,11 @@ export function PostCard({ post }: { post: Post }) {
           <h2 className="font-serif text-2xl md:text-3xl leading-tight mb-3 group-hover:text-[color:var(--color-accent)] transition-colors">
             {post.frontmatter.title}
           </h2>
+          {post.frontmatter.cardNote && (
+            <p className="mb-3 border-l-2 border-[color:var(--color-accent)] pl-3 font-serif text-lg leading-snug text-[color:var(--color-foreground)]">
+              {post.frontmatter.cardNote}
+            </p>
+          )}
           <p className="text-[color:var(--color-muted)] text-base">
             {post.frontmatter.description}
           </p>

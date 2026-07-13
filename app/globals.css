@@ -289,6 +289,9 @@ table {
 
 .prose-article table {
   width: 100%;
+  max-width: 100%;
+  display: block;
+  overflow-x: auto;
   border-collapse: collapse;
   margin-block: 1.6em;
   font-size: 0.95rem;
@@ -313,6 +316,60 @@ table {
 
 .prose-article tbody tr:last-child td {
   border-bottom: none;
+}
+
+.prose-article .figure-caption {
+  margin-top: 0.65rem;
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  font-style: normal;
+}
+
+.prose-article .article-tldr {
+  margin-block: 1.5rem;
+  padding: 1rem 1.1rem;
+  border-left: 3px solid var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.prose-article .article-tldr > strong {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+
+.prose-article .article-tldr ul {
+  margin-block: 0;
+}
+
+.prose-article details {
+  margin-block: 1.35rem;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-background) 94%, var(--color-accent) 6%);
+}
+
+.prose-article details > summary {
+  cursor: pointer;
+  padding: 0.9rem 1rem;
+  font-weight: 600;
+  list-style-position: inside;
+}
+
+.prose-article details[open] > summary {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.prose-article details > :not(summary) {
+  margin-inline: 1rem;
+}
+
+.prose-article details > table {
+  width: calc(100% - 2rem);
 }
 
 @keyframes fadeInUp {

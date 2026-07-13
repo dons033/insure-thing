@@ -1,0 +1,278 @@
+---
+title: "Can a Cheap Model Meet an Insurance SLA?"
+date: "2026-07-11"
+description: "I gave low-cost models actuarial methods, Python tools, operating rules, native tool delivery, and answer cleanup, then measured accuracy, completion, cost, and latency on repeated insurance tasks."
+author: "Don Seibert"
+tags: ["ai", "benchmarks", "insurebench", "harness", "tool-use"]
+image: "/images/blog/benchmark-rank-task-fit.png"
+hideHeroImage: true
+cardNote: "The result was interesting. How it happened is more important."
+cardImageFit: "contain"
+---
+
+I wanted to answer a practical question: could I make a cheap model accurate enough for an insurance workflow by giving it the right methods, tools, and controls?
+
+<aside className="article-tldr">
+<strong>TL;DR</strong>
+
+- A good harness can make a fast, low-cost model perform far above its no-tool baseline on a specific task.
+- Benchmarks, including InsureBench, are guideposts. Test the models and harnesses you plan to use on work that closely matches your own.
+- A harness is not once and done. Test, adjust, and test again.
+
+</aside>
+
+There is no single insurance service-level agreement, or SLA. A submission-triage system, a pricing workflow, and a nightly portfolio review need different levels of accuracy, completion, speed, and cost. The experiment was simpler: pick a defined set of repeated actuarial tasks and see how far a harness could move the result.
+
+The answer was yes on this task set. Gemma 4 went from 45 without help to 100 with a reference skill and native tools. GPT-OSS went from 95 to 100 while becoming cheaper and more predictable. Getting there took some trial and error, and the same harness did not work for every model.
+
+I tested four open-weight mixture-of-experts models. Their published sizes ranged from 26B to 310B total parameters, but from only about 4B to 15B active parameters per token. A mixture-of-experts model activates only part of its parameters for each token. Cheap here refers to API cost, not total model size.
+
+- [Gemma 4 26B A4B](https://huggingface.co/google/gemma-4-26B-A4B): 26B total, about 4B active
+- [GPT-OSS](https://openai.com/index/introducing-gpt-oss/): 117B total, 5.1B active
+- [DeepSeek V4 Flash](https://api-docs.deepseek.com/news/news260424/): 284B total, 13B active
+- [MiMo V2.5](https://huggingface.co/XiaomiMiMo/MiMo-V2.5): 310B total, 15B active
+
+![A diagram showing a low-cost model surrounded by an actuarial reference skill, Python sandbox, operating rules, native tool delivery, and answer cleanup. Gemma improves from 45 without the harness to 100 on completed actuarial tasks with the full harness.](/images/blog/benchmark-rank-task-fit.png)
+
+<p className="figure-caption">The model was only one part of the system. The measured result belonged to the complete harness.</p>
+
+## What went into the harness
+
+I use *harness* to mean everything between the task and a usable answer, including the model itself. This one had five parts.
+
+### 1. An actuarial reference skill
+
+Gemma received a short methods reference on actuarial analytics, which I call a skill. It covered method selection, chain-ladder mechanics, when to consider Bornhuetter-Ferguson, diagnostic patterns, and basic sanity checks.
+
+For example, a disturbance along a triangle diagonal points to a calendar-year effect. A frequency or severity change should be decomposed before it is attributed. Age-to-age factors on a cumulative paid triangle should not fall below 1.0 without a good explanation.
+
+The reference came from actuarial practice guidance, not from the test questions. We checked it against the answer vocabulary for 80 tasks and found no overlap. It supplied methods, not answers.
+
+It also had to be model-specific. Gemma scored 80 with native tools but no reference skill and 100 with both. The other models did not benefit. GPT-OSS, DeepSeek, and Mimo could do without it. On this set of tasks, loading the skill added input-token costs and sometimes hurt performance.
+
+### 2. A Python sandbox
+
+LLMs are good with language but unreliable at complex arithmetic. I gave each model access to a Python tool with much of the required math ready to go. NumPy, pandas, and chainladder were installed.
+
+The two-step rule was a practical dividing line. One or two simple operations usually do not justify a tool call. Longer calculations create more chances for transcription, rounding, and multiplication errors. Beyond two steps, the harness required Python.
+
+The tool ran in an isolated Python process with no network access and a stripped environment. The model wrote code, the harness ran it, and the result came back into the conversation. Triangle arithmetic happened in Python rather than in the model's internal reasoning.
+
+### 3. Rules for when and how to use the tool
+
+Offering a tool was not enough. Some models ignored it. The harness used four rules:
+
+1. Use Python first for any calculation longer than two steps.
+2. If the code fails, fix it and run it again. Do not repeat the same code or switch to mental arithmetic.
+3. Do not use Python for judgment questions that require reading the structure of a triangle.
+4. Put only the requested result in `final_answer`. Put calculations and qualifications in the explanation.
+
+The harness also supplied the required answer shape, using field names but no values. On the last allowed round, tools were disabled and the model had to answer. That prevented a model from calling tools until it ran out of budget.
+
+### 4. A delivery method the model understood
+
+I offered the same Python tool in two ways:
+
+1. A JSON-text dialect such as `{"action": "python_exec", ...}`.
+2. The provider's native function-calling interface.
+
+The operating rules were byte-for-byte identical. Only the delivery method changed.
+
+For some models, the JSON-text version was like precise instructions written in hieroglyphics. The instructions were present, but the model did not recognize them as tools it could use. Compared with no tools, the JSON-text protocol lowered GPT-OSS by 40 points and raised Gemma by 50. Native function calling then brought both to 100 on completed tasks.
+
+### 5. Answer cleanup
+
+The harness handled routine output problems before scoring the answer. It could read the first clean JSON object, use the model's final restatement instead of an earlier draft, and decode a dictionary that had been returned as a JSON string.
+
+If there was no usable JSON, the harness allowed one repair call. That call was billed and included in cost. Cleanup could fix format. It could not choose between conflicting answers. Two candidate answers, or no answer, still failed.
+
+A production workflow also needs structured output, retry limits, conflict handling, and a clear failure state.
+
+## Then I tested the complete system
+
+The test used easy-to-medium, repeated actuarial tasks with fresh numbers. It included reinsurance arithmetic, loss-triangle diagnostics, and chain-ladder calculations.
+
+This distinction matters. On a general LLM benchmark, 85% can look saturated. In an insurance process, it means roughly one job in seven is wrong. That may be a strong benchmark score. It is not an acceptable operating result.
+
+The chart shows all 12 combinations in the article: four models, each run without tools, with JSON-text tools, and with native tools. Gemma's tool runs also include its methods reference.
+
+![An integrated comparison of score, cost per task, and median latency for GPT-OSS, DeepSeek, Mimo, and Gemma without tools, with JSON-text tools, and with native tools. Native tools bring all four scores on completed tasks to 100, with different completion, cost, and latency results.](/images/blog/wire-format-harness.png)
+
+<p className="figure-caption">Bars show score. The two rows beneath them show cost and median wall-clock time per task. Green is lower and red is higher.</p>
+
+## A few adventures along the way
+
+### GPT-OSS failed with one interface and succeeded with another
+
+GPT-OSS scored 95 without tools. JSON-text tools lowered the score to 55, raised cost by 28%, and were used once in 20 tasks.
+
+Native tools scored 100 and were used on 18 of 20 tasks. Cost fell by 36%. Average reasoning use fell from 822 to 542 tokens per task because Python handled the arithmetic.
+
+The native harness also reduced the long tail. The slowest run fell from 61 seconds to 27 seconds. On the hard TRI-ULT tasks, median time fell from 57 to 20 seconds.
+
+OpenRouter price differences across providers explain part of the cost change, so I would not attribute the full reduction to the harness. The narrower finding holds: on this test, native delegation made GPT-OSS more accurate, cheaper, and more predictable.
+
+### DeepSeek improved accuracy but took longer
+
+DeepSeek scored 85 without tools, 80 with JSON-text tools, and 100 with native tools. It used native tools on all 20 tasks.
+
+The native run cost 4.5 times as much as the run without tools, although that was still only about $0.002 per task. Median latency rose from 21.6 to 55.9 seconds. Five tool rounds added network trips. The added accuracy came with a real speed penalty.
+
+### Mimo's accuracy hid incomplete work
+
+Mimo scored 100 without tools, but only on the 15 tasks it completed. All five failures were hard TRI-ULT tasks that exhausted the reasoning budget.
+
+JSON-text tools scored 94 on 18 completed tasks. Native tools scored 100 on 19 completed tasks. Native tools improved completion from 75% to 95%, but did not eliminate failures. Accuracy alone would hide that difference.
+
+### Gemma needed both methods and native tools
+
+Gemma scored 45 without help. The methods reference plus JSON-text tools raised it to 95. Moving the same harness to native tools raised it to 100, with tool use on all 20 tasks.
+
+Gemma needed both pieces. Native tools without the methods reference scored 80. The reference supplied actuarial judgment that the model lacked, while native delivery made the calculation tool usable.
+
+## What I learned
+
+### Test the task, not just the model ranking
+
+In a July 11 snapshot of the [Artificial Analysis Finance & Accounting Index](https://artificialanalysis.ai/models/capabilities/finance-and-accounting), DeepSeek scored 31 and Mimo 27. GPT-OSS and Gemma both scored 18. On [GDPval-AA v2](https://artificialanalysis.ai/evaluations/gdpval-aa), DeepSeek and Mimo were above the 1,000 human baseline at 1,189 and 1,145. GPT-OSS scored 799. Gemma scored 761.
+
+Those results would have screened out GPT-OSS and Gemma. On the defined actuarial task, both could reach 100 with the right harness. Broad benchmarks help identify candidates. Task testing shows how to implement them.
+
+### Build the harness around the model
+
+The complete harness includes the model, methods, tools, rules, delivery protocol, and output controls. Change one part and you have changed the system being tested.
+
+This is why a harness result must name the model and delivery method. The same JSON-text protocol raised Gemma by 50 points and lowered GPT-OSS by 40.
+
+### Make delegation explicit and selective
+
+Some models ignore tools that are merely available. Require delegation where the tool is better than the model. Do not require it where computation is irrelevant.
+
+This test needed both rules. Models should use Python for multi-step triangle arithmetic. They should not calculate factors when the question asks them to identify a calendar-year pattern.
+
+### Treat answer cleanup as part of the product
+
+A correct answer trapped in broken JSON is not a usable answer. Neither is a response that contains two conflicting final values. Format repair, deterministic cleanup, retry limits, and explicit failure handling belong in the deployed system.
+
+### Measure the completed task
+
+Tools add input tokens and network trips. They can also reduce reasoning, prevent arithmetic errors, and improve completion.
+
+Cost per token does not capture those tradeoffs. Measure accuracy, completion, cost per correct task, and time to a correct result. A small model with a good harness may finish while a Mythos-level beast is still contemplating every word.
+
+<details>
+<summary><strong>Wall-clock results, for the latency-minded</strong></summary>
+
+| Model and harness | Completed | Median | Slowest run | TRI-ULT median |
+|---|---:|---:|---:|---:|
+| GPT-OSS bare | 20/20 | 10.5s | 61s | 57s |
+| GPT-OSS JSON-text dialect | 20/20 | 24.6s | 118s | 27s |
+| **GPT-OSS native tools** | **20/20** | **14.8s** | **27s** | **20s** |
+| DeepSeek bare | 20/20 | 21.6s | 53s | 36s |
+| DeepSeek JSON-text dialect | 20/20 | 16.4s | 111s | 23s |
+| **DeepSeek native tools** | **20/20** | **55.9s** | **179s** | **40s** |
+| Mimo bare | **15/20** | 47.2s | 270s | **None completed** |
+| Mimo JSON-text dialect | **18/20** | 104.3s | 279s | 151s |
+| **Mimo native tools** | **19/20** | **45.0s** | **143s** | **33s** |
+| Gemma bare | 20/20 | 15.0s | 46s | 5s |
+| Gemma JSON-text dialect + skill | 20/20 | 19.1s | 63s | 23s |
+| **Gemma native tools + skill** | **20/20** | **12.7s** | **45s** | **13s** |
+
+Medians and slowest runs include only tasks that produced a scored answer, so the table also shows completion. Each cell attempted 20 tasks. At that sample size, the slowest observed run is clearer than a p90. Gemma without tools was fast but scored only 45, so latency must be read with the accuracy results.
+
+Wall-clock time includes model calls and recorded sandbox execution between tool rounds. It runs from the request to the final answer and excludes only local parsing, which took microseconds. We ran one execution lane through OpenRouter from July 5 to July 10, 2026. These results describe those runs, not model speed under every provider or traffic condition.
+
+Native tools reduced GPT-OSS's long tail and made Gemma the fastest tool-assisted harness that scored 100. Mimo completion improved, although one native run still failed. DeepSeek moved in the other direction: it scored 100, but five tool rounds raised median latency to roughly 2.5 times the no-tool result.
+
+</details>
+
+## The InsureBench implication
+
+This should be an InsureBench method, not a permanent model ranking. Models will change. The test structure should remain:
+
+> Evaluate the complete harness. Model, instructions, methods, tools, delivery protocol, and reasoning effort form one system. Measure its accuracy, completion, cost, and latency together.
+
+InsureBench reports three sets of results:
+
+1. **Insurance-task accuracy:** Is the result accurate enough for the work?
+2. **Harness performance:** Does the complete system finish the task reliably?
+3. **Cost and latency per completed task:** What does a correct result cost, and how long does it take?
+
+Insurance operations do not deploy a model in isolation. They deploy a process that must meet the job's requirements for accuracy, completion, controls, speed, and cost.
+
+> **Method note:** Each cell attempted 20 tasks generated from reserving and diagnostic templates, with fresh numbers for each seed. Between 15 and 20 tasks produced scored answers. The chart reports the benchmark's assisted score, and costs come from metered API billing. We confirmed the native-tool result on a held-out validation seed set before changing routing. Gemma's tool-assisted runs include its registered methods reference. Gemma scored 80 with native tools and no reference. Mimo's no-tool score of 100 covers completed tasks only. Five of 20 tasks did not finish.
+
+[Explore the current InsureBench results →](https://insurebench.insure-thing.com)
+
+## Addendum: three sample tasks
+
+These examples come from the same generators and difficulty range as the test set. We created them at seeds 90001 to 90003 for publication. They have never been scored and will not be used for development, validation, or benchmarking.
+
+<details>
+<summary><strong>1. Easy: reinsurance arithmetic</strong></summary>
+
+Gross unpaid losses are $69,337,124 and carried ceded recoverables are $21,058,167. A troubled reinsurer now appears 25% uncollectible.
+
+What is the effective net liability if that collectability view is accepted? Show the steps.
+
+**Answer:** $53,543,499.
+
+This is a control task. A model that handles basic arithmetic reliably should complete these few steps without a tool. Adding a tool is not useful by itself.
+
+</details>
+
+<details>
+<summary><strong>2. Medium: diagnose the triangle</strong></summary>
+
+You are the reserving actuary. Below are cumulative paid and incurred loss triangles for the same book, in thousands. Something in the development pattern looks wrong.
+
+**Paid losses**
+
+| Accident year | Dev 1 | Dev 2 | Dev 3 | Dev 4 | Dev 5 | Dev 6 |
+|---|---:|---:|---:|---:|---:|---:|
+| 2021 | 728 | 1,154 | 1,442 | 1,585 | 1,665 | 1,715 |
+| 2022 | 711 | 1,126 | 1,407 | 1,546 | 1,625 | |
+| 2023 | 717 | 1,136 | 1,420 | 1,560 | | |
+| 2024 | 692 | 1,097 | 1,371 | | | |
+| 2025 | 792 | 1,255 | | | | |
+| 2026 | 721 | | | | | |
+
+**Incurred losses**
+
+| Accident year | Dev 1 | Dev 2 | Dev 3 | Dev 4 | Dev 5 | Dev 6 |
+|---|---:|---:|---:|---:|---:|---:|
+| 2021 | 1,248 | 1,450 | 1,586 | 1,654 | 1,691 | 2,094 |
+| 2022 | 1,218 | 1,414 | 1,547 | 1,613 | 2,015 | |
+| 2023 | 1,229 | 1,427 | 1,561 | 1,988 | | |
+| 2024 | 1,186 | 1,378 | 1,840 | | | |
+| 2025 | 1,357 | 1,924 | | | | |
+| 2026 | 1,509 | | | | | |
+
+Classify the dominant anomaly as `accident_year`, `development_age`, or `calendar_year`. Explain which triangle shows it, the likely cause, what a naive chain ladder would do, what you would use instead, and what you would ask the operating team.
+
+**Answer:** `calendar_year`. The latest incurred diagonal is inflated, consistent with case-reserve strengthening.
+
+Computation does not solve this task. The model must recognize the pattern, explain its insurance meaning, and recommend a defensible response. A methods reference can help. Forcing a calculation tool can hurt.
+
+</details>
+
+<details>
+<summary><strong>3. Hard: chain-ladder ultimate</strong></summary>
+
+Below is a cumulative paid loss triangle in thousands.
+
+| Accident year | Dev 1 | Dev 2 | Dev 3 | Dev 4 | Dev 5 |
+|---|---:|---:|---:|---:|---:|
+| 2021 | 679 | 1,059 | 1,310 | 1,421 | 1,491 |
+| 2022 | 698 | 1,088 | 1,346 | 1,460 | |
+| 2023 | 595 | 927 | 1,148 | | |
+| 2024 | 634 | 988 | | | |
+| 2025 | 761 | | | | |
+
+Using volume-weighted, all-year age-to-age factors, project each accident year to ultimate with the chain-ladder method. Report the factors, cumulative development factors, per-accident-year ultimates, and total estimated ultimate losses.
+
+**Answer:** $7,393,000.
+
+This task tests delegation. Models often understand the method but make errors in the multi-step arithmetic. In an earlier run, DeepSeek noticed an inconsistency in its calculation and submitted the answer anyway with 0.95 confidence. A Python sandbox and a tool interface the model recognized changed the result.
+
+</details>

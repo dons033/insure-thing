@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 1000 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Can a cheap model meet an insurance SLA?</title>
+  <desc id="desc">Gemma 4 scores 45 without help. A harness adds an actuarial reference skill, Python sandbox, operating rules, native tool delivery, and answer cleanup. The completed-task score rises to 100.</desc>
+  <rect width="1000" height="1000" fill="#fafaf7"/>
+
+  <text x="72" y="72" fill="#c41e2a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" font-weight="700" letter-spacing="3">INSUREBENCH · HARNESS EXPERIMENT</text>
+  <text x="72" y="150" fill="#1a1a1f" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="500">Can a cheap model meet</text>
+  <text x="72" y="216" fill="#1a1a1f" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="500">an insurance SLA?</text>
+  <text x="72" y="260" fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="19">Define the task. Build the harness. Measure the complete system.</text>
+
+  <rect x="72" y="330" width="220" height="364" rx="20" fill="#ffffff" stroke="#e6e4dc" stroke-width="2"/>
+  <text x="104" y="374" fill="#6b6b73" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700" letter-spacing="2">MODEL ALONE</text>
+  <text x="104" y="440" fill="#1a1a1f" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700">Gemma 4</text>
+  <text x="104" y="550" fill="#c41e2a" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="700">45</text>
+  <text x="104" y="586" fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="16">task score</text>
+  <text x="104" y="648" fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="14">No reference skill</text>
+  <text x="104" y="672" fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="14">No calculation tool</text>
+
+  <path d="M306 512 H338" stroke="#c41e2a" stroke-width="4"/>
+  <path d="M326 499 L340 512 L326 525" fill="none" stroke="#c41e2a" stroke-width="4"/>
+
+  <rect x="354" y="330" width="292" height="364" rx="20" fill="#ffffff" stroke="#e6e4dc" stroke-width="2"/>
+  <text x="386" y="374" fill="#6b6b73" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700" letter-spacing="2">THE HARNESS</text>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="600" fill="#1a1a1f">
+    <rect x="386" y="408" width="228" height="42" rx="9" fill="#f3e6e8"/><text x="406" y="435">1. Actuarial skill</text>
+    <rect x="386" y="462" width="228" height="42" rx="9" fill="#e3f1ef"/><text x="406" y="489">2. Python sandbox</text>
+    <rect x="386" y="516" width="228" height="42" rx="9" fill="#f3ecd9"/><text x="406" y="543">3. Operating rules</text>
+    <rect x="386" y="570" width="228" height="42" rx="9" fill="#e7edf5"/><text x="406" y="597">4. Native delivery</text>
+    <rect x="386" y="624" width="228" height="42" rx="9" fill="#ece7f2"/><text x="406" y="651">5. Answer cleanup</text>
+  </g>
+
+  <path d="M660 512 H692" stroke="#1f7f7a" stroke-width="4"/>
+  <path d="M680 499 L694 512 L680 525" fill="none" stroke="#1f7f7a" stroke-width="4"/>
+
+  <rect x="708" y="330" width="220" height="364" rx="20" fill="#ffffff" stroke="#e6e4dc" stroke-width="2"/>
+  <text x="740" y="374" fill="#6b6b73" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700" letter-spacing="1.5">COMPLETED TASKS</text>
+  <text x="740" y="440" fill="#1a1a1f" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700">Gemma 4</text>
+  <text x="740" y="550" fill="#1f7f7a" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="700">100</text>
+  <text x="740" y="586" fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="16">task score</text>
+  <text x="740" y="632" fill="#1a1a1f" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="600">20 of 20 completed</text>
+  <text x="740" y="656" fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="14">12.7s median</text>
+  <text x="740" y="680" fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="14">$0.0013 per task</text>
+
+  <rect x="72" y="752" width="856" height="116" rx="18" fill="#ffffff" stroke="#e6e4dc" stroke-width="2"/>
+  <text x="104" y="798" fill="#1a1a1f" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="600">The model was only one part of the result.</text>
+  <text x="104" y="834" fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="16">Methods, tools, rules, delivery, and cleanup changed what the system could do.</text>
+
+  <line x1="72" y1="914" x2="928" y2="914" stroke="#e6e4dc" stroke-width="2"/>
+  <text x="72" y="950" fill="#1a1a1f" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="600">One task set is not a universal SLA.</text>
+  <text x="72" y="978" fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="14">Define the workflow's requirements, then test the complete harness against them.</text>
+</svg>

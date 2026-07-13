@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="840" viewBox="0 0 1200 840" role="img" aria-labelledby="title desc">
+  <title id="title">Accuracy, cost, and latency by delivery protocol</title>
+  <desc id="desc">Grouped bars compare task scores for four models run bare, with JSON-text tools, and with native tools. Aligned cells beneath each bar show cost per task and median wall-clock latency.</desc>
+  <rect width="1200" height="840" fill="#fafaf7"/>
+  <text x="72" y="58" fill="#c41e2a" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" letter-spacing="3">INSUREBENCH · DEPLOYED SYSTEM TEST</text>
+  <text x="72" y="116" fill="#1a1a1f" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="500">Accuracy, cost, and latency by delivery protocol</text>
+  <text x="72" y="154" fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="20">Same repeated actuarial tasks · higher score is better · lower cost and latency are better</text>
+
+  <g font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#1a1a1f">
+    <rect x="738" y="48" width="17" height="17" rx="4" fill="#1f7f7a"/><text x="765" y="62">Bare</text>
+    <rect x="832" y="48" width="17" height="17" rx="4" fill="#b26a00"/><text x="859" y="62">JSON-text tools</text>
+    <rect x="1008" y="48" width="17" height="17" rx="4" fill="#c41e2a"/><text x="1035" y="62">Native tools</text>
+  </g>
+
+  <g stroke="#e6e4dc" stroke-width="1">
+    <line x1="92" y1="520" x2="1120" y2="520"/>
+    <line x1="92" y1="395" x2="1120" y2="395"/>
+    <line x1="92" y1="270" x2="1120" y2="270"/>
+  </g>
+  <g fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="13">
+    <text x="62" y="525">0</text><text x="54" y="400">50</text><text x="46" y="275">100</text>
+  </g>
+
+  <g>
+    <rect x="150" y="282.5" width="42" height="237.5" rx="6" fill="#1f7f7a"/>
+    <rect x="200" y="382.5" width="42" height="137.5" rx="6" fill="#b26a00"/>
+    <rect x="250" y="270" width="42" height="250" rx="6" fill="#c41e2a"/>
+
+    <rect x="405" y="307.5" width="42" height="212.5" rx="6" fill="#1f7f7a"/>
+    <rect x="455" y="320" width="42" height="200" rx="6" fill="#b26a00"/>
+    <rect x="505" y="270" width="42" height="250" rx="6" fill="#c41e2a"/>
+
+    <rect x="660" y="270" width="42" height="250" rx="6" fill="#1f7f7a"/>
+    <rect x="710" y="285" width="42" height="235" rx="6" fill="#b26a00"/>
+    <rect x="760" y="270" width="42" height="250" rx="6" fill="#c41e2a"/>
+
+    <rect x="915" y="407.5" width="42" height="112.5" rx="6" fill="#1f7f7a"/>
+    <rect x="965" y="282.5" width="42" height="237.5" rx="6" fill="#b26a00"/>
+    <rect x="1015" y="270" width="42" height="250" rx="6" fill="#c41e2a"/>
+  </g>
+
+  <g fill="#1a1a1f" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" text-anchor="middle">
+    <text x="171" y="272">95</text><text x="221" y="372">55</text><text x="271" y="260">100</text>
+    <text x="426" y="297">85</text><text x="476" y="310">80</text><text x="526" y="260">100</text>
+    <text x="681" y="260">100*</text><text x="731" y="275">94</text><text x="781" y="260">100‡</text>
+    <text x="936" y="397">45</text><text x="986" y="272">95†</text><text x="1036" y="260">100</text>
+  </g>
+
+  <g fill="#1a1a1f" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" text-anchor="middle">
+    <text x="221" y="555">GPT-OSS</text>
+    <text x="476" y="555">DeepSeek</text>
+    <text x="731" y="555">Mimo</text>
+    <text x="986" y="555">Gemma 4</text>
+  </g>
+  <g fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="12" text-anchor="middle">
+    <text x="221" y="578">tool adoption 1 → 18 / 20</text>
+    <text x="476" y="578">tool adoption 4 → 20 / 20</text>
+    <text x="731" y="578">completion 75% → 95%</text>
+    <text x="986" y="578">tool adoption 13 → 20 / 20</text>
+  </g>
+
+  <line x1="72" y1="602" x2="1120" y2="602" stroke="#e6e4dc" stroke-width="1"/>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="700" text-anchor="middle" fill="#1a1a1f">
+    <text x="72" y="633" text-anchor="start" fill="#6b6b73" font-size="10">COST / TASK (¢)</text>
+    <rect x="147" y="612" width="48" height="31" rx="5" fill="#a9d6a3"><title>$0.00046 per task</title></rect><text x="171" y="632">0.046¢</text>
+    <rect x="197" y="612" width="48" height="31" rx="5" fill="#c9df98"><title>$0.00059 per task</title></rect><text x="221" y="632">0.059¢</text>
+    <rect x="247" y="612" width="48" height="31" rx="5" fill="#79c58a"><title>$0.00030 per task</title></rect><text x="271" y="632">0.030¢</text>
+
+    <rect x="402" y="612" width="48" height="31" rx="5" fill="#a5d4a2"><title>$0.00044 per task</title></rect><text x="426" y="632">0.044¢</text>
+    <rect x="452" y="612" width="48" height="31" rx="5" fill="#e7d47e"><title>$0.00077 per task</title></rect><text x="476" y="632">0.077¢</text>
+    <rect x="502" y="612" width="48" height="31" rx="5" fill="#e89a70"><title>$0.0020 per task</title></rect><text x="526" y="632">0.20¢</text>
+
+    <rect x="657" y="612" width="48" height="31" rx="5" fill="#e4bd6c"><title>$0.00097 per task</title></rect><text x="681" y="632">0.097¢</text>
+    <rect x="707" y="612" width="48" height="31" rx="5" fill="#eaa06f"><title>$0.0015 per task</title></rect><text x="731" y="632">0.15¢</text>
+    <rect x="757" y="612" width="48" height="31" rx="5" fill="#d86a63"><title>$0.0033 per task</title></rect><text x="781" y="632">0.33¢</text>
+
+    <rect x="912" y="612" width="48" height="31" rx="5" fill="#a2d3a1"><title>$0.00043 per task</title></rect><text x="936" y="632">0.043¢</text>
+    <rect x="962" y="612" width="48" height="31" rx="5" fill="#e5cd79"><title>$0.00084 per task</title></rect><text x="986" y="632">0.084¢</text>
+    <rect x="1012" y="612" width="48" height="31" rx="5" fill="#e5aa6f"><title>$0.0013 per task</title></rect><text x="1036" y="632">0.13¢</text>
+
+    <text x="72" y="680" text-anchor="start" fill="#6b6b73" font-size="10">MEDIAN LAT.</text>
+    <rect x="147" y="659" width="48" height="31" rx="5" fill="#79c58a"/><text x="171" y="679">10.5s</text>
+    <rect x="197" y="659" width="48" height="31" rx="5" fill="#c9df98"/><text x="221" y="679">24.6s</text>
+    <rect x="247" y="659" width="48" height="31" rx="5" fill="#98cf96"/><text x="271" y="679">14.8s</text>
+
+    <rect x="402" y="659" width="48" height="31" rx="5" fill="#b6d99b"/><text x="426" y="679">21.6s</text>
+    <rect x="452" y="659" width="48" height="31" rx="5" fill="#a3d39b"/><text x="476" y="679">16.4s</text>
+    <rect x="502" y="659" width="48" height="31" rx="5" fill="#e7a66e"/><text x="526" y="679">55.9s</text>
+
+    <rect x="657" y="659" width="48" height="31" rx="5" fill="#dfbb6f"/><text x="681" y="679">47.2s</text>
+    <rect x="707" y="659" width="48" height="31" rx="5" fill="#d86a63"/><text x="731" y="679">104.3s</text>
+    <rect x="757" y="659" width="48" height="31" rx="5" fill="#d9c077"/><text x="781" y="679">45.0s</text>
+
+    <rect x="912" y="659" width="48" height="31" rx="5" fill="#99cf96"/><text x="936" y="679">15.0s</text>
+    <rect x="962" y="659" width="48" height="31" rx="5" fill="#acd69c"/><text x="986" y="679">19.1s</text>
+    <rect x="1012" y="659" width="48" height="31" rx="5" fill="#88c990"/><text x="1036" y="679">12.7s</text>
+  </g>
+
+  <g font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#6b6b73">
+    <text x="72" y="732">Metric-cell color:</text>
+    <rect x="170" y="720" width="28" height="14" rx="3" fill="#79c58a"/>
+    <rect x="198" y="720" width="28" height="14" fill="#c9df98"/>
+    <rect x="226" y="720" width="28" height="14" fill="#e7d47e"/>
+    <rect x="254" y="720" width="28" height="14" fill="#eaa06f"/>
+    <rect x="282" y="720" width="28" height="14" rx="3" fill="#d86a63"/>
+    <text x="320" y="732">lower → higher within the 12 cells shown</text>
+  </g>
+
+  <text x="72" y="780" fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="12">* Mimo without tools scored 100 on completed tasks; 5 of 20 did not finish, all on TRI-ULT. ‡ Native Mimo completed 19 of 20.</text>
+  <text x="72" y="802" fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="12">† Gemma tool runs include its reference skill.</text>
+  <text x="72" y="824" fill="#6b6b73" font-family="Arial, Helvetica, sans-serif" font-size="12">Cost is metered API billing per attempted task. Latency is median request-to-answer wall-clock time among completed tasks, including recorded sandbox execution.</text>
+</svg>
