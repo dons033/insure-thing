@@ -1,0 +1,26 @@
+---
+title: "JEV: easy, fast, cheap, accurate"
+date: "2026-09-20"
+description: "A 50-case workers’ compensation classification test: JEV had the highest accuracy, second-lowest cost, and fastest reviewed workflow."
+author: "Don Seibert"
+tags: ["ai", "benchmarks", "underwriting", "workers-compensation"]
+image: "/images/blog/jev-classification-social.png"
+hideHeroImage: true
+cardImageFit: "contain"
+---
+
+Normal LLMs predict the next token. Combined with “thinking” tokens and tool calls, that simple technique has proven remarkably powerful.
+
+JEV has a different premise: one answer per question. Yes/No, pick from a list, or estimate a probability. Built by [TypeSafe](https://typesafe.ai/blog/introducing-system-one-models-and-jev), founded by a researcher behind ChatGPT, it’s fast, cheap, and really good at certain things.
+
+I tested it on 50 workers’ compensation classification cases using public web evidence and California class definitions: 40 construction businesses and 10 non-construction businesses to see if I could throw it off.
+
+**The outcome: zero wrong answers for JEV.** Gemini 3.5 Flash-Lite got 49 correct; GLM 5.3 Full and Flash each got 48. JEV was the strongest on this test, second cheapest, and the clear speed winner.
+
+![Accuracy versus cost, with median speed shown for each model](/images/blog/jev-classification-social.png)
+
+JEV took **0.64 seconds for classification plus an error-checking step**, at about **$0.33 per 1,000 cases in model costs**. Fast enough for many real-world, real-time deployments.
+
+Next: imagine checking every sensitive field on every ACORD in a commercial application, or on a claims form.
+
+We get more capable models all the time. This one challenges how we use them in insurance processes.
