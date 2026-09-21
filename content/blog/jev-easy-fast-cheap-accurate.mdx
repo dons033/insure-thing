@@ -9,9 +9,15 @@ hideHeroImage: true
 cardImageFit: "contain"
 ---
 
+I got to test a whole new model primitive this weekend, and I'm excited about it.
+
 Normal LLMs predict the next token. Combined with “thinking” tokens and tool calls, that simple technique has proven remarkably powerful.
 
 JEV has a different premise: one answer per question. Yes/No, pick from a list, or estimate a probability. Built by [TypeSafe](https://typesafe.ai/blog/introducing-system-one-models-and-jev), founded by a researcher behind ChatGPT, it’s fast, cheap, and really good at certain things.
+
+This model won’t write you a business plan, build you a Minecraft clone, or compose replies to clear your inbox. It doesn’t chat or pretend to be your friend. It answers specific questions.
+
+It might, however, make integrating AI into real-world insurance workflows faster, cheaper, more accurate, and even easier. If that’s interesting to you, read on.
 
 I tested it on 50 workers’ compensation classification cases using public web evidence and California class definitions: 40 construction businesses and 10 non-construction businesses to see if I could throw it off.
 
@@ -21,6 +27,14 @@ I tested it on 50 workers’ compensation classification cases using public web 
 
 JEV took **0.64 seconds for classification plus an error-checking step**, at about **$0.33 per 1,000 cases in model costs**. Fast enough for many real-world, real-time deployments.
 
+## Next steps
+
 Next: imagine checking every sensitive field on every ACORD in a commercial application, or on a claims form.
+
+I want to start with a few specific questions: Is required information missing? Do the answers contradict each other? Does a field agree with the supporting documents? Does this need a person to take a closer look?
+
+I’ll test those checks on forms with known errors, measure what gets caught and what slips through, and track how often correct information gets flagged unnecessarily. Then compare the cost and speed with the same checks using conventional LLMs.
+
+The goal is to develop practical ways to use these models in insurance: what to ask, what evidence to provide, and when to bring in a human.
 
 We get more capable models all the time. This one challenges how we use them in insurance processes.
