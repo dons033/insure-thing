@@ -1,0 +1,84 @@
+# Randomized partitions: quality at every batch size
+
+Completed 340 requests; actual cost $0.062764. All 100 questions scored once for each of 10 packets at every batch size and on each model.
+
+| Model | Questions per request | Correct / 1,000 | Quality | Cost / 1,000 complete packets | Cost / 1,000 questions | Median summed request time for all 100 answers |
+|---|---:|---:|---:|---:|---:|---:|
+| jev | 10 | 929 | 92.9% | $1.252 | $0.0125 | 3.36s |
+| jev | 25 | 931 | 93.1% | $0.733 | $0.0073 | 1.60s |
+| jev | 50 | 934 | 93.4% | $0.559 | $0.0056 | 0.76s |
+| jev | 100 | 930 | 93.0% | $0.473 | $0.0047 | 0.49s |
+| ling | 10 | 839 | 83.9% | $1.133 | $0.0113 | 17.83s |
+| ling | 25 | 830 | 83.0% | $0.832 | $0.0083 | 12.51s |
+| ling | 50 | 753 | 75.3% | $0.665 | $0.0066 | 11.96s |
+| ling | 100 | 652 | 65.2% | $0.630 | $0.0063 | 12.26s |
+
+Here a complete packet always means obtaining all 100 answers. Time is the sum of measured request durations for that packet/size, then the median across packets. It excludes gaps from the interleaved schedule, evidence gathering and disk operations; it is not an observed contiguous workflow or a parallel execution measurement. Actual charges include any provider cache discounts. Uncached estimates are saved in analysis.json.
+
+## Transitions when switching to one 100-question batch
+
+| Model | From size | Correct → wrong | Wrong → correct | Net correct change |
+|---|---:|---:|---:|---:|
+| jev | 10 | 2 | 3 | +1 |
+| jev | 25 | 3 | 2 | -1 |
+| jev | 50 | 5 | 1 | -4 |
+| ling | 10 | 244 | 57 | -187 |
+| ling | 25 | 227 | 49 | -178 |
+| ling | 50 | 135 | 34 | -101 |
+
+The primary score counts every answer in an invalid response as unusable/wrong. To separate output-contract failure from semantic changes, here is the same comparison restricted to questions with valid responses at both sizes:
+
+| Model | From size | Valid paired questions | Smaller-batch quality | 100-question quality | Regressions | Improvements |
+|---|---:|---:|---:|---:|---:|---:|
+| jev | 10 | 1000 | 92.9% | 93.0% | 2 | 3 |
+| jev | 25 | 1000 | 93.1% | 93.0% | 3 | 2 |
+| jev | 50 | 1000 | 93.4% | 93.0% | 5 | 1 |
+| ling | 10 | 800 | 83.1% | 81.5% | 70 | 57 |
+| ling | 25 | 800 | 81.4% | 81.5% | 48 | 49 |
+| ling | 50 | 800 | 82.9% | 81.5% | 45 | 34 |
+
+## Output validity
+
+- jev, size 10: 100/100 valid responses.
+- jev, size 25: 40/40 valid responses.
+- jev, size 50: 20/20 valid responses.
+- jev, size 100: 10/10 valid responses.
+- ling, size 10: 100/100 valid responses.
+- ling, size 25: 40/40 valid responses.
+- ling, size 50: 18/20 valid responses.
+- ling, size 100: 8/10 valid responses.
+- Invalid response detail: {"model": "ling", "id": "P02_n100_g00", "error": "missing/extra questions", "missing": ["q004"], "extra": []}
+- Invalid response detail: {"model": "ling", "id": "P07_n100_g00", "error": "missing/extra questions", "missing": ["q005", "q027", "q066", "q087"], "extra": []}
+- Invalid response detail: {"model": "ling", "id": "P02_n050_g00", "error": "missing/extra questions", "missing": ["q013"], "extra": []}
+- Invalid response detail: {"model": "ling", "id": "P07_n050_g01", "error": "missing/extra questions", "missing": ["q019"], "extra": []}
+
+## Domain quality
+
+| Model | Batch size | Crew | Subcontractor | Project | Unknown recall |
+|---|---:|---:|---:|---:|---:|
+| jev | 10 | 91.2% | 88.0% | 100.0% | 74.1% |
+| jev | 25 | 91.0% | 89.0% | 100.0% | 75.5% |
+| jev | 50 | 92.2% | 88.3% | 100.0% | 76.4% |
+| jev | 100 | 91.2% | 88.3% | 100.0% | 75.0% |
+| ling | 10 | 86.2% | 70.0% | 94.7% | 55.5% |
+| ling | 25 | 85.5% | 71.7% | 91.0% | 51.4% |
+| ling | 50 | 77.5% | 67.7% | 80.0% | 51.8% |
+| ling | 100 | 68.5% | 56.3% | 69.7% | 43.2% |
+
+## Limits
+
+- Original question text, evidence and provisional gold labels were retained. No relabeling or output repair. Exact keys and enum values are required; invalid answers count wrong.
+- Ten fictional applicants contain five repeated scenario patterns. This is a controlled development fixture, not an independently adjudicated insurance accuracy benchmark.
+- One seeded permutation per packet, identical for both models. Groups are disjoint and cover every question exactly once at each size. Request order was separately randomized.
+- Batch size changes question neighbors and their within-request positions. This measures this randomized batching approach; it cannot separate pure size effects from composition/position effects.
+- Fresh 100-question calls share the same shuffled order as the split calls. Comparisons with historical unshuffled 100-question calls also include time/provider variability, not order alone.
+- Single calls per partition and correlated questions do not justify a statistical significance claim. No operational referral metric is inferred from fact accuracy.
+
+## Fresh versus historical 100-question accuracy
+
+- jev, historical repetition 0: 930/1000 before; 930/1000 fresh; 7 answers changed.
+- jev, historical repetition 1: 934/1000 before; 930/1000 fresh; 9 answers changed.
+- jev, historical repetition 2: 930/1000 before; 930/1000 fresh; 5 answers changed.
+- ling, historical repetition 0: 794/1000 before; 652/1000 fresh; 331 answers changed.
+- ling, historical repetition 1: 789/1000 before; 652/1000 fresh; 331 answers changed.
+- ling, historical repetition 2: 796/1000 before; 652/1000 fresh; 328 answers changed.

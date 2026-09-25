@@ -1,0 +1,77 @@
+---
+title: "JEV benchmarking learnings: ask away"
+date: "2026-09-24"
+description: "100 underwriting questions. Half a second. What I learned about cost, speed and accuracy when batching questions with JEV 1.13 and Ling 3.0 Flash."
+author: "Don Seibert"
+tags: ["ai", "benchmarks", "underwriting", "workers-compensation"]
+image: "/images/blog/jev-ask-away/header.png"
+cardImageFit: "contain"
+hideHeroImage: false
+---
+
+## Summary
+
+**I asked JEV 100 underwriting questions in one request. It answered in half a second, stayed near 93% accuracy, and became cheaper per question as I added more. Ling benefited economically too, but took about 25 times longer at 100 questions.**
+
+As a follow-up to [my classification benchmarks](/blog/jev-easy-fast-cheap-accurate), I wanted to try document checking, with questions typical of underwriting workers’ compensation for contractors. I also tested Ling 3.0 Flash, an inexpensive model I’ve found very good for the price and fairly zippy on short requests.
+
+I haven’t done a full document-review benchmark. But as I was playing around, I realized that asking lots of questions about the same evidence in one query gets interesting. That looks a lot like real-world, real-time processing of application data.
+
+## JEV starts faster. Then it gets much faster.
+
+TypeSafe says questions in a request are [evaluated in parallel](https://docs.typesafe.ai/patterns/fan-out). That fits what I saw: time to completion barely moved as I added questions.
+
+![Median completion time: JEV versus Ling](/images/blog/jev-ask-away/jev-ling-randomized-completion-time.png)
+
+From 10 to 100 questions, JEV went from **0.29 to 0.49 seconds**. Ling went from **1.58 to 12.26 seconds**.
+
+This was startling. Economically, adding a useful question can make sense for either model. If someone is waiting for the answer, JEV is the clear winner in this test.
+
+## Cost was interesting too
+
+My hypothesis was that larger batches would favor JEV. They did, just not as dramatically as I’d expected. Ling was slightly cheaper at ten questions; at 100, JEV was **25% cheaper**.
+
+![Cost per 1,000 requests](/images/blog/jev-ask-away/jev-ling-randomized-cost-requests.png)
+
+The cost per individual question tells the more useful story:
+
+![Cost per 1,000 questions](/images/blog/jev-ask-away/jev-ling-randomized-cost-questions.png)
+
+Moving from ten questions to 100 reduced cost per question by **62% for JEV and 44% for Ling**. Both improved; JEV improved faster.
+
+## Accuracy held up
+
+JEV was better with this build. I haven’t heavily tuned either model for its particular strengths, and more harness work might help both.
+
+![Answer accuracy, shown on a 75–100% scale](/images/blog/jev-ask-away/jev-ling-randomized-quality.png)
+
+JEV stayed remarkably even, near **93%**. Ling ranged from **81% to 84%**, finishing lower at 100 questions. Small enough that I can’t give a firm answer about degradation, but interesting enough to test further.
+
+Ling omitted seven answers; JEV omitted none. I scored each answer individually, counting wrong and missing answers as incorrect.
+
+## The big takeaway: when using JEV, ask away
+
+For a contractor submission, ask whether subcontractors are used, which scopes they perform, whether employees also do that work, and whether the class codes fit the employee duties. Then let code decide what needs clarification or review.
+
+Ask the hard questions and the easy ones. Ask from different angles. Test things in different ways. Show very little fear about popping in a few questions just to try them out.
+
+Here is the nickel point: **at the observed batched cost, asking a question 10,000 times costs about 4.7 cents. If it finds one useful answer worth more than a nickel, that question has paid for itself in model costs.** Follow-up and review costs are separate.
+
+Questions with very rare but useful answers are now fair game.
+
+## A few other thoughts along the way
+
+- **Brevity is the soul of wit.** A more focused evidence set might improve accuracy. Try splitting the work into a few calls over specific subsets of evidence and running them in parallel. Test the cost, latency and quality for your use case.
+- **Some false positives can be a good trade.** For an important issue, a cautious flag that sends it to a more capable model, a deeper process or an expert human can be the right outcome. Test how question wording affects both detection and review burden.
+
+I’ve been testing Claude Opus 5.5 and Astra this week, and I love them both. I wouldn’t give them up for Ling or JEV. But JEV has been more interesting as a new thing. With JEV, I’m still exploring what becomes practical, and I think these types of models could have real impacts on the core workflows of insurers and other businesses.
+
+### A note on methodology
+
+California contractor workers’ compensation has a lot of useful public material: licensing and WC information, class definitions, and business websites. My earlier work used those sources; this experiment reused trade descriptions and class references to build synthetic submissions and supporting records. It did not read actual ACORD PDFs.
+
+I tested ten fictional applicants built from five scenario patterns, with identical evidence and randomized groups covering all 100 questions at every batch size. A separate sample of 50 single-question calls per model supplies the one-question points on the cost and time charts only. Answer keys remain provisional.
+
+Costs include caching discounts. Timings include incomplete responses, but exclude evidence gathering. There were no retries or repair calls. [Detailed results and scoring](/downloads/jev-ask-away-results.txt) are available separately.
+
+*Credit to Astra for helping build, run and analyze the experiments, and put this write-up together.*
