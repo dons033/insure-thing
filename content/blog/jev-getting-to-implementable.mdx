@@ -38,6 +38,14 @@ For example:
 
 ## 2. Ask for facts. Put the underwriting rules in code.
 
+“Decisioning models” is a better name than “System One,” in my view. [OpenRouter describes JEV as a structured decision model](https://openrouter.ai/typesafe). But for insurance, I think its most useful role is **surfacing evidence**, with final decisions kept in the underwriting platform.
+
+For example, the flow I want is:
+
+**JEV: evidence of roofing under the question's criteria → Underwriting platform: apply the carrier's rules → Decline, if those rules call for it.**
+
+The model answers the specific evidence question. The platform owns what happens next. Evidence of roofing could lead to a follow-up question, a referral, or a decline, depending on the rules and what the evidence actually establishes.
+
 On the new development set, JEV got every fact question right with the clearer wording. But when I also asked it directly whether the application needed review, it unnecessarily flagged five clean applications.
 
 The facts were right. The action was wrong.
@@ -48,7 +56,7 @@ Using those same facts in procedural rules fixed all five, without another model
 
 Subcontractor use is a good example. Code can check whether a required disclosure is present and complete. JEV can help identify evidence of subcontracting, its scope, and potential contradictions. A correctly completed disclosure should satisfy that requirement unless something specific calls it into question.
 
-**Use the model to interpret the evidence. Use code for requirements you can state clearly.**
+**Use JEV to surface evidence. Keep the underwriting decision in the underwriting platform.**
 
 ## 3. Missing evidence is not automatically an underwriting problem
 
