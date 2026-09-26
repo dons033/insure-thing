@@ -98,6 +98,14 @@ That is more interesting to me than sending everything through a bigger model.
 
 The JEV fact pass itself cost about **$0.17 per 1,000 packets**, with a **0.28-second median model response**. Gathering evidence and handling follow-up are separate costs.
 
+## 6. Decide what the savings are worth
+
+On the same 60 development packets, compact questions were **20% cheaper** and had a median response **23 milliseconds faster**. But they gave up three percentage points of fact accuracy: **97% versus 100%** with explicit questions.
+
+JEV is already cheap and fast. For this use case, I'll pay the extra **3.3 cents per thousand application packets** in model costs for those three points of accuracy.
+
+**Develop and test on your individual use case, and measure against your own trade-offs.** Savings are always welcome, but they need to be worth what you give up.
+
 ## What comes next
 
 I got 100% on this controlled development set. Getting to implementable means seeing whether that holds on new cases, especially the ones the system clears.
