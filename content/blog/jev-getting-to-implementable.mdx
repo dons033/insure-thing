@@ -1,0 +1,107 @@
+---
+title: "Getting JEV to implementable: from 93% toward 100%"
+date: "2026-09-26"
+description: "Clearer questions took JEV from 93.3% to 99.0%. What I learned about granular facts, underwriting rules, screening, and getting to an accuracy target."
+author: "Don Seibert"
+tags: ["ai", "benchmarks", "underwriting", "workers-compensation"]
+image: "/images/blog/jev-getting-to-implementable/jev-implementable-wording.png"
+cardImageFit: "contain"
+hideHeroImage: true
+---
+
+## Summary
+
+**JEV answered my underwriting questions quickly and cheaply. But 93% accuracy leaves a lot to clean up. Could better questions and a little procedural code get it closer to something I would actually use?**
+
+On the original question set, clearer wording took JEV from **93.3% to 99.0%**. On a new, controlled development set, it answered **900 out of 900 fact questions correctly**. Code using those answers then chose the right action for all **60 applications**.
+
+Those are two different tests, not one continuous climb to perfection. But they gave me some very useful tips for building with these models.
+
+![Clearer source instructions raised JEV accuracy from 93.3% to 99.0% on the original 1,000-answer set, reducing errors from 67 to 10.](/images/blog/jev-getting-to-implementable/jev-implementable-wording.png)
+
+## 1. Tell it exactly what question it is answering
+
+Most of the original mistakes had something in common: JEV gave a definite answer where my answer key expected “unknown.” That accounted for 55 of the 70 errors.
+
+An application says employees do interior painting. Does that mean the application *declares* interior painting? Yes. Does it independently establish what employees actually do? Different question.
+
+I had blurred those together. Clearer questions identified the source, the worker, and the period being discussed.
+
+For example:
+
+- What work does the application say employees perform?
+- Does the website describe exterior painting services?
+- Does the supporting record establish that employees perform that work, or subcontractors?
+- Is that work current?
+
+**Be precise about what an answer means. “Be careful” is not much of an instruction.**
+
+## 2. Ask for facts. Put the underwriting rules in code.
+
+On the new development set, JEV got every fact question right with the clearer wording. But when I also asked it directly whether the application needed review, it unnecessarily flagged five clean applications.
+
+The facts were right. The action was wrong.
+
+Using those same facts in procedural rules fixed all five, without another model call.
+
+![On 60 new development packets, explicit sources produced 900 of 900 correct facts but 55 of 60 correct actions. Procedural routing of the same facts raised correct actions to 60 of 60 without another model call.](/images/blog/jev-getting-to-implementable/jev-implementable-routing.png)
+
+Subcontractor use is a good example. Code can check whether a required disclosure is present and complete. JEV can help identify evidence of subcontracting, its scope, and potential contradictions. A correctly completed disclosure should satisfy that requirement unless something specific calls it into question.
+
+**Use the model to interpret the evidence. Use code for requirements you can state clearly.**
+
+## 3. Missing evidence is not automatically an underwriting problem
+
+I'm establishing actions from the application and the documents required at that stage.
+
+Payroll records may be required with an application. Policies will also be audited, bringing more records into the process. That does not mean every statement in every application needs independent corroboration before anything can proceed.
+
+The useful distinction is:
+
+- **Required document missing:** request it.
+- **Specific material contradiction:** investigate or refer.
+- **Complete application, with no identified issue:** pass the checks it has satisfied.
+
+An audit later does not resolve a contradiction today. But an absent record that is not yet required should not automatically become a referral either.
+
+My development fixtures used stricter corroboration rules. The next test will make these application-stage requirements explicit.
+
+## 4. “Only say yes if you're certain” can miss the point
+
+I tried two kinds of questions: a sensitive screen for issues worth investigating, and a stricter question asking whether a discrepancy was established.
+
+The JEV screen flagged **all 20 defective applications and all 20 unresolved applications**, plus one of the 20 clean ones. Strict confirmation flagged only **16 of the 20 defective applications**.
+
+![Sensitive screening flagged 20 defective, 20 unresolved and one clean packet. Strict confirmation flagged 16 defective, zero unresolved and two clean packets. Each group contains 20 packets; the questions have different targets.](/images/blog/jev-getting-to-implementable/jev-implementable-screening.png)
+
+These questions serve different purposes. “I cannot confirm a problem” does not mean “this application passes.”
+
+For screening, I want a specific reason to look more closely. A website showing exterior work might justify a question about an interior-only declaration. It does not, by itself, establish who did the work or prove misrepresentation.
+
+**A useful flag starts a process. It isn't the final verdict.**
+
+## 5. Escalate selectively
+
+A stronger model can help interpret difficult evidence. It cannot supply missing payroll records.
+
+In a replay using saved reviewer answers, sending only relevant uncertain answers to a stronger model required **three additional reviews across 60 applications** and preserved all 60 correct routes. Known discrepancies went to referral; missing required information went to an information request.
+
+That is more interesting to me than sending everything through a bigger model.
+
+The JEV fact pass itself cost about **$0.17 per 1,000 packets**, with a **0.28-second median model response**. Gathering evidence and handling follow-up are separate costs.
+
+## What comes next
+
+I got 100% on this controlled development set. Getting to implementable means seeing whether that holds on new cases, especially the ones the system clears.
+
+I'll continue with JEV, using a stronger model for occasional spot-checks on issues it cannot resolve. I'll freeze the questions and action rules, then test new examples with independently reviewed answers.
+
+I'll track missed problems, unnecessary referrals, requests for information, and errors that slip through as clean. A single accuracy number hides too much of that.
+
+**The takeaway: ask precise, granular questions, give “unknown” a useful destination, and make the next action explicit.** That looks like a practical way to turn a fast, inexpensive model into something useful in an insurance workflow.
+
+### Methodology and credit
+
+The original test contained 1,000 answers from ten synthetic packets. The new development test used 60 synthetic packets across 20 scenario families, with 15 fact questions per packet. These were structured application and supporting records, not ACORD PDF extraction. Labels remain provisional, some original fixtures contain conflicting evidence, and held-out validation is next. All 60 correct routes includes referral and information requests, not 60 automatic approvals.
+
+Thanks to Astra for helping build, run, and analyze the experiments. I still get the credit for asking all the questions.
