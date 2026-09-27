@@ -150,15 +150,15 @@ I also tried KEV locally at 16-bit, 8-bit, and 4-bit precision. It works well on
 
 I closed background apps and reran the same eight packets, with ten questions per packet. These are the updated results:
 
-| Precision | Median per packet | Correct answers | Peak GPU memory | Peak host RAM |
-|---|---:|---:|---:|---:|
-| BF16 (16-bit) | 5.87s | 90.00% | 10.20 GiB | 8.62 GiB |
-| HQQ 8-bit | 4.97s | 91.25% | 6.99 GiB | 8.68 GiB |
-| HQQ 4-bit | 4.68s | 87.50% | 5.40 GiB | 8.67 GiB |
+| Precision | Median per packet | Correct answers | Peak GPU memory |
+|---|---:|---:|---:|
+| BF16 (16-bit) | 5.87s | 90.00% | 10.20 GiB |
+| HQQ 8-bit | 4.97s | 91.25% | 6.99 GiB |
+| HQQ 4-bit | 4.68s | 87.50% | 5.40 GiB |
 
 The 8-bit version looks like a useful balance here. The 4-bit version saves more GPU memory, but was only a little faster and lost three correct answers compared with 8-bit. It also caused one unnecessary referral. All three repeated their earlier answers exactly.
 
-Memory includes more than the compressed weights. GPU figures are peak PyTorch allocations during inference; host RAM is the process peak across setup and inference. These peaks are separate, not a simultaneous total, and exclude operating-system and driver overhead. This setup loads the original model before quantizing, so startup still needs roughly 8.5 GiB of GPU memory for the quantized versions. The table is not a minimum-device-memory specification.
+Memory includes more than the compressed weights. GPU figures are peak PyTorch allocations during inference and exclude host RAM, operating-system and driver overhead. This setup loads the original model before quantizing, so startup still needs roughly 8.5 GiB of GPU memory for the quantized versions. The table is not a minimum-device-memory specification.
 
 **CPU only works too.** My earlier FP32 CPU run took a measured median **66.2 seconds per packet**, with **88.75% correct answers** and **21.1 GiB peak host RAM**. That is a different precision and runtime configuration, not an estimate for 4-bit or 8-bit CPU inference. Slow, but usable for experiments or work that can wait.
 
