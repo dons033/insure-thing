@@ -1,0 +1,147 @@
+---
+title: "A week in, JEV gets competition"
+date: "2026-09-27"
+description: "JEV now has challengers: KEV runs locally, and Span-01 does well on yes/no questions. I tested all four models on insurance submission evidence."
+author: "Don Seibert"
+tags: ["ai", "benchmarks", "underwriting", "decisioning-models"]
+image: "/images/blog/jev-gets-competition/hero.png"
+cardImageFit: "contain"
+---
+
+## Summary
+
+Barely a week ago, I was getting to know JEV and OpenRouter's new decisioning category. Now we have actual competition.
+
+The competitors are different, but have their advantages. **KEV has the same output style as JEV, the same pricing per token, and was slower and less accurate on my benchmark. It ended up slightly cheaper, for an interesting reason I'll get to below. BUT: it's open weights. You can run it locally on consumer hardware.**
+
+**Span-01 isn't as broad through OpenRouter: it answers yes/no questions.** But it does them well, does them cheaply, and while not quite as wicked fast as JEV, is less spendy. Worth looking at if your questions are yes/no, or can sensibly be rephrased that way.
+
+Span-01 Lite is free, but struggled on this test. It may only accommodate easier use cases. At roughly half a second per request, it remains fast compared with the conventional LLMs I've tested, and the price makes it worth experimenting with.
+
+JEV remains my strongest overall performer here. But a week in, there are already some interesting choices.
+
+## What I tested
+
+I've been looking at how these models can surface evidence for insurance underwriting. What does the application actually say? What does the website advertise? Who did the work? Do the supporting records agree?
+
+For this round, I used **180 fictional contractor submission cases grounded in 30 archived business websites**. Each website profile supplied six scenarios, including straightforward submissions, understated work, subcontracted work, revised scope, and missing or conflicting evidence.
+
+These are document-evidence questions, rather than another round of picking workers' compensation class codes. An application might describe related work while a completed job record describes the target activity. Or a website might advertise a service without establishing that the applicant's employees performed it on the job being reviewed.
+
+I ran two comparisons:
+
+- **JEV vs. KEV:** ten questions per case, covering yes/no answers, choices, and scores. That's 1,800 answers per model.
+- **All four models:** the three existing yes/no questions from each case, giving 540 answers per model. I reused JEV and KEV's saved answers and ran both Span models on those questions.
+
+That distinction matters when reading the hero: JEV's rounded **95%** and KEV's **88%** are their full-benchmark results. Span's **92%** and Lite's **65%** cover the yes/no subset. The charts below keep those comparisons separate.
+
+## KEV: the alternative you can run locally
+
+First there's KEV. JEV to KEV, we see what you did there.
+
+[Jared Palmer's KEV-4B](https://huggingface.co/jaredpalmer/kev-4b) is built on Qwen3.5-4B-Base, with a trained adapter and a pointer head. It takes evidence and typed questions, and returns probability distributions without generating a prose answer. So while its foundation is a conventional language model, this is more than asking a chatbot to behave itself and return JSON.
+
+That doesn't settle whether it's good at my use case. Testing does.
+
+[![Full benchmark: JEV answered 95.3% correctly versus KEV's 87.5%. Median API completion was 0.268 versus 0.760 seconds. Reported cost per 1,000 ten-question cases was $0.110 versus $0.084.](/images/blog/jev-gets-competition/jev-kev-full.png)](/images/blog/jev-gets-competition/jev-kev-full.png)
+
+JEV got **1,715 of 1,800 answers correct**. KEV got **1,575**. JEV was about **2.8 times faster** by median successful response time.
+
+KEV did have a win within the test: it was better on the evidence-strength question, getting **156 of 180** right versus JEV's **141**. The overall winner doesn't necessarily win your particular question.
+
+I also passed the answers through the same procedural rules. JEV's answers led to the expected action on **180 of 180 cases**; KEV's did on **144**. KEV's 36 misses were unnecessary holds. Neither model's answers caused the rules to incorrectly clear a case.
+
+That is a limited submission-checking rule, not a policy acceptance decision. JEV still made 85 individual answer errors; correct routing doesn't make those answers right.
+
+### Same token price, different bill
+
+Both providers charged **$0.042 per million input tokens**. I sent identical evidence and questions to each model.
+
+But JEV reported **471,926 input tokens**, while KEV reported **361,194**. KEV's reported bill was therefore about **23.5% lower**: roughly **8.4 cents per 1,000 cases**, versus **11 cents** for JEV.
+
+Different tokenization or provider formatting could explain that. The logs don't establish which. What they do establish is that the same submitted text did not produce the same billed token count. Comparing the price per million tokens alone would have missed it.
+
+### And yes, it really runs locally
+
+I downloaded KEV and tested it on both my CPU and an AMD Radeon RX 6800 XT, a consumer GPU with 16 GB of video memory.
+
+The model files took about **9.5 GB of disk space**. The GPU run used about **10.2 GiB of GPU memory** at peak. On eight cases with ten questions each, the CPU configuration took a median **66 seconds** per case; the GPU configuration took **10 seconds**. The GPU run matched all 80 answer labels from the hosted KEV run on those cases.
+
+This was a working local setup, with reference-kernel fallbacks, not a fully optimized serving deployment. The hosted API was much faster. But the point is that you can host KEV yourself, and keep the submission evidence on your own hardware.
+
+If you're going via API and want speed, JEV is your friend. If you want local, KEV is the option among these models. It may be accurate enough for your use case, and it's small enough to test without a data center.
+
+## Span-01: good for yes/no use cases
+
+Then there's [Respan's Span-01](https://www.respan.ai/docs/documentation/span-01/concept), from a company focused on agent evaluation and observability. It evaluates specified behaviors against supplied evidence. Respan's native interface has probabilities for present, absent, and not observable; the OpenRouter interface I tested exposes a single probability of yes.
+
+That OpenRouter interface rejected the choice and score questions, so I used only the three compatible questions. I kept their wording and evidence unchanged, apart from serializing the evidence object into the text format Span requires.
+
+[![On the same 540 yes/no questions, JEV scored 95.0%, KEV 83.9%, Span-01 92.0%, and Span-01 Lite 64.8%. JEV and KEV's saved answers came from ten-question requests; Span received three questions per request.](/images/blog/jev-gets-competition/four-model-yes-no.png)](/images/blog/jev-gets-competition/four-model-yes-no.png)
+
+**Span-01 landed between JEV and KEV on this subset.** Lite was quite a bit weaker.
+
+The errors are more useful than the overall score:
+
+| Model | Correct answers | False positives | False negatives |
+|---|---:|---:|---:|
+| JEV 1.13 | 513 / 540 | 27 | 0 |
+| KEV 4B | 453 / 540 | 87 | 0 |
+| Span-01 | 497 / 540 | 43 | 0 |
+| Span-01 Lite | 350 / 540 | 141 | 49 |
+
+JEV, KEV, and Span-01 each got **180 of 180 subcontractor-disclosure questions right**. Span-01 Lite got 153.
+
+The harder question was whether supporting completion records made unresolved, incompatible claims about the same job. JEV got **154 of 180** right, Span-01 **147**, KEV **129**, and Lite **127**.
+
+For example, an application can understate the work while two completion records agree about what actually happened. That is a discrepancy between the application and the records. It does not mean the completion records contradict each other. Span-01 sometimes flagged the latter anyway.
+
+This is where I want more experiments: clearer source boundaries, narrower questions, and testing whether wording improvements carry across models. I haven't optimized these questions specifically for Span.
+
+## All fairly fast. All fairly cheap.
+
+Across the full 180-case yes/no run, Span-01's median completion time was **0.494 seconds**, and Lite's was **0.508 seconds**. Span-01's reported charge for the entire run was **$0.00734**. Lite reported no charge. Both returned valid answers on all 180 requests without retries.
+
+For a fairer comparison of cost and speed across all four, I had eight saved JEV/KEV cases where the same three questions had been asked on their own. Here is that small matched subset:
+
+[![On eight matched three-question cases, median API completion was JEV 0.235 seconds, KEV 0.618, Span-01 0.494, and Lite 0.557. Cost per 1,000 cases was $0.0751, $0.0594, $0.0413, and free, respectively.](/images/blog/jev-gets-competition/four-model-cost-speed.png)](/images/blog/jev-gets-competition/four-model-cost-speed.png)
+
+JEV is still the speed winner. Span-01 is cheaper than either JEV or KEV on these calls. Lite is free, though it was no faster than paid Span in this test.
+
+These are all small model bills. I would choose based on what the model gets right, what happens when it gets something wrong, and whether I need to run locally. The price difference is worth measuring, but it wouldn't be my first concern here.
+
+## What I take from this
+
+I started with JEV because it felt like a different way to put models into insurance workflows. Now there are alternatives, just a few days into exploring it.
+
+**JEV gives me the best combination of accuracy and speed in this test. KEV gives me local deployment. Span-01 gives me another capable, inexpensive option for yes/no evidence questions.** Lite may fit simpler questions, and costs very little to try.
+
+My recommendation keeps coming back to the same thing: develop and test on the individual use case, and measure against your own trade-offs. KEV winning the evidence-strength question is a useful reminder of why.
+
+And for insurance, I still prefer to think of these as **evidence-surfacing models**. The model tells me what the evidence supports under the question I asked. The underwriting platform decides whether that means ask another question, request records, refer, or decline.
+
+I'm interested in how much more of that evidence we can afford to check, how quickly, and where we can run the checks. This is already getting more interesting.
+
+### Methodology and limits
+
+The cases combine archived public website evidence with synthetic applications and supporting records. They are not actual customer submissions, and no ACORD PDFs were parsed. The 180 cases reuse six scenario variants per source business; 1,800 answers are not 1,800 independent risks.
+
+Answer keys were frozen before these runs and remain provisional, without independent reviewer signoff. I made no prompt or label changes during the scored runs. Yes/no answers use a 0.5 threshold; choice answers use the selected category; score questions are graded against the most likely rubric category. These are answer-accuracy measurements, not probability-calibration claims.
+
+JEV and KEV's yes/no answers were reused from ten-question requests. Span received three questions per request. The eight-case cost/speed chart uses the same three-question requests across models, measured on different dates. The local KEV test is a separate eight-case smoke test, not a repeat of all 180 cases.
+
+Timings are successful-request completion times, excluding evidence gathering, model loading, queue waits, and retry backoff. The JEV/KEV run encountered throttling and other failures; its charted prices are reported successful-request model charges and exclude unpriced failures. Two initial Span compatibility probes returned HTTP 400 without usage information; the 360 scored Span requests all succeeded. Local hardware and electricity costs were not measured.
+
+The hero rounds JEV/KEV's full-benchmark results and Span's yes/no results. The detailed charts show more precise figures. Span's native three-way uncertainty output was not tested through OpenRouter.
+
+### Models and earlier experiments
+
+- [JEV 1.13 on OpenRouter](https://openrouter.ai/typesafe/jev-1.13)
+- [KEV-4B model card and open weights](https://huggingface.co/jaredpalmer/kev-4b)
+- [KEV source code](https://github.com/jaredpalmer/kev)
+- [Span-01 documentation](https://www.respan.ai/docs/documentation/span-01/concept)
+- [Span-01 on OpenRouter](https://openrouter.ai/respan/span-01) and [Span-01 Lite](https://openrouter.ai/respan/span-01-lite)
+- [Earlier: JEV benchmarking learnings, ask away](/blog/jev-benchmarking-ask-away)
+- [Earlier: getting JEV to implementable](/blog/jev-getting-to-implementable)
+
+*Credit to Astra for helping build, run, and analyze the experiments, and put this write-up together.*
