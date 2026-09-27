@@ -14,7 +14,7 @@ Barely a week ago, I was getting to know JEV and OpenRouter's new decisioning ca
 
 The competitors are different, but have their advantages. **KEV has the same output style as JEV, the same pricing per token, and was slower and less accurate on my benchmark. It ended up slightly cheaper, for an interesting reason I'll get to below. BUT: it's open weights. You can run it locally on consumer hardware.**
 
-**Span-01 isn't as broad through OpenRouter: it answers yes/no questions.** But it does them well, does them cheaply, and while not quite as wicked fast as JEV, is less spendy. Worth looking at if your questions are yes/no, or can sensibly be rephrased that way.
+**Span-01 isn't as broad through OpenRouter: it answers yes/no questions.** That's it. It's “Bit” from Tron. But it does them well, does them cheaply, and while not quite as wicked fast as JEV, is less spendy. Worth looking at if your questions are yes/no, or can sensibly be rephrased that way.
 
 Span-01 Lite is free, but struggled on this test. It may only accommodate easier use cases. At roughly half a second per request, it remains fast compared with the conventional LLMs I've tested, and the price makes it worth experimenting with.
 
@@ -63,7 +63,7 @@ Different tokenization or provider formatting could explain that. The logs don't
 
 ### And yes, it really runs locally
 
-I downloaded KEV and tested it on both my CPU and an AMD Radeon RX 6800 XT, a consumer GPU with 16 GB of video memory.
+I downloaded KEV and tested it on both my CPU and an AMD Radeon RX 6800 XT, a consumer GPU with 16 GB of video memory. A newer iPhone might be next, but mine's a 13.
 
 The model files took about **9.5 GB of disk space**. The GPU run used about **10.2 GiB of GPU memory** at peak. On eight cases with ten questions each, the CPU configuration took a median **66 seconds** per case; the GPU configuration took **10 seconds**. The GPU run matched all 80 answer labels from the hosted KEV run on those cases.
 
