@@ -65,7 +65,7 @@ Different tokenization or provider formatting could explain that. The logs don't
 
 I downloaded KEV and tested it on both my CPU and an AMD Radeon RX 6800 XT, a consumer GPU with 16 GB of video memory. A newer iPhone might be next, but mine's a 13.
 
-The model files took about **9.5 GB of disk space**. The GPU run used about **10.2 GiB of GPU memory** at peak. On eight cases with ten questions each, the CPU configuration took a median **66 seconds** per case; the GPU configuration took **10 seconds**. The GPU run matched all 80 answer labels from the hosted KEV run on those cases.
+The model files took about **9.5 GB of disk space**. The GPU run used about **10.2 GiB of GPU memory** at peak. On eight cases with ten questions each, the CPU configuration took a median **66 seconds** per case; the initial GPU configuration took **10 seconds**. After closing background apps, I reran the GPU tests and got substantially better times; the updated table is at the end of this post. The GPU run matched all 80 answer labels from the hosted KEV run on those cases.
 
 This was a working local setup, with reference-kernel fallbacks, not a fully optimized serving deployment. The hosted API was much faster. But the point is that you can host KEV yourself, and keep the submission evidence on your own hardware.
 
@@ -143,5 +143,27 @@ The hero rounds JEV/KEV's full-benchmark results and Span's yes/no results. The 
 - [Span-01 on OpenRouter](https://openrouter.ai/respan/span-01) and [Span-01 Lite](https://openrouter.ai/respan/span-01-lite)
 - [Earlier: JEV benchmarking learnings, ask away](/blog/jev-benchmarking-ask-away)
 - [Earlier: getting JEV to implementable](/blog/jev-getting-to-implementable)
+
+## Update: KEV on consumer hardware
+
+I also tried KEV locally at 16-bit, 8-bit, and 4-bit precision. It works well on consumer hardware: these runs used my AMD Radeon RX 6800 XT with 16 GB of VRAM, in a desktop with an Intel Core i5-12600K and 64 GB of RAM.
+
+I closed background apps and reran the same eight packets, with ten questions per packet. These are the updated results:
+
+| Precision | Median per packet | Correct answers | Peak GPU memory | Peak host RAM |
+|---|---:|---:|---:|---:|
+| BF16 (16-bit) | 5.87s | 90.00% | 10.20 GiB | 8.62 GiB |
+| HQQ 8-bit | 4.97s | 91.25% | 6.99 GiB | 8.68 GiB |
+| HQQ 4-bit | 4.68s | 87.50% | 5.40 GiB | 8.67 GiB |
+
+The 8-bit version looks like a useful balance here. The 4-bit version saves more GPU memory, but was only a little faster and lost three correct answers compared with 8-bit. It also caused one unnecessary referral. All three repeated their earlier answers exactly.
+
+Memory includes more than the compressed weights. GPU figures are peak PyTorch allocations during inference; host RAM is the process peak across setup and inference. These peaks are separate, not a simultaneous total, and exclude operating-system and driver overhead. This setup loads the original model before quantizing, so startup still needs roughly 8.5 GiB of GPU memory for the quantized versions. The table is not a minimum-device-memory specification.
+
+**CPU only works too.** My earlier FP32 CPU run took a measured median **66.2 seconds per packet**, with **88.75% correct answers** and **21.1 GiB peak host RAM**. That is a different precision and runtime configuration, not an estimate for 4-bit or 8-bit CPU inference. Slow, but usable for experiments or work that can wait.
+
+And the iPhone idea? **An iPhone 17 Pro is a candidate to test at 8-bit, and an iPhone 16 at 4-bit, with a mobile implementation.** The [17 Pro has 12 GB of RAM](https://www.ifixit.com/Guide/iPhone+17+Pro+Chip+ID/196117), while the [iPhone 16 family has 8 GB](https://9to5mac.com/2024/09/13/iphone-16-ram-apple-intelligence/). I haven't run KEV on either. Desktop GPU memory doesn't translate directly into an iOS app budget, and [Apple says additional app memory is not guaranteed](https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.kernel.increased-memory-limit). A compatible mobile runtime, direct loading of compressed weights, and an on-device test are still needed before I can say it fits.
+
+These are small local checks: 80 answers per configuration, with one warmed timing pass. Loading and warm-up are excluded. The HQQ backend and reference kernels are not a fully optimized deployment. But the practical point holds: KEV gives me a way to check insurance evidence on hardware I already own, while keeping that evidence local.
 
 *Credit to Astra for helping build, run, and analyze the experiments, and put this write-up together.*
