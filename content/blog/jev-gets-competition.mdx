@@ -166,4 +166,14 @@ And the iPhone idea? **An iPhone 17 Pro is a candidate to test at 8-bit, and an 
 
 These are small local checks: 80 answers per configuration, with one warmed timing pass. Loading and warm-up are excluded. The HQQ backend and reference kernels are not a fully optimized deployment. But the practical point holds: KEV gives me a way to check insurance evidence on hardware I already own, while keeping that evidence local.
 
+## Addendum: I also tried Laya
+
+I also tested Laya, another open-weight model in this space. It needs more work for this use case. JEV and KEV worked well out of the box on these insurance questions; Laya did not.
+
+I checked the implementation, tried three checkpoints, rephrased questions, and gave it shorter, more focused evidence. The best result across those exploratory checks was **46 correct answers out of 80**, using eight submission packets. JEV had answered 78 correctly and KEV 72 on those same packets with the original inputs. The Laya adaptations changed the inputs, so this is a diagnostic comparison rather than another entry in the main benchmark.
+
+Why keep an eye on it? [Ryan Porter's Anthus study explains how fine-tuning can help Laya](https://anth.us/blog/jev-vs-laya/). On a constructed sentiment dataset, training on 140 labeled examples brought Laya to 89.6% accuracy. That is a useful reason to consider a small local model when you have your own labels and are prepared to train it. The study also found changes to answers outside the training task, so those need testing too.
+
+For my insurance workflow, Laya would need more development and possibly fine-tuning. I haven't tested that, and I don't know whether it would close the gap. For now, I'm parking it and continuing with the models that worked well without task-specific training.
+
 *Credit to Astra for helping build, run, and analyze the experiments, and put this write-up together.*
