@@ -21,12 +21,15 @@ export function Navbar() {
         <ul className="hidden md:flex items-center gap-8 text-sm">
           {navLinks.map((l) => (
             <li key={l.href}>
-              <Link
-                href={l.href}
-                className="text-[color:var(--color-foreground)] hover:text-[color:var(--color-accent)] transition-colors"
-              >
-                {l.label}
-              </Link>
+              {l.href.startsWith("https://") ? (
+                <a href={l.href} className="text-[color:var(--color-foreground)] hover:text-[color:var(--color-accent)] transition-colors">
+                  {l.label}
+                </a>
+              ) : (
+                <Link href={l.href} className="text-[color:var(--color-foreground)] hover:text-[color:var(--color-accent)] transition-colors">
+                  {l.label}
+                </Link>
+              )}
             </li>
           ))}
         </ul>
@@ -48,13 +51,15 @@ export function Navbar() {
           <ul className="px-6 py-4 flex flex-col gap-4">
             {navLinks.map((l) => (
               <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className="block py-1 text-base"
-                  onClick={() => setOpen(false)}
-                >
-                  {l.label}
-                </Link>
+                {l.href.startsWith("https://") ? (
+                  <a href={l.href} className="block py-1 text-base" onClick={() => setOpen(false)}>
+                    {l.label}
+                  </a>
+                ) : (
+                  <Link href={l.href} className="block py-1 text-base" onClick={() => setOpen(false)}>
+                    {l.label}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>

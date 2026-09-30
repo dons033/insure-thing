@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { HeroVideo } from "@/components/ui/hero-video";
 import { formatDate, getPostBySlug } from "@/lib/blog";
-import { servicePillars } from "@/lib/constants";
+import { insureBenchUrl, servicePillars } from "@/lib/constants";
 
 const FEATURED_POST_SLUGS = [
   "insurebench-rating-the-model-and-the-harness",
@@ -128,6 +128,25 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="benchmark-heading" className="border-y border-[color:var(--color-border)]">
+        <div className="mx-auto grid max-w-[1200px] gap-6 px-6 py-12 md:grid-cols-[1fr_auto] md:items-center lg:px-10">
+          <div>
+            <div className="mb-2 font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)]">
+              Public benchmark
+            </div>
+            <h2 id="benchmark-heading" className="font-serif text-2xl md:text-3xl">
+              InsureBench: evidence for choosing an insurance AI system.
+            </h2>
+            <p className="mt-3 max-w-2xl text-[color:var(--color-muted)]">
+              Explore multi-functional LLM results and emerging decision-model tests, with attention to the workflow around each model.
+            </p>
+          </div>
+          <a href={insureBenchUrl} className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--color-accent)] hover:underline">
+            Explore InsureBench <span aria-hidden="true">→</span>
+          </a>
         </div>
       </section>
 

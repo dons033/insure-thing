@@ -8,11 +8,14 @@ export const siteConfig = {
   linkedin: "https://www.linkedin.com/in/donald-seibert/",
 };
 
+export const insureBenchUrl = "https://insurebench.insure-thing.com";
+
 export const navLinks = [
-  { href: "/about", label: "About" },
   { href: "/services", label: "Services" },
-  { href: "/blog", label: "Blog" },
+  { href: insureBenchUrl, label: "InsureBench" },
   { href: "/labs", label: "Labs" },
+  { href: "/blog", label: "Blog" },
+  { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 

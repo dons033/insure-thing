@@ -18,12 +18,15 @@ export function Footer() {
           <ul className="flex flex-wrap gap-6 text-sm">
             {navLinks.map((l) => (
               <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className="text-[color:var(--color-foreground)] hover:text-[color:var(--color-accent)]"
-                >
-                  {l.label}
-                </Link>
+                {l.href.startsWith("https://") ? (
+                  <a href={l.href} className="text-[color:var(--color-foreground)] hover:text-[color:var(--color-accent)]">
+                    {l.label}
+                  </a>
+                ) : (
+                  <Link href={l.href} className="text-[color:var(--color-foreground)] hover:text-[color:var(--color-accent)]">
+                    {l.label}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>

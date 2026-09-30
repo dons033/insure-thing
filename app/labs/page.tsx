@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { insureBenchUrl } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Labs",
   description:
-    "Working insurance benchmarks, production prototypes, and live experiments that demonstrate how InsureThing evaluates and builds real systems.",
+    "Working insurance prototypes and experiments that show how InsureThing builds practical systems.",
 };
 
 export default function LabsPage() {
@@ -19,51 +20,15 @@ export default function LabsPage() {
             Working systems make the argument concrete.
           </h1>
           <p className="mt-8 max-w-3xl text-lg leading-relaxed text-[color:var(--color-muted)]">
-            Labs contains public benchmarks, production prototypes, and live
-            experiments. Each project tests an idea against actual insurance
-            work—and shows the controls, limitations, and economics alongside
-            the result.
+            Labs collects working prototypes and experiments. Each project
+            tests an idea against insurance work—and shows the controls,
+            limitations, and economics alongside the result.
           </p>
         </div>
       </section>
 
       <section className="mx-auto max-w-[1200px] px-6 py-20 lg:px-10">
         <div className="grid gap-8 md:grid-cols-2">
-          <a
-            href="https://insurebench.insure-thing.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group border-t-2 border-[color:var(--color-accent)] pt-7 md:col-span-2"
-          >
-            <div className="grid gap-8 md:grid-cols-[0.8fr_1.2fr]">
-              <div>
-                <div className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-accent)]">
-                  Public benchmark
-                </div>
-                <h2 className="mt-4 font-serif text-3xl transition-colors group-hover:text-[color:var(--color-accent)]">
-                  InsureBench
-                </h2>
-                <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium group-hover:text-[color:var(--color-accent)]">
-                  Explore the benchmark <span aria-hidden="true">↗</span>
-                </div>
-              </div>
-              <div>
-                <p className="text-lg leading-relaxed text-[color:var(--color-muted)]">
-                  Evaluates model-plus-harness combinations on insurance work by
-                  quality and cost. The practical question is not which model
-                  wins overall, but which setup clears the required accuracy bar
-                  for each capability at an economical cost.
-                </p>
-                <div className="mt-6 border-l-2 border-[color:var(--color-accent)] pl-4 text-sm leading-relaxed">
-                  <span className="font-medium">What this demonstrates:</span>{" "}
-                  task-specific model evaluation, deployment economics, and a
-                  public evidence boundary that does not expose private prompts,
-                  answer keys, or model outputs.
-                </div>
-              </div>
-            </div>
-          </a>
-
           <Link
             href="/labs/wc-underwriting"
             className="group border-t border-[color:var(--color-border)] pt-7 transition-colors hover:border-[color:var(--color-accent)]"
@@ -114,6 +79,13 @@ export default function LabsPage() {
             <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium group-hover:text-[color:var(--color-accent)]">
               Play the experiment <span aria-hidden="true">↗</span>
             </div>
+          </a>
+        </div>
+
+        <div className="mt-14 border-t border-[color:var(--color-border)] pt-7 text-sm leading-relaxed">
+          Looking for model and harness comparisons?{" "}
+          <a href={insureBenchUrl} className="font-medium text-[color:var(--color-accent)] hover:underline">
+            Explore InsureBench <span aria-hidden="true">→</span>
           </a>
         </div>
 
