@@ -12,6 +12,8 @@ import {
   SweBenchProTimeline,
 } from "@/components/blog/fence-figures";
 
+import DecisionModelTable from "@/components/blog/decision-model-table";
+
 export const mdxComponents: MDXComponents = {
   a: ({ href, children, ...props }) => {
     if (href && href.startsWith("/")) {
@@ -27,6 +29,7 @@ export const mdxComponents: MDXComponents = {
       </a>
     );
   },
+  DecisionModelTable,
   TokensVenn,
   ClerkStatCards,
   CostAccuracyScatter,
