@@ -1,0 +1,143 @@
+---
+title: "Choosing among 12 decision models"
+date: "2026-10-06"
+description: "There are now 12 distinct decision models on OpenRouter. I shortlisted the competitors for two jobs: a few questions, or many questions about the same evidence. Only Luna matched JEV's scaling among the API competitors in my matched test."
+author: "Don Seibert"
+tags: ["ai", "benchmarks", "underwriting", "decisioning-models"]
+image: "/images/blog/jev-new-competitors/hero.png"
+cardImageFit: "contain"
+---
+
+## Summary
+
+We now have **12 decision models on OpenRouter**, and more through other APIs and on Hugging Face. Barely a few weeks after JEV debuted, there's a field to choose from. OpenAI has now joined in with its [Decisions API](https://developers.openai.com/api/docs/guides/decisions).
+
+I shortlisted the competitors and broke the comparison into two use cases: **a few questions, and many questions about the same evidence.**
+
+For a few questions, there are several good options. **Mercury Decide belongs on the shortlist, especially at its current free price.** JEV, OpenAI's Luna, and Perplexity's Decider are also strong API options. KEV remains interesting if I want a compact model running locally.
+
+For many questions, the field narrows. **Of the API competitors in my matched scaling test, only Luna echoed JEV's performance: 100 questions in about four-tenths of a second, with very little extra time as I added questions.**
+
+I already [wrote about JEV doing this](https://www.insure-thing.com/blog/jev-benchmarking-ask-away). This time, I wanted to know which competitors could keep up.
+
+## A few questions
+
+These models take evidence and typed questions, then return yes/no probabilities, choices, or scores. I know what I want to ask and what kind of answer I need.
+
+I gave ten models the same **50 evidence packets, with 150 scored findings** across 15 insurance families: workers' compensation submissions, claims, policy terms, cyber, commercial auto, loss runs, reinsurance, and others. Each packet has four questions: three scored findings and one separate diagnostic.
+
+<DecisionModelTable />
+
+**Mercury led overall; Perplexity led the paid models on accuracy.** JEV combined strong accuracy with the fastest completion and a lower bill. Luna and JEV were close on accuracy.
+
+KEV was the cheapest paid option here. Its accuracy was lower, but I can run it on consumer hardware and keep the data in my own environment. My [earlier post covers the local tests](https://www.insure-thing.com/blog/jev-gets-competition).
+
+**Mercury is a good option to try, especially while it's free.** That pricing is promotional, so I'll revisit the economics when there's a lasting price to compare.
+
+This is broader and harder than my earlier workers' compensation classification test. I started with a quick screen, then completed the larger accuracy comparison for every model in the table.
+
+The larger test didn't change my shortlist. Solar reached **89.3%**, but its median was nearly 18 seconds per packet, without timeouts or retries. Clef Flash scored **85.3%** and TEV **79.3%**; neither improved on JEV's combination of accuracy, speed, and cost here.
+
+Clef finished at **90%**, with valid typed answers on every packet. Its confidence behavior was interesting: all 15 wrong primary answers were below 90% confidence. At that cutoff, it accepted 83 correct answers and no wrong ones; JEV accepted 73 correct answers and no wrong ones. That's worth further testing as a review signal, rather than treating the cutoff as calibrated for production.
+
+Some questions were deliberately difficult: did the applicant's employees perform the work, or another firm's crew? Are two records incompatible, or do they describe different things? Does a supplied policy rule apply to these particular facts?
+
+**A note on accuracy:** Most of these models were reasonably close on this benchmark. Check them on your own use cases, refine the questions and evidence, and I'd expect several to do well. Take this as an indicator, not as gospel.
+
+For me, the more interesting separation is **price and speed**. That's where JEV rules the roost, especially when I'm asking many questions about the same evidence.
+
+[![Price versus median completion time for nine models on the same four-question packets, with provider icons and model names. JEV is fastest, KEV is the cheapest paid option, and Mercury is promotional free. Solar's 17.91-second median is omitted from this plot; its full results remain in the table.](/images/blog/jev-new-competitors/price-speed-scatter.png)](/images/blog/jev-new-competitors/price-speed-scatter.png)
+
+## Many questions about the same evidence
+
+At one or a few questions, several competitors are close enough to consider. As the question count grows, JEV and Luna pull away on completion time and the economics of sharing evidence.
+
+I tested **1, 10, 25, 50, and 100 questions about the same evidence**, including subcontractors, business activities, out-of-state exposure, and working at heights. Clef stops at 50 questions in these charts; every plotted decision-model point is a single request.
+
+[![Seven completion curves: six decision models plus Ling Flash from an earlier test. At 100 questions, JEV took 0.36 seconds, Luna 0.40, Perplexity 1.31, Liquid d1 1.35, Mercury 6.35, and Ling Flash 12.26. Clef's curve ends at 50 questions and 1.62 seconds. The right panel shows the five faster curves.](/images/blog/jev-new-competitors/question-completion.png)](/images/blog/jev-new-competitors/question-completion.png)
+
+JEV went from **0.26 seconds for one question to 0.36 for 100**. Luna went from **0.25 to 0.40 seconds**. Perplexity and Liquid d1 took about 1.3 seconds at 100 questions. Clef took 1.62 seconds for 50. Mercury climbed to 6.35 seconds at 100.
+
+For context, I added **Ling 3.0 Flash**, the inexpensive, fast conventional LLM from my earlier experiment. It went from **0.98 seconds for one question to 12.26 seconds for 100**. The dashed curve uses the same ten evidence packets, with different question grouping and run dates.
+
+Perplexity and d1 are still fast. But Luna was the only challenger in this comparison that reproduced JEV's nearly flat completion curve.
+
+The cost curves show another difference:
+
+[![Five paid decision models compared on cost per packet and per answer. JEV, Luna, and Clef become cheaper per answer as question count rises; JEV and Luna have the lowest cost at 100 questions. Perplexity and Liquid d1 stay nearly flat per answer. Clef's cost curves end at 50 questions.](/images/blog/jev-new-competitors/question-cost.png)](/images/blog/jev-new-competitors/question-cost.png)
+
+| Model | Median time for 100 questions | Model cost per 1,000 packets of 100 questions |
+|---|---:|---:|
+| JEV 1.13 | 0.36 seconds | $0.47 |
+| OpenAI Luna Decisions | 0.40 seconds | $1.56 |
+| Perplexity Decider V1 27B | 1.31 seconds | $6.64 |
+| Liquid d1 | 1.35 seconds | $7.24 |
+| Mercury Decide | 6.35 seconds | Promotional free |
+
+Clef is omitted from this 100-question table. Its scaling curves end at the measured 50-question single request.
+
+**How many questions can JEV and Luna take?** Both handled 100 in my OpenRouter tests. I couldn't find a published question-count maximum for either in their current public documentation. [TypeSafe documents a 64k-token total request budget, with a separate 32k limit for the evidence plus the longest question](https://docs.typesafe.ai/models); [OpenAI's Decisions API reference doesn't state a maximum length for its questions array](https://developers.openai.com/api/reference/resources/decisions/methods/create). Those direct API specifications don't establish an OpenRouter limit, and I haven't tested beyond 100.
+
+Perplexity and d1 reported input usage that grew roughly with the number of questions. JEV and Luna's bills grew much more slowly. **The price per million tokens doesn't tell me the cost of checking a document. I need to measure the request I actually plan to send.**
+
+On the same ten questions tracked across request sizes, each model's accuracy moved by at most one percentage point: through 50 for Clef and through 100 for the others. I didn't see a clear penalty from adding questions in this test.
+
+### Architecture and serving matter
+
+Many competitors start with conventional LLM backbones, often Qwen. Their implementations differ. [TEV keeps the standard next-token head](https://openrouter.ai/togethercomputer/tev1-4b-experimental). [KEV adds a pointer head and shares the computed evidence across question branches](https://huggingface.co/jaredpalmer/kev-4b). [Clef uses a joint head to score the questions together](https://huggingface.co/Cloudflare/clef).
+
+So I wouldn't infer that a model cannot share work simply because it is based on Qwen. The scoring method, serving implementation, and billing all matter.
+
+The practical test is whether a model can answer many questions about shared evidence with very little added time and cost. **JEV and Luna demonstrated that combination here.** The other measured API curves didn't match it. Clef shared evidence but took longer through 50 questions. Our local KEV timing is a separate experiment.
+
+## Where many questions might make a difference
+
+**An insurance application or first notice of loss.** Imagine checking the whole set across many dimensions while the person submitting it is still there. Does the website describe work missing from the application? Is there evidence of subcontractors? Do addresses and dates agree? Which facts are disputed? What needs clarification?
+
+Ask the hard questions, the easy ones, and questions from different angles. A question that rarely finds anything may still be worth asking if that rare finding is valuable. This test used prepared text; gathering and extracting a whole document set takes additional time.
+
+**Re-architecting an RPG.** Given a shared scene and player action, many NPCs could have complex reactions. I could categorize those reactions, grade hostility or trust against a defined rubric, and check which responses fit each character. The game would choose the actions and generate dialogue.
+
+**A conversation as it happens.** Hook this up to voice recognition and check a transcript across many dimensions: what was discussed, which questions were answered, whether a statement contradicts supplied records, and whether the speaker explicitly expresses frustration or urgency. Those are useful observations; a transcript score doesn't establish honesty or someone's emotional state.
+
+For insurance, I still see these as **evidence-surfacing models**. The model reports what the evidence supports. The underwriting or claims platform decides what happens next.
+
+## What I would choose
+
+| What I need | Where I would start |
+|---|---|
+| A few typed answers through an API | Mercury, JEV, Luna, and Perplexity |
+| Many checks on the same evidence with someone waiting | JEV and Luna |
+| A compact model running in my own environment | KEV, tested on my actual questions |
+| Explanations, investigation, or more involved reasoning | A regular LLM, possibly after a decision model surfaces an issue |
+
+Mercury's accuracy and current free price make it worth trying when I can wait a little longer for many answers. Perplexity's accuracy may be worth its higher cost at large question counts. A tiny local model may be sufficient for a simpler job. The number of questions is one useful way to narrow the field; the evidence, required accuracy, and cost of errors determine the final choice.
+
+## Next up
+
+Today, I'm taking a closer look at **OpenAI's new Luna Decisions model** and its native API. Image inputs are particularly interesting: scanned forms, supporting documents, and website pictures could give us a new benchmark. No image results yet.
+
+Then: several of these models are built on Qwen. **Should I just use Qwen or another LLM with typed outputs?** It can also give me an explanation, free text, or a tool call. If all I care about is maximum accuracy, I'd still reach for a frontier model, accepting much higher cost and much slower responses. I've started that comparison, and it's worth its own post.
+
+These results are a snapshot in time. With the excitement around JEV, by the time you read this they're probably already out of date.
+
+Don't worry. I'll keep testing.
+
+## Methodology
+
+The [OpenRouter Decisions listing](https://openrouter.ai/models?output_modalities=decisions) contained 12 distinct models at the time of this comparison. Free and paid listings of the same model count once. This comparison covers ten models with JEV-style outputs beyond yes/no; the two binary-only Span models are excluded. Provider icons come from the OpenRouter listing.
+
+The accuracy comparison gives all ten models the same 50 packets from 25 related scenarios, with three scored findings and one separate diagnostic per packet. The earlier quick screen was a fixed ten-packet subset from five scenario groups. Clef, Clef Flash, TEV, and Solar each reuse their ten completed quick-screen packets and add the other 40. Saved answers were reused only after verifying identical inputs and reparsing the raw responses. These are author-defined development labels, not an independently adjudicated holdout. Time is median completion through parsing and validation, including retry backoff. Cost is reported model charges for the same 50 packets; uncertain charges from failed attempts are excluded from displayed costs and retained in the spending guard. Runs occurred at different times.
+
+Evidence combines archived public business material with fictional applications, records, and supplied policy definitions. Scenarios do not allege discrepancies at the source businesses.
+
+The separate scaling test uses ten synthetic packets from five patterns, with 50 random single-question requests per model and ten requests at each larger size. Clef's displayed results stop at 50 questions. Questions are related YES/NO/UNKNOWN choices about one shared evidence set per request. Quality is compared on the same ten questions per packet across 10, 25, and 50 questions, plus 100 for the models shown there; singles are excluded.
+
+The six decision models in the scaling test used OpenRouter's decision interface. Times cover the API request through validation, including failed attempts and retry backoff, excluding evidence collection and preprocessing. Runs occurred on different dates; Mercury and Clef's scaling runs were added later. Costs are reported inference charges, excluding extraction, platform, and human-review costs. No response-repair calls were used.
+
+Clef's separate extension uses the exact same frozen scaling evidence and question selections, with fresh timings at every size. The displayed results include 50 single-question requests and ten each at 10, 25, and 50 questions. Two failed connections before payload transmission were retried, with backoff included and no inference charge. Its API schema documents a 64-question limit. Archived experiments with combined calls are excluded from these charts and the 100-question comparison. Published text-state truncation warnings were not reproduced in our earlier long-tail visibility probes, which is not proof of complete long-context support.
+
+Ling's historical timing curve is a separate reference, using the conventional chat API with JSON-object output. It uses the same ten evidence packets: 50 random single-question requests, and randomized partitions producing 100, 40, 20, and 10 requests at 10, 25, 50, and 100 questions. Incomplete responses count toward timing; there were no retries or repair calls. These earlier results are not pooled with the current decision-model measurements or added to their accuracy and cost comparisons.
+
+Model details: [OpenAI Decisions](https://developers.openai.com/api/docs/guides/decisions), [Perplexity Decider](https://openrouter.ai/perplexity/pplx-decider-v1-27b), [KEV 4B](https://huggingface.co/jaredpalmer/kev-4b), [Liquid d1](https://openrouter.ai/liquid/d1), [Clef model card](https://huggingface.co/Cloudflare/clef), [Cloudflare API limits](https://developers.cloudflare.com/workers-ai/models/clef/). Results reflect the tested routes and versions, as of October 6, 2026.
+
