@@ -1,0 +1,72 @@
+---
+title: "Decision models: the cost of asking 100 questions"
+date: "2026-10-11"
+description: "Mercury wins different accuracy and cost comparisons, JEV remains fast, and Microsoft adds another inexpensive option. InsureBench now has a permanent Decision Models comparison."
+author: "Don Seibert"
+tags: ["ai", "benchmarks", "underwriting", "decisioning-models"]
+---
+
+The decision-model category is getting interesting quickly. We now have enough choices that “which one wins?” needs a follow-up: wins at what?
+
+On my broader insurance-evidence benchmark, **free Mercury had the highest observed accuracy**. **JEV was the fastest**. On the separate question-scaling benchmark, **paid Mercury had the lowest measured cost among paid routes**, including at 100 questions per request. Microsoft Decision-1 is inexpensive too, but paid Mercury displaced it on batch cost.
+
+Those results now have a permanent home: [InsureBench Decision Models](https://insurebench.insure-thing.com/decisions). The page separates text, image inputs, and yes/no comparisons, lets you select models, and keeps older versions available.
+
+## The broader insurance comparison
+
+This test uses 50 evidence packets, containing 150 scored findings and 50 separately scored diagnostic questions. They cover 25 related scenarios across 15 insurance families. The questions ask what the supplied evidence supports, including choices and yes/no findings.
+
+| Model / route | Correct findings | Median completion | Cost per 1,000 packets |
+|---|---:|---:|---:|
+| Mercury Decide, free | 142/150 (94.7%) | 0.483s | $0 |
+| Perplexity Decider v1.1 | 141/150 (94.0%) | 0.419s | $0.0666 |
+| Luna Decisions | 139/150 (92.7%) | 0.330s | $0.1296 |
+| Mercury Decide, paid | 139/150 (92.7%) | 0.588s | $0.0159 |
+| JEV 1.13 | 138/150 (92.0%) | 0.253s | $0.0565 |
+| Microsoft Decision-1 | 138/150 (92.0%) | 0.495s | $0.0377 |
+| Drex v1.5 | 129/150 (86.0%) | 0.552s | $0.0358 |
+| Clef Omni | 114/150 (76.0%) | 0.378s | $0.1803 |
+
+This is a selection of the measured routes; the page includes the full comparison. Free Mercury's zero charge reflects its promotional route, not an estimate of its eventual paid price.
+
+Paid Mercury did not show the speed improvement I expected. Its median on this run was 0.588 seconds, versus 0.483 seconds in the saved free-route run. These were measured at different times, so this is not a controlled test of the serving difference. It is the performance I actually observed.
+
+## One packet, many questions
+
+The second benchmark asks 1, 10, 25, 50, or 100 questions about the same evidence. It uses ten synthetic packets from five scenario patterns, with correlated YES/NO/UNKNOWN choice questions. There are 90 requests per model and 1,900 scored answers across the five sizes.
+
+At 100 questions per request, the comparison looks different:
+
+| Model | Accuracy | Median completion | Cost per 1,000 questions |
+|---|---:|---:|---:|
+| Perplexity Decider v1.1 | 98.2% | 2.116s | $0.0332 |
+| Mercury Decide, paid | 98.0% | 1.523s | $0.000323 |
+| Luna Decisions | 92.7% | 0.399s | $0.0156 |
+| JEV 1.13 | 93.1% | 0.361s | $0.00470 |
+| Microsoft Decision-1 | 91.5% | 1.174s | $0.00323 |
+
+Paid Mercury's reported cost was about one-tenth Microsoft's and one-fifteenth JEV's. JEV remained much faster. Perplexity was narrowly ahead on observed accuracy; two answers out of 1,000 are too small a difference to treat as an established capability gap on these related questions.
+
+At one question per request, paid Mercury cost $0.0321 per 1,000 questions. At 100, it cost $0.000323. Its reported charges per packet were nearly constant across sizes in this run. That is a measured billing result, not a claim about how the provider implements inference.
+
+## Does batching change quality?
+
+Comparing each batch's overall score can confuse question difficulty with batching effects. I therefore also scored the same ten questions per packet at every size from 10 through 100.
+
+Paid Mercury scored **98/100 on that fixed set at all four sizes**. Microsoft scored **96, 91, 90, and 91 out of 100** at sizes 10, 25, 50, and 100. That is a possible degradation signal for Microsoft, with no observed degradation for Mercury on this fixed set. Replication and more independent cases are needed before generalizing either result.
+
+## How to use the comparison
+
+The new page has three views: **Image Inputs**, **General Text**, and **Yes/No**. Image models appear on measured image workloads; yes/no comparisons use identical Boolean questions. Open weights, a verified local runtime, and the deployment actually measured are separate filters.
+
+The model picker retains older versions and weaker performers. Recommended selections keep the charts readable, while “Show all models” restores every measured entry in the selected workload. Costs, timings, and scores stay attached to their workloads; there is no pooled overall ranking.
+
+For a workflow that needs a quick response, JEV remains attractive. For many questions against shared evidence, paid Mercury's economics are particularly interesting. For local deployment, the available weights and runtime can matter more than a small score difference.
+
+## What the results establish
+
+These are development benchmarks with author-defined labels, not independently adjudicated holdouts. The packets and questions are related, and small score gaps should be read accordingly. Evidence findings also do not replace underwriting rules or a decision about what action to take.
+
+The October 9 additions and October 10 paid Mercury runs were audited by reparsing every saved raw response and checking frozen request inputs. Paid Mercury completed all 140 requests without failures, for $0.00369 total. Microsoft had three successfully retried failures in scaling; its plotted costs exclude uncertain failed-call charges, which remain reserved in the run ledger. Historical comparisons still await a full raw-ledger audit.
+
+Cost is reported USD, timing is measured end-to-end completion, and provider caching is uncontrolled. Local operating cost is unmeasured. The [live comparison](https://insurebench.insure-thing.com/decisions) keeps the workload details and downloadable aggregate results alongside the charts as we add more models.
