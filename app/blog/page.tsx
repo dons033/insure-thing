@@ -4,6 +4,7 @@ import { getAllPosts } from "@/lib/blog";
 import { PostCard } from "@/components/blog/post-card";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/blog" },
   title: "Blog",
   description:
     "Essays and field notes on underwriting, insurance products, AI systems, and the economics of putting them into production.",

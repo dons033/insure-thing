@@ -29,14 +29,16 @@ export async function generateMetadata({
   const post = getPostBySlug(slug);
   if (!post) return {};
   return {
+    alternates: { canonical: `/blog/${slug}` },
     title: post.frontmatter.title,
     description: post.frontmatter.description,
     openGraph: {
+      url: `${siteConfig.url}/blog/${slug}`,
       title: post.frontmatter.title,
       description: post.frontmatter.description,
       type: "article",
       publishedTime: post.frontmatter.date,
-      images: post.frontmatter.image ? [post.frontmatter.image] : undefined,
+      images: post.frontmatter.image ? [post.frontmatter.image] : ["/og-image.png"],
     },
   };
 }

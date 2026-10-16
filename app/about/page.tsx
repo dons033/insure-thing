@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/about" },
   title: "About Don Seibert",
   description:
     "InsureThing is led by Don Seibert, an insurance operator and consultant with more than 20 years across underwriting, product, analytics, and technology.",

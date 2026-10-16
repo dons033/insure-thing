@@ -3,6 +3,7 @@ import Link from "next/link";
 import { engagements, servicePillars } from "@/lib/constants";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/services" },
   title: "Services",
   description:
     "Build insurance products, improve underwriting and portfolio performance, and apply AI to real insurance operations with direct operator involvement.",

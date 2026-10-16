@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { HeroVideo } from "@/components/ui/hero-video";
 import { formatDate, getPostBySlug } from "@/lib/blog";
 import { insureBenchUrl, servicePillars } from "@/lib/constants";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const FEATURED_POST_SLUGS = [
   "insurebench-rating-the-model-and-the-harness",

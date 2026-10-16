@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/labs/wc-underwriting" },
   title: "CA Workers' Comp Pre-Clearance",
   description:
     "Pre-clearance for California Workers' Compensation submissions. Brokers send an inquiry; the system pre-fills from CSLB, BuildZoom, and CA SOS, applies opinionated rules, and replies with a quotable, refer, or decline answer plus the documentation needed to move forward. Proof of concept for a fuller underwriting workstation.",

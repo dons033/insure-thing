@@ -3,7 +3,7 @@ export const siteConfig = {
   title: "InsureThing — Insurance products, underwriting systems, and AI",
   description:
     "Operator-led insurance consulting for carriers, MGAs, and insurtechs. Build products, improve underwriting and pricing, and apply AI to real insurance workflows.",
-  url: "https://insure-thing.com",
+  url: "https://www.insure-thing.com",
   email: "hello@insure-thing.com",
   linkedin: "https://www.linkedin.com/in/donald-seibert/",
 };

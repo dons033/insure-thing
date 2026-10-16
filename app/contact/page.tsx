@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { siteConfig } from "@/lib/constants";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/contact" },
   title: "Contact",
   description:
     "Start a conversation with InsureThing about an insurance product, underwriting, pricing, analytics, or applied AI problem.",

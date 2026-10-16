@@ -3,6 +3,7 @@ import Link from "next/link";
 import { insureBenchUrl } from "@/lib/constants";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/labs" },
   title: "Labs",
   description:
     "Working insurance prototypes and experiments that show how InsureThing builds practical systems.",
